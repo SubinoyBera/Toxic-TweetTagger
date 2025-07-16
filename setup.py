@@ -7,7 +7,7 @@ from typing import List
 # The constant is used to check if the package is being installed in editable mode.
 CONNECTOR = '-e .'
 
-def get_requirements(filename: str):
+def get_requirements(filename: str) -> List:
     """
     Reads the requirements file and returns the list of package requirements for the development
     of the project.
