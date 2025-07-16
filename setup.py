@@ -38,7 +38,7 @@ setup(
     description = "Hate Tweet classification with MLOps implementation",
     long_description = long_description,
     long_description_content_type = "text/markdown",
-    url = "https://github.com/SubinoyBera/Book-Recommender-System",
+    url = "https://github.com/SubinoyBera/Toxic-TweetTagger",
     install_requires = get_requirements("requirements.txt"),
     packages = find_packages(where="src"),
     package_dir = {"": "src"},
