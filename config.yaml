@@ -5,3 +5,8 @@ data_ingestion:
   raw_data_dir: raw
   ingested_data_dir: ingested_data
   download_url: ""
+
+data_preprocessing:
+  root_dir: artifacts/data_preprocessing
+  processed_data_dir: processed_data
+  dataset: tweet_data.csv
