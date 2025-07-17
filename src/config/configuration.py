@@ -1,11 +1,10 @@
 import sys
-import os
 from pathlib import Path
 from src.logger.logging import logging
 from src.constants.constants import *
 from src.utils.common import read_yaml, create_directory
 from src.exception.app_exception import AppException
-from src.entity.config_entity import (DataIngestionConfig)
+from src.entity.config_entity import (DataIngestionConfig, DataPreprocessingConfig)
 
 class AppConfiguration:
     def __init__(self, 
@@ -53,4 +52,34 @@ class AppConfiguration:
         
         except Exception as e:
             logging.error(f"Error while creating Data Ingestion Configuration: {e}", exc_info=True)
+            raise AppException(e, sys)
+
+
+    def data_preprocessing_config(self) -> DataPreprocessingConfig:
+        """
+        Creates the configuration for Data Preprocessing.
+        Returns: DataPreprocessingConfig object
+        """
+        try:
+            preprocessing_config = self.config.data_preprocessing
+            ingestion_config = self.config.ingestion_config
+
+            preprocessing_root = preprocessing_config.root_dir
+            processed_data_dir = preprocessing_config.processed_data_dir
+            dataset = preprocessing_config.dataset
+
+            create_directory(preprocessing_root)
+
+            processed_data_dir_path = Path(preprocessing_root, processed_data_dir)
+            dataset_path = Path(ingestion_config.ingested_data, dataset)
+
+            preprocessing_configuration = DataPreprocessingConfig(
+                processed_data_dir = processed_data_dir_path,
+                ingested_dataset_path = dataset_path
+            )
+
+            return preprocessing_configuration
+        
+        except Exception as e:
+            logging.error(f"Error while creating Data Preprocessing Configuration: {e}", exc_info=True)
             raise AppException(e, sys)
