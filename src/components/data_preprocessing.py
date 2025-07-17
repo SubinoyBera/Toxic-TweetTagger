@@ -76,8 +76,8 @@ class DataPreprocessing:
         Raises:
             AppException: If error occurs during data preprocessing
         """
-
         # Sampling from dataframe to create a smaller working dataset
+        df['Label'] = df['Label'].astype(int)
         subset_hate_df = df[df['Label']==1].sample(n=60000, random_state=42)
         subset_nornal_df = df[df['Label']==0].sample(n=60000, random_state=42)
 
@@ -86,6 +86,8 @@ class DataPreprocessing:
         fn = HelperFunctions()
         # Preprocessing steps
         try:
+            subset_df.dropna(how='any', inplace=True)
+
             logging.info("Performing lowercasing")
             df['Content'] = subset_df['Content'].apply(fn.lower_case)
 
@@ -95,10 +97,11 @@ class DataPreprocessing:
             logging.info("Removing stopwords")
             subset_df['Content'] = subset_df['Content'].apply(fn.remove_stopwords)
 
-            print("\n Performing lemmatization")
+            logging.info("Performing lemmatization")
             subset_df['Content'] = subset_df['Content'].apply(fn.lemmatization)
 
-            logging.info("Finished preprocessing successfully")
+            logging.info("Finished preprocessing operations successfully")
+
             processed_data_dir = self.data_preprocessing_config.processed_data_dir
             create_directory(processed_data_dir)
             subset_df.to_csv(Path(processed_data_dir, 'clean_data.csv'), index=False)
