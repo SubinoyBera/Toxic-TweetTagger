@@ -26,7 +26,7 @@ class HelperFunctions:
     
     def lower_case(self, text):
         """Converts the given text to lowercase."""
-        return text.tolower()
+        return text.lower()
     
     def remove_punctuations(self, text):
         """Removes all punctuation marks from the given text."""
@@ -48,7 +48,7 @@ class HelperFunctions:
 
 
 class DataPreprocessing:
-    def __init__(self, config = AppConfiguration() ):
+    def __init__(self, config = AppConfiguration()):
         """
         Initializes the DataPreprocessing object by creating a data preprocessing configuration.
 
@@ -89,7 +89,7 @@ class DataPreprocessing:
             subset_df.dropna(how='any', inplace=True)
 
             logging.info("Performing lowercasing")
-            df['Content'] = subset_df['Content'].apply(fn.lower_case)
+            subset_df['Content'] = subset_df['Content'].apply(fn.lower_case)
 
             logging.info("Removing punctuations")
             subset_df['Content'] = subset_df['Content'].apply(fn.remove_punctuations)
@@ -102,9 +102,11 @@ class DataPreprocessing:
 
             logging.info("Finished preprocessing operations successfully")
 
-            processed_data_dir = self.data_preprocessing_config.processed_data_dir
+            processed_data_dir = self.data_preprocessing_config.preprocessed_data_dir
             create_directory(processed_data_dir)
             subset_df.to_csv(Path(processed_data_dir, 'clean_data.csv'), index=False)
+            # free memory
+            del subset_df
             logging.info(f"Data successfully saved at {processed_data_dir}")
         
         except Exception as e:
@@ -115,15 +117,16 @@ class DataPreprocessing:
         """
         Initiates the data preprocessing process by calling the preprocess method.
         """
+        obj = DataPreprocessing()
         try:
             logging.info(f"{'='*20}Data Preprocessing{'='*20}")
-            data_path = self.data_preprocessing_config.ingested_dataset_path
+            data_path = obj.data_preprocessing_config.ingested_dataset_path
             if not data_path:
                 logging.error("No data path found")
                 return
             df = pd.read_csv(data_path, encoding='utf-8')
-            obj = DataPreprocessing()
             obj.preprocess(df)
+            del df
             logging.info(f"{'='*20}Data Preprocessing Completed Successfully{'='*20} \n\n")
 
         except Exception as e:
