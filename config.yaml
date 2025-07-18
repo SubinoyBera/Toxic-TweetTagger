@@ -8,5 +8,14 @@ data_ingestion:
 
 data_preprocessing:
   root_dir: artifacts/data_preprocessing
-  processed_data_dir: processed_data
   dataset: tweet_data.csv
+
+feature_engineering:
+  root_dir: artifacts/feature_engineering
+  models_dir: artifacts/models
+  preprocessed_dataset: clean_data.csv 
+
+model_training:
+  models_dir: artifacts/models
+  train_dataset: train_data.csv
+  test_dataset: test_data.csv

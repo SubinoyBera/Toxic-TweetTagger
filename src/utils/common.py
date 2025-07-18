@@ -1,6 +1,7 @@
 import os
 import sys
 import yaml
+import pickle
 from pathlib import Path
 from box import ConfigBox
 from ensure import ensure_annotations
@@ -25,7 +26,7 @@ def read_yaml(path_to_yaml: Path) -> ConfigBox:
             return ConfigBox(content)
         
     except Exception as e:
-        logging.error(f"Failed to read YAML file at {path_to_yaml}: {e}")
+        logging.error(f"Failed to read YAML file at {path_to_yaml}: {e}", exc_info=True)
         raise AppException(e, sys) 
         
     
@@ -48,5 +49,23 @@ def create_directory(path_to_directory: Path, verbose=True):
         logging.info(f"Directory created at {path_to_directory}") if verbose else None
 
     except Exception as e:
-        logging.error(f"Failed to create directory at {path_to_directory}: {e}")
+        logging.error(f"Failed to create directory at {path_to_directory}: {e}", exc_info=True)
         raise AppException(e, sys)
+    
+
+def save_obj(location_path: Path, obj, obj_name):
+    """
+    Saves a given object to a given path in .pkl format using the pickle library.
+    Args:
+        location_path (Path): The path to the directory where the object should be saved.
+        obj (object): The object to be saved.
+        obj_name (str): The name of the object to be saved (should include .pkl extension).
+    """
+    try:
+        if ".pkl" not in obj_name:
+            logging.error(f"Invalid object format.")
+            return
+        pickle.dump(obj, open(Path(location_path, obj_name), 'wb'))
+
+    except Exception as e:
+        logging.error(f"Failed to save object at {location_path}: {e}", exc_info=True)
