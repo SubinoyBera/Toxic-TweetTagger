@@ -5,8 +5,8 @@ from src.logger.logging import logging
 from src.constants.constants import *
 from src.utils.common import read_yaml, create_directory
 from src.exception.app_exception import AppException
-from src.entity.config_entity import (DataIngestionConfig, DataPreprocessingConfig,
-                                      FeatureEngineeringConfig, ModelTrainingConfig)
+from src.entity.config_entity import (DataIngestionConfig, DataPreprocessingConfig,FeatureEngineeringConfig,
+                                      ModelTrainingConfig, ModelEvaluationConfig)
 
 class AppConfiguration:
     def __init__(self, 
@@ -123,14 +123,41 @@ class AppConfiguration:
             training_config = self.config.model_training
 
             models_dir_path = Path(training_config.model_dir)
+            model_name = training_config.model_name
             train_data_path = self.feature_engineering_configuration.train_test_data_path
 
-            training_configuration = ModelTrainingConfig(
+            self.training_configuration = ModelTrainingConfig(
                 train_data_path = train_data_path,
-                models_dir = models_dir_path
+                models_dir = models_dir_path,
+                model_name = model_name
             )
         
-            return training_configuration
+            return self.training_configuration
+
+        except Exception as e:
+            logging.error(f"Error while creating Model Training Configuration: {e}", exc_info=True)
+            raise AppException(e, sys)
+        
+
+    def model_evaluation_config(self) -> ModelEvaluationConfig:
+        """
+        Creates the configuration for Model Training.
+        Returns: ModelTrainingConfig object
+        """
+        try:
+            evaluation_config = self.config.model_evaluation
+
+            models_dir_path = Path(evaluation_config.model_dir)
+            model_name = self.training_configuration.model_name
+            test_data_path = self.feature_engineering_configuration.train_test_data_path
+
+            evaluation_configuration = ModelEvaluationConfig(
+                    test_data_path = test_data_path,
+                    models_dir = models_dir_path,
+                    trained_model_name = model_name
+                )
+
+            return evaluation_configuration
 
         except Exception as e:
             logging.error(f"Error while creating Model Training Configuration: {e}", exc_info=True)
