@@ -17,5 +17,10 @@ feature_engineering:
 
 model_training:
   models_dir: artifacts/models
+  model_name: XgBoost-test1
   train_dataset: train_data.csv
+
+model_evaluation:
+  models_dir: artifacts/models
   test_dataset: test_data.csv
+  evaluation_report: evaluation_report.json

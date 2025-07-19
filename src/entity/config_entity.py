@@ -22,3 +22,10 @@ class FeatureEngineeringConfig:
 class ModelTrainingConfig:
     train_data_path: Path
     models_dir: Path
+    model_name: str
+
+@dataclass(frozen=True)
+class ModelEvaluationConfig:
+    test_data_path: Path
+    models_dir: Path
+    trained_model_name: str
