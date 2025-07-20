@@ -1,11 +1,7 @@
+from components import *
 import os
-import sys
 import requests
 import zipfile
-from src.logger.logging import logging
-from src.exception.app_exception import AppException
-from src.utils.common import create_directory
-from src.config.configuration import AppConfiguration
 
 class DataIngestion:
     def __init__(self, app_config = AppConfiguration()):
@@ -34,7 +30,7 @@ class DataIngestion:
 
             create_directory(download_dir)
             data_filename = os.path.basename(dataset_url)
-            download_data_path = os.path.join(download_dir, data_filename)
+            download_data_path = Path(download_dir, data_filename)
 
             response = requests.get(dataset_url)
             if response.status_code == 200:
@@ -49,14 +45,14 @@ class DataIngestion:
             raise AppException(e, sys)
         
 
-    def extract_zipfile(self, file_path):
+    def extract_zipfile(self, file_path: Path):
         """
         Extracts the given zip file into a given directory.
         Args:
             zip_file_path (str): The path of the zip file to be extracted
         """
         try:
-            ingested_dir = self.data_ingestion_config.ingested_dir
+            ingested_dir = self.data_ingestion_config.ingested_data_dir
             create_directory(ingested_dir)
 
             with zipfile.ZipFile(file_path, 'r') as zip_ref:
@@ -68,20 +64,28 @@ class DataIngestion:
             raise AppException(e, sys)
         
 
-    def initiate_data_ingestion(self):
-        """
-        Starts the data ingestion process by downloading the data from given url and saving it into a given location. 
-        Extracts the given zip file into a given directory.
+def main():
+    """
+    Initiates the data ingestion process by downloading the dataset from the given url
+    and extracting it into the specified directory.
 
-        Raises:
-            AppException: If error occurs during data ingestion
-        """
-        try:
-            logging.info(f"{'='*20}Data Ingestion{'='*20}")
-            data = self.download_data()
-            self.extract_zipfile(data)
-            logging.info(f"{'='*20}Data Ingestion Completed Successfully{'='*20} \n\n")
+    Raises:
+        AppException: If an error occurs during data ingestion
+    """
+    obj = DataIngestion()
+    try:
+        logging.info(f"{'='*20}Data Ingestion{'='*20}")
+        data = obj.download_data()
+        obj.extract_zipfile(data)
+        # free memory
+        del data
+        gc.collect()
+        logging.info(f"{'='*20}Data Ingestion Completed Successfully{'='*20} \n\n")
 
-        except Exception as e:
-            logging.error(f"Error in Data Ingestion process: {e}", exc_info=True)
-            raise AppException(e, sys)
+    except Exception as e:
+        logging.error(f"Error in Data Ingestion process: {e}", exc_info=True)
+        raise AppException(e, sys)
+
+# entry point for the data ingestion process
+if __name__ == "__main__":
+    main()

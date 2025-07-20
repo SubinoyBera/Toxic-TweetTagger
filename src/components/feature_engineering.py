@@ -57,9 +57,13 @@ class FeatureEngineering:
             raise AppException(e, sys)
 
 
-def initiate_feature_engineering():
+def main():
     """
-    Initiates the feature engineering process by reading the preprocessed dataset.
+    Main function to initiate the feature engineering workflow. It reads preprocessed data, 
+    performs feature engineering on the data, and splits data into training and testing sets.
+
+    Raises:
+        AppException: If an error occurs during feature engineering.
     """
     obj = FeatureEngineering()
     try:
@@ -75,3 +79,7 @@ def initiate_feature_engineering():
     except Exception as e:
         logging.error(f"Error during Feature Engineering: {e}", exc_info=True)
         raise AppException(e, sys)
+    
+# entry point for the feature engineering process
+if __name__ == "__main__":
+    main()

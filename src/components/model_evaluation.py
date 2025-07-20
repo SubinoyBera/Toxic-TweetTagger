@@ -2,9 +2,9 @@ from src.components import *
 import os
 import numpy as np
 import json
+import dagshub
 import mlflow
 from mlflow.xgboost import log_model
-import dagshub
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from dotenv import load_dotenv
 load_dotenv()
@@ -112,11 +112,14 @@ class ModelEvaluation:
             raise AppException(e, sys)
     
 
-def initiate_model_evaluation():
+def main():
     """
-    Initiates the model evaluation process by loading the test data, loading the trained model
-    and evaluating the model using various metrics. The evaluation report is saved to a JSON file
-    and the model is logged in Mlflow along with the evaluation metrics and parameters.
+    Main function to evaluate the model and log the evaluation metrics, parameters, and the model in Mlflow.
+
+    This function reads the test data, loads the trained model, evaluates the model, logs the evaluation metrics and model parameters in Mlflow, and saves the model evaluation metrics to a file.
+
+    Raises:
+        AppException: If an error occurs during model evaluation.
     """
     obj = ModelEvaluation()
     test_data_path = obj.evaluation_config.test_data_path
@@ -158,3 +161,7 @@ def initiate_model_evaluation():
         except Exception as e:
             logging.error(f"Error during model evaluation: {e}", exc_info=True)
             raise AppException(e, sys)
+
+# entry point for the model evaluation process  
+if __name__ == "__main__":
+    main()
