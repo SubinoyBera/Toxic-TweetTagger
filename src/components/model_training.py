@@ -46,19 +46,17 @@ class ModelTrainer:
             raise AppException(e, sys)
         
     
-def initiate_model_training():
+def main():
     """
-    Initiates the model training process by reading the training dataset
-    and training a model using the XGBoost classifier. The trained model
-    is saved to the specified directory.
-
+    Main function to initiate the model training workflow. It reads the training dataset,
+    trains an ML model and saves the model.
+    
     Raises:
         AppException: If an error occurs during model training.
     """
-
     obj = ModelTrainer()
     try:
-        logging.info(f"{'='*20}Model training{'='*20}")
+        logging.info(f"{'='*20}Model Training{'='*20}")
         train_data_path = obj.model_training_config.train_data_path
         if not train_data_path:
             logging.error("Training dataset path not found")
@@ -71,3 +69,7 @@ def initiate_model_training():
     except Exception as e:
         logging.error(f"Error during model training: {e}", exc_info=True)
         raise AppException(e, sys)
+    
+# entry point for the model training process
+if __name__ == "__main__":  
+    main()

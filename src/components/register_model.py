@@ -87,10 +87,11 @@ class RegisterModel:
             raise AppException(e, sys)
 
 
-def initiate_model_registration():
+def main():
     """
-    Initiates the model registration process by loading the experiment information 
-    from the 'experiment_info.json' file and registering the model in Mlflow.
+    Main function to handle the model registration process in Mlflow.
+    Initializes a RegisterModel object, loads experiment information from a JSON file,
+    and registers the model in Mlflow. The registered model is transitioned to the "Staging" stage.
 
     Raises:
         AppException: If an error occurs during model registration.
@@ -112,3 +113,7 @@ def initiate_model_registration():
     except Exception as e:
         logging.error(f"Error during model registration in Mlflow: {e}", exc_info=True)
         raise AppException(e, sys)
+    
+# entry point for the model registration process
+if __name__ == "__main__":
+    main()

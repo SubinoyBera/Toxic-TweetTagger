@@ -1,21 +1,14 @@
-import sys
+from components import *
 import string
-from pathlib import Path
-from src.logger.logging import logging
-from src.exception.app_exception import AppException
-from src.utils.common import create_directory
-from src.config.configuration import AppConfiguration
-
-import pandas as pd
-import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
+import nltk
 
 #nltk.download('stopwords')
 #nltk.download('wordnet')
 
 class HelperFunctions:
-    def __init__(self) -> None:
+    def __init__(self):
         """
         Initializes an instance of the HelperFunctions class.
 
@@ -113,22 +106,30 @@ class DataPreprocessing:
             logging.error(f"Data preprocessing failed: {e}", exc_info=True)
             raise AppException(e, sys)
     
-    def initiate_preprocessing(self):
-        """
-        Initiates the data preprocessing process by calling the preprocess method.
-        """
-        obj = DataPreprocessing()
-        try:
-            logging.info(f"{'='*20}Data Preprocessing{'='*20}")
-            data_path = obj.data_preprocessing_config.ingested_dataset_path
-            if not data_path:
-                logging.error("No data path found")
-                return
-            df = pd.read_csv(data_path, encoding='utf-8')
-            obj.preprocess(df)
-            del df
-            logging.info(f"{'='*20}Data Preprocessing Completed Successfully{'='*20} \n\n")
+def main():
+    """
+    Main function to initiate the data preprocessing workflow. It reads ingested dataset,
+    performs different preprocessing operations and saves the preprocessed data as a CSV file.
 
-        except Exception as e:
-            logging.error(f"Error in Data Preprocessing process: {e}", exc_info=True)
-            raise AppException(e, sys)
+    Raises:
+        AppException: If an error occurs during data preprocessing.
+    """
+    obj = DataPreprocessing()
+    try:
+        logging.info(f"{'='*20}Data Preprocessing{'='*20}")
+        data_path = obj.data_preprocessing_config.ingested_dataset_path
+        if not data_path:
+            logging.error("No data path found")
+            return
+        df = pd.read_csv(data_path, encoding='utf-8')
+        obj.preprocess(df)
+        del df
+        logging.info(f"{'='*20}Data Preprocessing Completed Successfully{'='*20} \n\n")
+
+    except Exception as e:
+        logging.error(f"Error in Data Preprocessing process: {e}", exc_info=True)
+        raise AppException(e, sys)
+    
+# entry point for the data preprocessing process
+if __name__ == "__main__":
+    main()

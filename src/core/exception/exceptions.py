@@ -3,7 +3,6 @@
 
 import sys
 from types import ModuleType
-from src.logger import logging
 
 # static method
 def error_message_details(error, error_details: ModuleType = sys) -> str:

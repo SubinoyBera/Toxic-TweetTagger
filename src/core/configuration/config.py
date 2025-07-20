@@ -1,12 +1,12 @@
 # Project pipeline configuration 
 import sys
 from pathlib import Path
-from src.logger.logging import logging
-from src.constants.constants import *
-from src.utils.common import read_yaml, create_directory
-from src.exception.app_exception import AppException
-from src.entity.config_entity import (DataIngestionConfig, DataPreprocessingConfig,FeatureEngineeringConfig,
-                                      ModelTrainingConfig, ModelEvaluationConfig, ModelRegistrationConfig)
+from logger.logging import logging
+from constant.constants import *
+from utils.common import read_yaml, create_directory
+from exception.exceptions import AppException
+from entity.config_entity import (DataIngestionConfig, DataPreprocessingConfig,FeatureEngineeringConfig,
+                                  ModelTrainingConfig, ModelEvaluationConfig, ModelRegistrationConfig)
 
 class AppConfiguration:
     def __init__(self, 
