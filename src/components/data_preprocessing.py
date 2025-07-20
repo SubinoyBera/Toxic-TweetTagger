@@ -106,7 +106,7 @@ class DataPreprocessing:
             logging.error(f"Data preprocessing failed: {e}", exc_info=True)
             raise AppException(e, sys)
     
-def main():
+def initiate_data_preprocessing():
     """
     Main function to initiate the data preprocessing workflow. It reads ingested dataset,
     performs different preprocessing operations and saves the preprocessed data as a CSV file.
@@ -132,4 +132,4 @@ def main():
     
 # entry point for the data preprocessing process
 if __name__ == "__main__":
-    main()
+    initiate_data_preprocessing()

@@ -46,7 +46,7 @@ class ModelTrainer:
             raise AppException(e, sys)
         
     
-def main():
+def initiate_model_training():
     """
     Main function to initiate the model training workflow. It reads the training dataset,
     trains an ML model and saves the model.
@@ -72,4 +72,4 @@ def main():
     
 # entry point for the model training process
 if __name__ == "__main__":  
-    main()
+    initiate_model_training()

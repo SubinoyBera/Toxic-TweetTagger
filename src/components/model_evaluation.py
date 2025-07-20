@@ -112,7 +112,7 @@ class ModelEvaluation:
             raise AppException(e, sys)
     
 
-def main():
+def initiate_model_evaluation():
     """
     Main function to evaluate the model and log the evaluation metrics, parameters, and the model in Mlflow.
 
@@ -164,4 +164,4 @@ def main():
 
 # entry point for the model evaluation process  
 if __name__ == "__main__":
-    main()
+    initiate_model_evaluation()

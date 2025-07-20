@@ -64,7 +64,7 @@ class DataIngestion:
             raise AppException(e, sys)
         
 
-def main():
+def initiate_data_ingestion():
     """
     Initiates the data ingestion process by downloading the dataset from the given url
     and extracting it into the specified directory.
@@ -88,4 +88,4 @@ def main():
 
 # entry point for the data ingestion process
 if __name__ == "__main__":
-    main()
+    initiate_data_ingestion()
