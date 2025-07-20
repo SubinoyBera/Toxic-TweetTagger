@@ -57,7 +57,7 @@ class FeatureEngineering:
             raise AppException(e, sys)
 
 
-def main():
+def initiate_feature_engineering():
     """
     Main function to initiate the feature engineering workflow. It reads preprocessed data, 
     performs feature engineering on the data, and splits data into training and testing sets.
@@ -82,4 +82,4 @@ def main():
     
 # entry point for the feature engineering process
 if __name__ == "__main__":
-    main()
+    initiate_feature_engineering()
