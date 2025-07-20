@@ -6,7 +6,7 @@ from src.constants.constants import *
 from src.utils.common import read_yaml, create_directory
 from src.exception.app_exception import AppException
 from src.entity.config_entity import (DataIngestionConfig, DataPreprocessingConfig,FeatureEngineeringConfig,
-                                      ModelTrainingConfig, ModelEvaluationConfig)
+                                      ModelTrainingConfig, ModelEvaluationConfig, ModelRegistrationConfig)
 
 class AppConfiguration:
     def __init__(self, 
@@ -149,16 +149,35 @@ class AppConfiguration:
 
             models_dir_path = Path(evaluation_config.model_dir)
             model_name = self.training_configuration.model_name
+            eval_report_filename = evaluation_config.evaluation_report
+            exp_info_filename = evaluation_config.experiment_info
+
+            reports_dir_path = evaluation_config.reports_dir
+            create_directory(reports_dir_path)
+
+            eval_report_filepath = Path(reports_dir_path, eval_report_filename)
+            exp_info_filepath = Path(reports_dir_path, exp_info_filename)
+
             test_data_path = self.feature_engineering_configuration.train_test_data_path
 
-            evaluation_configuration = ModelEvaluationConfig(
+            self.evaluation_configuration = ModelEvaluationConfig(
                     test_data_path = test_data_path,
                     models_dir = models_dir_path,
-                    trained_model_name = model_name
+                    trained_model_name = model_name,
+                    evaluation_report_filepath = eval_report_filepath,
+                    experiment_info_filepath = exp_info_filepath
                 )
 
-            return evaluation_configuration
+            return self.evaluation_configuration
 
         except Exception as e:
             logging.error(f"Error while creating Model Training Configuration: {e}", exc_info=True)
             raise AppException(e, sys)
+        
+
+    def model_registration_config(self) -> ModelRegistrationConfig:
+        exp_info_filepath = self.evaluation_configuration.experiment_info_filepath
+
+        return ModelRegistrationConfig(
+            experiment_info_filepath = exp_info_filepath
+        )
