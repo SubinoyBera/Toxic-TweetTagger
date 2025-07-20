@@ -29,3 +29,9 @@ class ModelEvaluationConfig:
     test_data_path: Path
     models_dir: Path
     trained_model_name: str
+    evaluation_report_filepath: Path
+    experiment_info_filepath: Path
+
+@dataclass(frozen=True)
+class ModelRegistrationConfig:
+    experiment_info_filepath: Path

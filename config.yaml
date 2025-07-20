@@ -23,4 +23,9 @@ model_training:
 model_evaluation:
   models_dir: artifacts/models
   test_dataset: test_data.csv
+  reports_dir: reports
   evaluation_report: evaluation_report.json
+  experiment_info: experiment_info.json
+
+model_registration:
+  experiment_info: experiment_info.json
