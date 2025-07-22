@@ -4,7 +4,7 @@ import sys
 import gc
 import pandas as pd
 from pathlib import Path
-from core.logger.logging import logging
-from core.exception.exceptions import AppException
-from core.configuration.config import AppConfiguration
-from utils.common import *
+from ..core.logger import logging
+from ..core.exception import AppException
+from ..core.configuration import AppConfiguration
+from ..utils.common import *

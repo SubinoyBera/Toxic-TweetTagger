@@ -1,11 +1,13 @@
-from src.components import *
 import os
 import numpy as np
 import json
 import dagshub
 import mlflow
+from ..components import *
 from mlflow.xgboost import log_model
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.metrics import (accuracy_score, precision_score, recall_score,
+                            f1_score, roc_auc_score)
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -14,6 +16,7 @@ uri = os.getenv("MLFOW_URI")
 repo_owner = os.getenv("OWNER")
 repo_name = os.getenv("REPO")
 
+# set up connection with dagshub
 if uri is not None:
 	raise ValueError("MLFLOW_URI environment variable is not set.")
 mlflow.set_tracking_uri(uri)    # type: ignore
@@ -124,12 +127,15 @@ def initiate_model_evaluation():
     obj = ModelEvaluation()
     test_data_path = obj.evaluation_config.test_data_path
     model_path = obj.evaluation_config.models_dir
-    model_name = obj.evaluation_config.trained_model_name
+    # get model name
+    config_params = read_yaml(Path("params.yaml"))
+    model_name = config_params.model_training.model_name
 
     mlflow.set_experiment("DVC Pipeline Model Experiments")
     with mlflow.start_run(run_name=model_name) as run:
         try:
             test_df = pd.read_csv(test_data_path)
+            test_df.dropna(how='any', inplace=True)
             model = load_obj(location_path=model_path, obj_name=f"{model_name}.pkl")
             
             evaluation_report, model_params = obj.evaluate(model, model_name, test_df)

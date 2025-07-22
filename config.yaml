@@ -1,10 +1,10 @@
-artifacts: artifacts
+aretfacts: artifacts
 
 data_ingestion:
   root_dir: artifacts/data_ingestion
   raw_data_dir: raw
   ingested_data_dir: ingested_data
-  download_url: "https://raw.githubusercontent.com/SubinoyBera/Project-Datasets/main/Toxic-TweetTagger-dataset.zip"
+  download_url: https://raw.githubusercontent.com/SubinoyBera/Project-Datasets/main/Toxic-TweetTagger-dataset.zip
 
 data_preprocessing:
   root_dir: artifacts/data_preprocessing
@@ -12,17 +12,15 @@ data_preprocessing:
 
 feature_engineering:
   root_dir: artifacts/feature_engineering
-  models_dir: artifacts/models
-  preprocessed_dataset: clean_data.csv 
+  models_dir: models
+  preprocessed_dataset: clean_data.feather
 
 model_training:
-  models_dir: artifacts/models
-  model_name: XgBoost-test1
-  train_dataset: train_data.csv
+  models_dir: models
+  train_dataset: train_data.feather
 
 model_evaluation:
-  models_dir: artifacts/models
-  test_dataset: test_data.csv
+  test_dataset: test_data.feather
   reports_dir: reports
   evaluation_report: evaluation_report.json
   experiment_info: experiment_info.json

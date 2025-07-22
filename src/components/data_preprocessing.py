@@ -1,9 +1,10 @@
-from components import *
+from ..components import *
 import string
+from tqdm import tqdm
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
-import nltk
 
+import nltk
 #nltk.download('stopwords')
 #nltk.download('wordnet')
 
@@ -80,26 +81,27 @@ class DataPreprocessing:
         # Preprocessing steps
         try:
             subset_df.dropna(how='any', inplace=True)
-
+            tqdm.pandas()
             logging.info("Performing lowercasing")
-            subset_df['Content'] = subset_df['Content'].apply(fn.lower_case)
+            subset_df['Content'] = subset_df['Content'].progress_apply(fn.lower_case)
 
             logging.info("Removing punctuations")
-            subset_df['Content'] = subset_df['Content'].apply(fn.remove_punctuations)
+            subset_df['Content'] = subset_df['Content'].progress_apply(fn.remove_punctuations)
 
             logging.info("Removing stopwords")
-            subset_df['Content'] = subset_df['Content'].apply(fn.remove_stopwords)
+            subset_df['Content'] = subset_df['Content'].progress_apply(fn.remove_stopwords)
 
             logging.info("Performing lemmatization")
-            subset_df['Content'] = subset_df['Content'].apply(fn.lemmatization)
+            subset_df['Content'] = subset_df['Content'].progress_apply(fn.lemmatization)
 
             logging.info("Finished preprocessing operations successfully")
 
             processed_data_dir = self.data_preprocessing_config.preprocessed_data_dir
             create_directory(processed_data_dir)
-            subset_df.to_csv(Path(processed_data_dir, 'clean_data.csv'), index=False)
+            subset_df.to_feather(Path(processed_data_dir, 'clean_data.feather'))
             # free memory
             del subset_df
+            gc.collect()
             logging.info(f"Data successfully saved at {processed_data_dir}")
         
         except Exception as e:
@@ -124,6 +126,7 @@ def initiate_data_preprocessing():
         df = pd.read_csv(data_path, encoding='utf-8')
         obj.preprocess(df)
         del df
+        gc.collect()
         logging.info(f"{'='*20}Data Preprocessing Completed Successfully{'='*20} \n\n")
 
     except Exception as e:

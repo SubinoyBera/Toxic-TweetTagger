@@ -1,4 +1,4 @@
-from src.components import *
+from ..components import *
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
@@ -28,7 +28,13 @@ class FeatureEngineering:
             AppException: If error occurs during feature engineering
         """
         try:
-            vectorizer = TfidfVectorizer(max_features=3000, min_df=3)
+            config_params = read_yaml(Path("params.yaml"))
+            params = config_params.feature_engineering
+
+            vectorizer = TfidfVectorizer(max_features=params.max_features,
+                                        min_df=params.min_df,
+                                        ngram_range=(params.ngrams.min, params.ngrams.max)
+                                        )
 
             logging.info("Performing TF-IDF vectorization")
             X_tfidf = vectorizer.fit_transform(df['Content'])
@@ -37,20 +43,21 @@ class FeatureEngineering:
             featured_data = pd.DataFrame(X_tfidf.toarray())
             featured_data['Label'] = df['Label'].values
 
-            train_data, test_data = train_test_split(featured_data, test_size=0.2, random_state=42)
-            # free memory
-            del featured_data, X_tfidf
-
-            logging.info("Saving vectorizer object and training-testing sets")
             save_models_path = self.eng_config.models_dir
             save_obj(location_path=save_models_path, obj_name='vectorizer.pkl', obj=vectorizer)
+            logging.info(f"Saved vectorizer at: {save_models_path} directory")
 
-            save_training_data_path = self.eng_config.train_test_data_path
-            train_data.to_csv(Path(save_training_data_path, 'train_data.csv'), index=False)
-            test_data.to_csv(Path(save_training_data_path, 'test_data.csv'), index=False)
+            train_data, test_data = train_test_split(featured_data, test_size=0.2, random_state=42)
+            
+            logging.info("Saving training and testing datasets")
+            train_test_datapath = self.eng_config.train_test_data_path
+            train_data.to_feather(Path(train_test_datapath, 'train_data.feather'))
+            test_data.to_feather(Path(train_test_datapath, 'test_data.feather'))
             # free memory
-            del train_data, test_data
-            logging.info("Feature engineering done on data. Saved vectorizer obj and training-testing datasets")
+            del featured_data, X_tfidf, train_data, test_data
+            gc.collect()
+
+            logging.info("Feature engineering operation done")
 
         except Exception as e:
             logging.error(f"Feature engineering operation terminated: {e}", exc_info=True)
@@ -71,9 +78,11 @@ def initiate_feature_engineering():
         data_path = obj.eng_config.preprocessed_data_path
         if not data_path:
             logging.error("Dataset path after preprocessing stage not found")
-        df = pd.read_csv(data_path)
+        df = pd.read_feather(data_path)
+        df.dropna(how='any', inplace=True)
         obj.perform_feature_engineering(df)
-        del df
+        del df, obj
+        gc.collect()
         logging.info(f"{'='*20}Feature Engineering Completed Successfully{'='*20} \n\n")
 
     except Exception as e:
