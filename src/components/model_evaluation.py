@@ -134,7 +134,7 @@ def initiate_model_evaluation():
     mlflow.set_experiment("DVC Pipeline Model Experiments")
     with mlflow.start_run(run_name=model_name) as run:
         try:
-            test_df = pd.read_csv(test_data_path)
+            test_df = pd.read_feather(test_data_path)
             test_df.dropna(how='any', inplace=True)
             model = load_obj(location_path=model_path, obj_name=f"{model_name}.pkl")
             
@@ -158,7 +158,7 @@ def initiate_model_evaluation():
             log_model(model, "model")
 
             # log model evaluation metrics file to Mlfow
-            mlflow.log_artifact("reports/model_evaluation.json")
+            mlflow.log_artifact("reports/metrics.json")
 
             # save model info
             obj.save_model_info(model_name=model_name, run_id=run.info.run_id)
