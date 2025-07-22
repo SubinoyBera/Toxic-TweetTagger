@@ -5,9 +5,9 @@ import pickle
 from pathlib import Path
 from box import ConfigBox
 from ensure import ensure_annotations
-from src.logger import logging
-from src.exception.app_exception import AppException
-import logging
+from ..core.logger import logging
+from ..core.exception import AppException
+
 
 @ensure_annotations
 def read_yaml(path_to_yaml: Path) -> ConfigBox:
@@ -20,7 +20,7 @@ def read_yaml(path_to_yaml: Path) -> ConfigBox:
     """
     try:
         with open(path_to_yaml, 'r') as yaml_file:
-            content = yaml.safe_load_all(yaml_file)
+            content = yaml.safe_load(yaml_file)
             logging.info(f"YAML file read successfully from {path_to_yaml}")
 
             return ConfigBox(content)

@@ -1,5 +1,5 @@
 import mlflow.client
-from src.components import *
+from ..components import *
 import json
 import dagshub
 import mlflow

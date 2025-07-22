@@ -1,7 +1,7 @@
-from components import *
 import os
 import requests
 import zipfile
+from ..components import *
 
 class DataIngestion:
     def __init__(self, app_config = AppConfiguration()):
