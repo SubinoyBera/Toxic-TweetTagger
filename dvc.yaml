@@ -1,0 +1,63 @@
+stages:
+  data_ingestion:
+    cmd: python src/components/data_ingestion.py
+    deps:
+      - src/components/data_ingestion.py
+      - src/core/configuration.py
+    outs:
+      - artifacts/data_ingestion/raw
+      - artifacts/data_ingestion/ingested_data
+
+  data_preprocessing:
+    cmd: python src/components/data_preprocessing.py
+    deps:
+      - src/components/data_preprocessing.py
+      - src/core/configuration.py
+      - artifacts/data_ingestion/ingested_data
+    outs:
+      - artifacts/data_preprocessing
+
+  feature_engineering:
+    cmd: python src/components/feature_engineering.py
+    deps:
+      - python src/components/feature_engineering
+      - src/core/configuration.py
+      - artifacts/data_preprocessing
+    params:
+      - feature_engineering.vectorizer
+      - feature_engineering.max_features
+    outs:
+      - models/vectorizer.pkl
+      - artifacts/feature_engineering
+    
+  model_training:
+    cmd: python src/components/model_training.py
+    deps:
+      - src/components/model_training.py
+      - src/core/configuration.py
+      - artifacts/feature_engineering/train_data.feather
+    params:
+      - model_training.hyperparameters
+    outs:
+      - models/$(model_training.model_name).pkl
+
+  model_evaluation:
+    cmd: python src/components/model_evaluation.py
+    deps:
+      - src/components/model_training.py
+      - src/core/configuration.py
+      - artifacts/feature_engineering/test_data.feather
+      - models/$(model_training.model_name).pkl
+    params:
+      - model_training.model_name
+    outs:
+      - reports/metrics.json
+      - reports/experiment.json
+
+  model_registration:
+  cmd: python src/components/register_model.py
+  deps:
+    - src/components/register_model.py
+    - src/core/configuration.py
+    - reports/experiment.json
+  
