@@ -22,8 +22,8 @@ model_training:
 model_evaluation:
   test_dataset: test_data.feather
   reports_dir: reports
-  evaluation_report: evaluation_report.json
-  experiment_info: experiment_info.json
+  evaluation_report: metrics.json
+  experiment_info: experiment.json
 
 model_registration:
-  experiment_info: experiment_info.json
+  experiment_info: experiment.json
