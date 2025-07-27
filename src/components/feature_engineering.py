@@ -30,6 +30,7 @@ class FeatureEngineering:
         try:
             config_params = read_yaml(Path("params.yaml"))
             params = config_params.feature_engineering
+            vectorizer_name = params.vectorizer
 
             vectorizer = TfidfVectorizer(max_features=params.max_features,
                                         min_df=params.min_df,
@@ -44,8 +45,7 @@ class FeatureEngineering:
             featured_data['Label'] = df['Label'].values
 
             save_models_path = self.eng_config.models_dir
-            save_obj(location_path=save_models_path, obj_name='vectorizer.pkl', obj=vectorizer)
-            logging.info(f"Saved vectorizer at: {save_models_path} directory")
+            save_obj(location_path=save_models_path, obj_name=f"{vectorizer_name}.joblib", obj=vectorizer)
 
             train_data, test_data = train_test_split(featured_data, test_size=0.2, random_state=42)
             

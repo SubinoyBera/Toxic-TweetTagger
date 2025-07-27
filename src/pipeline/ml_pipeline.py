@@ -19,19 +19,19 @@ def run_pipeline():
     """
     try:
         logging.info("STAGE:1 Data Ingestion Stage Initiated")
-        initiate_data_ingestion()
+        #initiate_data_ingestion()
 
         logging.info("STAGE:2 Data Preprocessing Stage Initiated")
-        initiate_data_preprocessing()
+        #initiate_data_preprocessing()
 
         logging.info("STAGE:3 Feature Engineering Stage Initiated")
-        initiate_feature_engineering()
+        #initiate_feature_engineering()
 
         logging.info("STAGE:4 Model Training Stage Initiated")
-        initiate_model_training()
+        #   initiate_model_training()
 
         logging.info("STAGE:5 Model Evaluation Stage Initiated")
-        initiate_model_evaluation()
+        #initiate_model_evaluation()
 
         logging.info("STAGE:6 Model Registration Stage Initiated")
         initiate_model_registration()
