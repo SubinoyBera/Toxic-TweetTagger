@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToxicTweet-Tagger</title>
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="dev">
+            <h4>Subinoy Bera</h4>
+        </div>
+        
+        <nav class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+
+    <div class="container"> 
+        <h1>Hate Tweet Detection</h1>
+        <form action="/predict" method="POST">
+            <label for="text">Write text:</label><br>
+            <textarea id="text" name="text" class="textarea" rows="5" placeholder="Enter your text here...">{{ user_input if user_input else '' }}</textarea><br>
+            <button type="submit">Predict</button>
+        </form>
+        
+        {% if result is not none %}
+            <div class="result {{ confidence }}">
+                <p><strong>Toxicity Score:</strong></p>
+                {% if confidence > 0.70 %}
+                <p>🔴⚠️ This comment is <strong>highly toxic</strong></p>
+                {% elif confidence > 0.54 %}
+                <p>❌ This comment is <strong>toxic</strong></p>
+                {% elif confidence > 0.46 %}
+                <p>🤔 This comment looks likely to be toxic!</p>
+                {% else %}
+                <p>✅ This comment looks <strong>safe</strong></p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    
+</body>
+</html>

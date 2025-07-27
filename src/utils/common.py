@@ -1,7 +1,7 @@
 import os
 import sys
 import yaml
-import pickle
+import joblib
 from pathlib import Path
 from box import ConfigBox
 from ensure import ensure_annotations
@@ -62,13 +62,17 @@ def save_obj(location_path: Path, obj, obj_name: str):
         obj_name (str): The name of the object to be saved (should include .pkl extension).
     """
     try:
-        if ".pkl" not in obj_name:
+        if not obj_name.endswith(".joblib"):
             logging.error(f"Invalid object format.")
-            return
-        pickle.dump(obj, open(Path(location_path, obj_name), 'wb'))
+            raise ValueError(f"Invalid file format for object: {obj_name}")
+        
+        with open(Path(location_path, obj_name), 'wb') as f:
+            joblib.dump(obj, f)
+            logging.info(f"{obj_name} saved at {location_path}")
 
     except Exception as e:
         logging.error(f"Failed to save object at {location_path}: {e}", exc_info=True)
+        raise AppException(e, sys)
 
 
 def load_obj(location_path: Path, obj_name: str):
@@ -76,14 +80,17 @@ def load_obj(location_path: Path, obj_name: str):
     Saves a given object to a given path in .pkl format using the pickle library.
     Args:
         location_path (Path): The path to the directory where the object should be saved.
-        obj (object): The object to be saved.
         obj_name (str): The name of the object to be saved (should include .pkl extension).
     """
     try:
-        if ".pkl" not in obj_name:
+        if not obj_name.endswith(".joblib"):
             logging.error(f"Invalid object format.")
-            return
-        pickle.load(open(Path(location_path, obj_name), 'rb'))
+            raise ValueError(f"Invalid file format for object: {obj_name}")
+        with open(Path(location_path, obj_name), 'rb') as f:
+            obj = joblib.load(f)
+            logging.info(f"{obj_name} loaded from {location_path}")
+            return obj
 
     except Exception as e:
         logging.error(f"Failed to load object from {location_path}: {e}", exc_info=True)
+        raise AppException(e, sys)

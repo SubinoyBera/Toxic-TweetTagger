@@ -31,19 +31,19 @@ class ModelTrainer:
             config_params = read_yaml(Path("params.yaml"))
             params = config_params.model_training
 
-            model = XGBClassifier(n_estimators=params.hyperparamters.n_estimators,
-                              learning_rate=params.hyperparamters.learning_rate,
-                              max_depth=params.hyperparamters.max_depth, 
-                              gamma=params.hyperparamters.gamma,
-                              reg_lambda=params.hyperparamters.reg_lambda,
-                              subsample=params.hyperparamters.subsample, 
+            model = XGBClassifier(n_estimators=params.hyperparameters.n_estimators,
+                              learning_rate=params.hyperparameters.learning_rate,
+                              max_depth=params.hyperparameters.max_depth, 
+                              gamma=params.hyperparameters.gamma,
+                              reg_lambda=params.hyperparameters.reg_lambda,
+                              subsample=params.hyperparameters.subsample, 
                               n_jobs=-1, random_state=42, use_label_encoder=False)
         
             logging.info("Model training started")
             model.fit(X_train, y_train)
 
             save_model_path = self.model_training_config.models_dir
-            save_obj(location_path=save_model_path, obj=model, obj_name=f"{params.model_name}.pkl")
+            save_obj(location_path=save_model_path, obj=model, obj_name=f"{params.model_name}.joblib")
             logging.info(f"Model trained as saved at: {save_model_path}")
             # free memory
             del X_train, y_train, model

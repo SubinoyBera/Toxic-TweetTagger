@@ -125,8 +125,9 @@ class AppConfiguration:
             training_config = self.config.model_training
             feature_engineering_configuration = self.feature_engineering_config()
 
-            models_dir_path = Path(training_config.model_dir)
-            train_data_path = feature_engineering_configuration.train_test_data_path
+            models_dir_path = Path(training_config.models_dir)
+            train_dataset = training_config.train_dataset
+            train_data_path = Path(feature_engineering_configuration.train_test_data_path, train_dataset)
 
             training_configuration = ModelTrainingConfig(
                 train_data_path = train_data_path,
@@ -154,13 +155,14 @@ class AppConfiguration:
             eval_report_filename = evaluation_config.evaluation_report
             exp_info_filename = evaluation_config.experiment_info
 
-            reports_dir_path = evaluation_config.reports_dir
+            reports_dir_path = Path(evaluation_config.reports_dir)
             create_directory(reports_dir_path)
 
             eval_report_filepath = Path(reports_dir_path, eval_report_filename)
             exp_info_filepath = Path(reports_dir_path, exp_info_filename)
 
-            test_data_path = feature_engineering_configuration.train_test_data_path
+            test_dataset = evaluation_config.test_dataset
+            test_data_path = Path(feature_engineering_configuration.train_test_data_path, test_dataset)
 
             evaluation_configuration = ModelEvaluationConfig(
                     test_data_path = test_data_path,

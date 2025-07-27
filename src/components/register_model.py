@@ -1,5 +1,6 @@
 import mlflow.client
 from ..components import *
+from .model_evaluation import CustomModel
 import json
 import dagshub
 import mlflow
@@ -12,8 +13,6 @@ uri = os.getenv("MLFOW_URI")
 repo_owner = os.getenv("OWNER")
 repo_name = os.getenv("REPO")
 
-if uri is not None:
-	raise ValueError("MLFLOW_URI environment variable is not set.")
 mlflow.set_tracking_uri(uri)    # type: ignore
 
 if repo_owner is None:
@@ -68,7 +67,7 @@ class RegisterModel:
             register_modelname (str): name under which the model to be registered in Mlflow..
         """
         try:
-            model_uri = f"runs:/{experiment_info['run_id']}/{experiment_info['model_name']}"
+            model_uri = f"runs:/{experiment_info['run_id']}/{experiment_info['model']}"
 
             logging.info("Registering model in Mlflow")
             model_version = mlflow.register_model(model_uri, register_modelname)
@@ -102,7 +101,7 @@ def initiate_model_registration():
         exp_info_filepath = obj.registration_config.experiment_info_filepath
 
         experiment_info = obj.load_exp_info(exp_info_filepath)
-        register_modelname = "Production Model"
+        register_modelname = "ToxicTagger-Models"
 
         if type(experiment_info) is not dict:
             logging.error("'register_model' function expects dict type object ")
@@ -113,6 +112,7 @@ def initiate_model_registration():
     except Exception as e:
         logging.error(f"Error during model registration in Mlflow: {e}", exc_info=True)
         raise AppException(e, sys)
+    
     
 # entry point for the model registration process
 if __name__ == "__main__":
