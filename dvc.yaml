@@ -20,16 +20,15 @@ stages:
   feature_engineering:
     cmd: python src/components/feature_engineering.py
     deps:
-      - python src/components/feature_engineering
+      - src/components/feature_engineering.py
       - src/core/configuration.py
       - artifacts/data_preprocessing
     params:
-      - feature_engineering.vectorizer
       - feature_engineering.max_features
     outs:
-      - models/vectorizer.pkl
+      - models/vectorizer_meta.txt
       - artifacts/feature_engineering
-    
+
   model_training:
     cmd: python src/components/model_training.py
     deps:
@@ -39,7 +38,7 @@ stages:
     params:
       - model_training.hyperparameters
     outs:
-      - models/$(model_training.model_name).pkl
+      - models/model_meta.txt
 
   model_evaluation:
     cmd: python src/components/model_evaluation.py
@@ -47,7 +46,7 @@ stages:
       - src/components/model_training.py
       - src/core/configuration.py
       - artifacts/feature_engineering/test_data.feather
-      - models/$(model_training.model_name).pkl
+      - models/model_meta.txt
     params:
       - model_training.model_name
     outs:
@@ -55,9 +54,8 @@ stages:
       - reports/experiment.json
 
   model_registration:
-  cmd: python src/components/register_model.py
-  deps:
-    - src/components/register_model.py
-    - src/core/configuration.py
-    - reports/experiment.json
-  
+    cmd: python src/components/register_model.py
+    deps:
+      - src/components/register_model.py
+      - src/core/configuration.py
+      - reports/experiment.json

@@ -1,7 +1,15 @@
-import os
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 import requests
 import zipfile
-from ..components import *
+import sys
+import gc
+from pathlib import Path
+from src.core.logger import logging
+from src.core.exception import AppException
+from src.core.configuration import AppConfiguration
+from src.utils.common import *
 
 class DataIngestion:
     def __init__(self, app_config = AppConfiguration()):

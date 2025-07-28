@@ -4,7 +4,6 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from .services import *
 import numpy as np
-from contextlib import asynccontextmanager
 from pydantic import BaseModel
 import uuid
 from datetime import datetime
@@ -31,8 +30,8 @@ async def Home(request: Request):
 def health_check():
     return {
         "status" : 200,
-        "model" : "XGB",
-        "version" : 0.1
+        "model" : clf.get_model_name,
+        "version" : version
     }
 
 
@@ -55,20 +54,20 @@ async def predict(request: Request, text: str = Form(...)):
 
 
 @app.post('/api')
-async def api(data: str, request: Request):
-    start_time = time.time()
+async def api(tweet: str, request: Request):
     timestamp = datetime.now().astimezone().isoformat()
-
-    text = data
-    text_df = preprocess(text)
+    request_id = str(uuid.uuid4())
     
-    model_response = model.predict(text_df)
+    start_time = time.time()
+    df_tweet = preprocess(tweet)
+    model_response = model.predict(df_tweet)
 
     label = model_response["class_label"][0]
-    probability_scores = model_response["class_probalility_scores"]
-    confidence = float(np.max(probability_scores)),
-    proba_class0 = float(np.round(probability_scores[0][0], 4).item())
-    proba_class1 = float(np.round(probability_scores[0][1], 4).item())
+    probability_scores = model_response["class_probability_scores"]
+    proba_class0 = float(probability_scores[0][0])
+    proba_class1 = float(probability_scores[0][1])
+
+    end_time = time.time()
 
     if proba_class1 > 0.70:
         toxic_level = "strong"
@@ -80,15 +79,33 @@ async def api(data: str, request: Request):
         toxic_level = "none"
 
 
-    response = { 
-        "prediction": {
-            "category" : int(label),
-            "confidence" : confidence,
-            "toxic_level" : toxic_level,
-            "category_scores": {
-                0: proba_class0,
-                1: proba_class1
+    response = {
+        "response": {
+            "class_label": int(label),
+            "confidence": round(abs(proba_class0 - proba_class1), 4),
+            "toxic_level": toxic_level,
+            "pred_scores": {
+                0: round(proba_class0, 4),
+                1: round(proba_class1, 4)
             },
+        },
+        "metadata": {
+            "request_id": request_id,
+            "timestamp": timestamp,
+            "response_time": f"{round((end_time - start_time), 4)} sec",
+            "input": {
+                "num_tokens": int(len(tweet.split())),
+                "num_characters": int(len([i for i in tweet])),
+                "language": "en - iso 639-1code",
+            },
+            "model": clf.get_model_name(),
+            "version": version,
+            "vectorizer": clf.get_vectorizer_name(),
+            "type": "production",
+            "loader_module": "mlflow.pyfunc.model",
+            "streamable": False,
+            "api_version": "v-1.0",
+            "developer": "Subinoy Bera"
         }
     }
 

@@ -24,21 +24,21 @@
         <h1>Hate Tweet Detection</h1>
         <form action="/predict" method="POST">
             <label for="text">Write text:</label><br>
-            <textarea id="text" name="text" class="textarea" rows="5" placeholder="Enter your text here...">{{ user_input if user_input else '' }}</textarea><br>
-            <button type="submit">Predict</button>
+            <textarea id="text" name="text" class="textarea" rows="5" placeholder="Enter your text here ...">{{ user_input if user_input else '' }}</textarea><br>
+            <button type="submit"><p>Predict</p></button>
         </form>
         
         {% if result is not none %}
             <div class="result {{ confidence }}">
-                <p><strong>Toxicity Score:</strong></p>
+                <p><strong>Result</strong></p>
                 {% if confidence > 0.70 %}
-                <p>🔴⚠️ This comment is <strong>highly toxic</strong></p>
+                <p>⚠️🔴 This comment is highly toxic!!</p>
                 {% elif confidence > 0.54 %}
-                <p>❌ This comment is <strong>toxic</strong></p>
+                <p>❌ This comment is toxic!</p>
                 {% elif confidence > 0.46 %}
                 <p>🤔 This comment looks likely to be toxic!</p>
                 {% else %}
-                <p>✅ This comment looks <strong>safe</strong></p>
+                <p>✅😃 This comment looks safe!</p>
                 {% endif %}
             </div>
         {% endif %}

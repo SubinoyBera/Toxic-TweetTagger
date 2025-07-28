@@ -1,0 +1,40 @@
+name: CI Pipeline
+  
+on :
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build and test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout code
+      uses: actions/checkout@v3
+
+    - name: setup python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10.5'
+
+    - name: cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements'.txt) }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: install dependencies
+      run: |
+        pip install uv
+        uv pip install -r requirements.txt
+
+    - name: run pipeline
+      env:
+        SECRETS: ${{ $secrets.SECRETS }}
+      run: |
+        dvc repro
+  

@@ -1,10 +1,19 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 import mlflow.client
-from ..components import *
-from .model_evaluation import CustomModel
+from src.components import *
 import json
 import dagshub
 import mlflow
 from mlflow.tracking import MlflowClient
+import sys
+import pandas as pd
+from pathlib import Path
+from src.core.logger import logging
+from src.core.exception import AppException
+from src.core.configuration import AppConfiguration
+from src.utils.common import *
 from dotenv import load_dotenv
 load_dotenv()
 

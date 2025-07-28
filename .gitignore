@@ -211,5 +211,4 @@ logs/*
 artifacts/*
 notebooks/artifacts/*
 notebooks/models/*
-models/*
 /artifacts
