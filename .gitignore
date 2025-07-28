@@ -207,8 +207,10 @@ marimo/_lsp/
 __marimo__/
 
 # Project files/folders to ignore
-logs/*
+logs/
 artifacts/*
-notebooks/artifacts/*
-notebooks/models/*
+notebooks/artifacts/
+notebooks/models/
 /artifacts
+dvc_storage/
+.dvc/cache/
