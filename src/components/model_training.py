@@ -1,4 +1,13 @@
-from ..components import *
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
+import gc
+import pandas as pd
+from pathlib import Path
+from src.core.logger import logging
+from src.core.exception import AppException
+from src.core.configuration import AppConfiguration
+from src.utils.common import *
 import pandas as pd
 from xgboost import XGBClassifier
 
@@ -36,8 +45,7 @@ class ModelTrainer:
                               max_depth=params.hyperparameters.max_depth, 
                               gamma=params.hyperparameters.gamma,
                               reg_lambda=params.hyperparameters.reg_lambda,
-                              subsample=params.hyperparameters.subsample, 
-                              n_jobs=-1, random_state=42, use_label_encoder=False)
+                              subsample=0.8, n_jobs=-1, random_state=42, use_label_encoder=False)
         
             logging.info("Model training started")
             model.fit(X_train, y_train)
@@ -45,6 +53,10 @@ class ModelTrainer:
             save_model_path = self.model_training_config.models_dir
             save_obj(location_path=save_model_path, obj=model, obj_name=f"{params.model_name}.joblib")
             logging.info(f"Model trained as saved at: {save_model_path}")
+
+            with open(Path(save_model_path, "model_meta.txt"), 'w') as f:
+                f.write(f"Model has been trained\n\n {params}")
+
             # free memory
             del X_train, y_train, model
             gc.collect()

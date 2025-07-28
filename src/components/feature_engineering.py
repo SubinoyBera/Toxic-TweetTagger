@@ -1,4 +1,13 @@
-from ..components import *
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
+import gc
+import pandas as pd
+from pathlib import Path
+from src.core.logger import logging
+from src.core.exception import AppException
+from src.core.configuration import AppConfiguration
+from src.utils.common import *
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
@@ -44,8 +53,11 @@ class FeatureEngineering:
             featured_data = pd.DataFrame(X_tfidf.toarray())
             featured_data['Label'] = df['Label'].values
 
-            save_models_path = self.eng_config.models_dir
-            save_obj(location_path=save_models_path, obj_name=f"{vectorizer_name}.joblib", obj=vectorizer)
+            save_model_path = self.eng_config.models_dir
+            save_obj(location_path=save_model_path, obj_name=f"{vectorizer_name}.joblib", obj=vectorizer)
+            
+            with open(Path(save_model_path, "vectorizer_meta.txt"), 'w') as f:
+                f.write(f"Vectorizer has been created\n\n {params}")
 
             train_data, test_data = train_test_split(featured_data, test_size=0.2, random_state=42)
             

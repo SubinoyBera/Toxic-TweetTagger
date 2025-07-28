@@ -1,18 +1,16 @@
 feature_engineering:
-  vectorizer: TfidfVectorizer
-  max_features: 2000
+  vectorizer: Tfidf
+  max_features: 3300
   min_df: 3
   ngrams:
     min: 1
     max: 1
 
 model_training:
-  model_name: XGB-v1
+  model_name: XGB-v2
   hyperparameters:
-    n_estimators: 100
-    learning_rate: 0.01
-    max_depth: 10 
+    n_estimators: 1000
+    learning_rate: 0.08
+    max_depth: 15 
     gamma: 0.1
-    reg_lambda: 1
-    subsample: 0.8
-    random_state: 42
+    reg_lambda: 0.8

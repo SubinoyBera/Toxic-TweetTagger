@@ -1,8 +1,16 @@
-import os
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 import numpy as np
 import json
 from typing import Any
-from ..components import *
+import gc
+import pandas as pd
+from pathlib import Path
+from src.core.logger import logging
+from src.core.exception import AppException
+from src.core.configuration import AppConfiguration
+from src.utils.common import *
 from scipy.sparse import csr_matrix
 from sklearn.metrics import (accuracy_score, precision_score, recall_score,f1_score, roc_auc_score)
 import dagshub
@@ -32,16 +40,16 @@ class CustomModel(PythonModel):
         self.vectorizer = vectorizer
 
     def predict(self, context, model_input: pd.DataFrame):
-        texts = model_input["texts"]
+        texts = model_input["comments"]
         if self.vectorizer is not None and self.model is not None:
             X = self.vectorizer.transform(texts)
             X = csr_matrix(X)
             X = pd.DataFrame(X.toarray())
-            class_probalility_scores = self.model.predict_proba(X)
+            class_probability_scores = self.model.predict_proba(X)
             class_label = self.model.predict(X)
 
         return {
-            "class_probalility_scores" : class_probalility_scores,
+            "class_probability_scores" : class_probability_scores,
             "class_label" : class_label
         }
 
@@ -201,6 +209,9 @@ def initiate_model_evaluation():
             # save model info
             obj.save_model_info(model_name=model_name, run_id=run.info.run_id)
             logging.info("Model evaluation completed")
+
+            del model, vectorizer
+            gc.collect()
 
         except Exception as e:
             logging.error(f"Error during model evaluation: {e}", exc_info=True)

@@ -1,0 +1,149 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src/components/data_ingestion.py
+    deps:
+    - path: src/components/data_ingestion.py
+      hash: md5
+      md5: c44065870f3c8892ed554c901a6aa24e
+      size: 3416
+    - path: src/core/configuration.py
+      hash: md5
+      md5: 10a028418fc95c8ef65511c9c6f07da4
+      size: 7779
+    outs:
+    - path: artifacts/data_ingestion/ingested_data
+      hash: md5
+      md5: 69283ce7c06a93bc3825c99ef46ee900.dir
+      size: 101459478
+      nfiles: 1
+    - path: artifacts/data_ingestion/raw
+      hash: md5
+      md5: 5b4013f5b9a8ad24310bcd3b59aa4e9e.dir
+      size: 35435400
+      nfiles: 1
+  data_preprocessing:
+    cmd: python src/components/data_preprocessing.py
+    deps:
+    - path: artifacts/data_ingestion/ingested_data
+      hash: md5
+      md5: 69283ce7c06a93bc3825c99ef46ee900.dir
+      size: 101459478
+      nfiles: 1
+    - path: src/components/data_preprocessing.py
+      hash: md5
+      md5: edbab1649f6c6cf62fbece2004bb4312
+      size: 5608
+    - path: src/core/configuration.py
+      hash: md5
+      md5: 10a028418fc95c8ef65511c9c6f07da4
+      size: 7779
+    outs:
+    - path: artifacts/data_preprocessing
+      hash: md5
+      md5: bc225b67fab71a1a859f86da269535f5.dir
+      size: 10499898
+      nfiles: 1
+  feature_engineering:
+    cmd: python src/components/feature_engineering.py
+    deps:
+    - path: artifacts/data_preprocessing
+      hash: md5
+      md5: bc225b67fab71a1a859f86da269535f5.dir
+      size: 10499898
+      nfiles: 1
+    - path: src/components/feature_engineering.py
+      hash: md5
+      md5: 697b488f6f52a41961c7f9e45917c789
+      size: 4462
+    - path: src/core/configuration.py
+      hash: md5
+      md5: 10a028418fc95c8ef65511c9c6f07da4
+      size: 7779
+    params:
+      params.yaml:
+        feature_engineering.max_features: 3300
+    outs:
+    - path: artifacts/feature_engineering
+      hash: md5
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0
+    - path: models/vectorizer_meta.txt
+      hash: md5
+      md5: 0bdaa747747b5377d6ec2287a56f348d
+      size: 122
+  model_training:
+    cmd: python src/components/model_training.py
+    deps:
+    - path: artifacts/feature_engineering/train_data.feather
+      hash: md5
+      md5: fa60013ba0fb62079151e6aa5faa8a87
+      size: 26184618
+    - path: src/components/model_training.py
+      hash: md5
+      md5: a2493f82cf6d395f065a222908d9bb3a
+      size: 3641
+    - path: src/core/configuration.py
+      hash: md5
+      md5: 10a028418fc95c8ef65511c9c6f07da4
+      size: 7779
+    params:
+      params.yaml:
+        model_training.hyperparameters:
+          n_estimators: 1000
+          learning_rate: 0.08
+          max_depth: 15
+          gamma: 0.1
+          reg_lambda: 0.8
+    outs:
+    - path: models/model_meta.txt
+      hash: md5
+      md5: 83861b16167f2e6b6d89c4dddca45ee0
+      size: 167
+  model_evaluation:
+    cmd: python src/components/model_evaluation.py
+    deps:
+    - path: artifacts/feature_engineering/test_data.feather
+      hash: md5
+      md5: e21f9da5d6d7f7a6c0f411c4ebe8e20b
+      size: 7464778
+    - path: models/model_meta.txt
+      hash: md5
+      md5: 83861b16167f2e6b6d89c4dddca45ee0
+      size: 167
+    - path: src/components/model_training.py
+      hash: md5
+      md5: a2493f82cf6d395f065a222908d9bb3a
+      size: 3641
+    - path: src/core/configuration.py
+      hash: md5
+      md5: 10a028418fc95c8ef65511c9c6f07da4
+      size: 7779
+    params:
+      params.yaml:
+        model_training.model_name: XGB-v2
+    outs:
+    - path: reports/experiment.json
+      hash: md5
+      md5: 14bf1f4ffd335ad2dd362cdee209fbbe
+      size: 78
+    - path: reports/metrics.json
+      hash: md5
+      md5: 6b209438da5368a6256ae3d8204c7e97
+      size: 209
+  model_registration:
+    cmd: python src/components/register_model.py
+    deps:
+    - path: reports/experiment.json
+      hash: md5
+      md5: 14bf1f4ffd335ad2dd362cdee209fbbe
+      size: 78
+    - path: src/components/register_model.py
+      hash: md5
+      md5: c863d6d4ac5d1e6054fb50d766b2bf54
+      size: 4946
+    - path: src/core/configuration.py
+      hash: md5
+      md5: 10a028418fc95c8ef65511c9c6f07da4
+      size: 7779
