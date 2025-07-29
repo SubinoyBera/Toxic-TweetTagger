@@ -88,7 +88,7 @@ class HelperFunctions:
         return " ".join(text)
 
 
-def preprocess(tweet: str):
+def preprocess(tweet: str) -> pd.DataFrame:
     """
     Preprocesses a given tweet by performing the following tasks:
         1. Lowercasing the tweet

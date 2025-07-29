@@ -39,11 +39,11 @@ header{
 .container {
     max-width: 600px;
     margin: 40px auto;
-    background: white;
+    background: oldlace;
     text-align: center;
     padding: 40px 30px;
     border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 20px black(0, 0, 0, 0.1);
 }
 
 .container h1 {
@@ -57,7 +57,7 @@ header{
     padding: 12px;
     margin-top: 10px;
     margin-bottom: 20px;
-    border: 1px solid #ccc;
+    border: 1px solid chocolate;
     border-radius: 6px;
     font-size: 16px;
     resize: vertical;

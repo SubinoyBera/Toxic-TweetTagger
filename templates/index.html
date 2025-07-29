@@ -24,7 +24,7 @@
         <h1>Hate Tweet Detection</h1>
         <form action="/predict" method="POST">
             <label for="text">Write text:</label><br>
-            <textarea id="text" name="text" class="textarea" rows="5" placeholder="Enter your text here ...">{{ user_input if user_input else '' }}</textarea><br>
+            <textarea id="text" name="tweet" class="textarea" rows="5" placeholder="Enter your text here ...">{{ user_input if user_input else '' }}</textarea><br>
             <button type="submit"><p>Predict</p></button>
         </form>
         
