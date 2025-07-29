@@ -29,13 +29,13 @@
         </form>
         
         {% if result is not none %}
-            <div class="result {{ confidence }}">
+            <div class="result {{ prediction_class1 }}">
                 <p><strong>Result</strong></p>
-                {% if confidence > 0.70 %}
+                {% if prediction_class1 > 0.70 %}
                 <p>⚠️🔴 This comment is highly toxic!!</p>
-                {% elif confidence > 0.54 %}
+                {% elif prediction_class1 > 0.54 %}
                 <p>❌ This comment is toxic!</p>
-                {% elif confidence > 0.46 %}
+                {% elif prediction_class1 > 0.46 %}
                 <p>🤔 This comment looks likely to be toxic!</p>
                 {% else %}
                 <p>✅😃 This comment looks safe!</p>
