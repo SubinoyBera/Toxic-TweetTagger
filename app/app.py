@@ -1,15 +1,15 @@
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.exceptions import HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from .services import *
-import uuid
+from .schema import UserInput, APIResponse
 from datetime import datetime
-import time
+import uuid, time
 
 clf = Model()
 model, version = clf.load_model()
-
 
 # Initializing fastapi app
 app = FastAPI()
@@ -19,7 +19,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get('/', response_class=HTMLResponse)
 async def Home(request: Request):
-    return templates.TemplateResponse(request, "index.html", {"result": None })
+    return templates.TemplateResponse("index.html", {"request" : request, "result": None })
+
 
 @app.get('/health')
 def health_check():
@@ -32,9 +33,13 @@ def health_check():
 
 
 @app.post("/predict", response_class=HTMLResponse)
-async def predict(request: Request, tweet: str = Form(...)):
+async def predict(request: Request, tweet: str = Form(...,
+                                                    description="User tweet or comment to be classified")
+                                                ):
+    if not tweet:
+        raise HTTPException(status_code=400, detail="Tweet cannot be empty.")
+    
     tweet_df = preprocess(tweet)
-
     model_response = model.predict(tweet_df)
 
     probability_scores = model_response["class_probability_scores"]
@@ -43,21 +48,22 @@ async def predict(request: Request, tweet: str = Form(...)):
     return templates.TemplateResponse("index.html", {
         "request": request,
         "result": True,
-        "prediction_class1": pred_score_class1,
+        "prediction_class1": round(pred_score_class1, 4),
         "user_input": tweet
     })
 
 
-@app.post('/api')
-async def api(tweet: str, request: Request):
+@app.post('/api', response_model=APIResponse)
+async def api(data: UserInput, request: Request):
     timestamp = datetime.now().astimezone().isoformat()
     request_id = str(uuid.uuid4())
     
     start_time = time.time()
+    tweet = data.comment
     df_tweet = preprocess(tweet)
     model_response = model.predict(df_tweet)
 
-    label = model_response["class_label"][0]
+    label = int(model_response["class_label"][0])
     probability_scores = model_response["class_probability_scores"]
     proba_class0 = float(probability_scores[0][0])
     proba_class1 = float(probability_scores[0][1])
@@ -76,7 +82,7 @@ async def api(tweet: str, request: Request):
 
     response = {
         "response": {
-            "class_label": int(label),
+            "class_label": label,
             "confidence": round(abs(proba_class0 - proba_class1), 4),
             "toxic_level": toxic_level,
             "pred_scores": {
@@ -91,7 +97,7 @@ async def api(tweet: str, request: Request):
             "input": {
                 "num_tokens": int(len(tweet.split())),
                 "num_characters": int(len([i for i in tweet])),
-                "language": "en - iso 639-1code",
+                "language": "'en' (iso 639-1code)",
             },
             "model": clf.get_model_name(),
             "version": version,
@@ -104,4 +110,4 @@ async def api(tweet: str, request: Request):
         }
     }
 
-    return response
+    return JSONResponse(status_code=200, content=response)
