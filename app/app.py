@@ -3,8 +3,6 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from .services import *
-import numpy as np
-from pydantic import BaseModel
 import uuid
 from datetime import datetime
 import time
@@ -21,35 +19,32 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get('/', response_class=HTMLResponse)
 async def Home(request: Request):
-    return templates.TemplateResponse("index.html", 
-                                      {"request": request,
-                                       "result": None})
-
+    return templates.TemplateResponse(request, "index.html", {"result": None })
 
 @app.get('/health')
 def health_check():
     return {
         "status" : 200,
-        "model" : clf.get_model_name,
-        "version" : version
+        "message": "live",
+        "model" : clf.get_model_name(),
+        "version" : version,
     }
 
 
 @app.post("/predict", response_class=HTMLResponse)
-async def predict(request: Request, text: str = Form(...)):
-    text = text
-    text_df = preprocess(text)
+async def predict(request: Request, tweet: str = Form(...)):
+    tweet_df = preprocess(tweet)
 
-    model_response = model.predict(text_df)
+    model_response = model.predict(tweet_df)
 
-    probability_scores = model_response["class_probalility_scores"]
-    confidence_class1 = float(np.round(probability_scores[0][1], 4).item())
+    probability_scores = model_response["class_probability_scores"]
+    pred_score_class1 = float(probability_scores[0][1])
 
     return templates.TemplateResponse("index.html", {
         "request": request,
         "result": True,
-        "confidence": confidence_class1,
-        "user_input": text
+        "prediction_class1": pred_score_class1,
+        "user_input": tweet
     })
 
 
