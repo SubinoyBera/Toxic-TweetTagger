@@ -7,6 +7,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def promote_model():
+    """
+    Promotes a model from staging to production in MLflow.
+
+    This function sets up MLflow tracking URI and authentication using environment variables,
+    retrieves the latest version of the model in the Staging stage, archives any existing
+    Production model versions, and transitions the selected model version to the Production stage.
+    Raises:
+        AppException: If there is an error during the promotion process.
+        EnvironmentError: If the Dagshub Token environment variable is not set.
+    """
     try:
         # Set up MLflow tracking URI and authentication
         uri = os.getenv("MLFOW_URI")
@@ -44,6 +54,7 @@ def promote_model():
     except Exception as e:
         logging.error(f"Failed to promote model to production stage: {e}", exc_info=True)
         raise AppException(e, sys)
+
 
 if __name__ == "__main__":
     promote_model()
