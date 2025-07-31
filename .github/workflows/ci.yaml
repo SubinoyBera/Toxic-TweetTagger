@@ -1,5 +1,5 @@
 name: CI Pipeline
-  
+
 on:
   push:
     branches: [main]
@@ -11,58 +11,68 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: checkout code
-      uses: actions/checkout@v3
+      - name: checkout code
+        uses: actions/checkout@v3
 
-    - name: setup python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
 
-    - name: cache pip dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
+      - name: cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
-    - name: install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install uv
-        uv pip install -r requirements.txt
+      - name: install uv package manager
+        run: |
+          python -m pip install --upgrade pip
+          pip install uv
 
-    - name: run linters
-      run: |
-        tox -e lint, format_check, type_check
+      - name: install dependencies in virtual environment
+        run: |
+          uv venv .venv
+          source .venv/bin/activate
+          uv pip install -r requirements-dev.txt
 
-    - name: run ml pipeline
-      env:
-        DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-        MLFLOW_URI: ${{ secrets.MLLFOW_URI }}
-      run: |
-        dvc repro
+      - name: run linters
+        run: |
+          source .venv/bin/activate
+          tox -e lint, format_check, type_check
 
-    - name: run model tests
-      env:
-        DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-        MLFLOW_URI: ${{ secrets.MLLFOW_URI }}
-      run: |
-        pytest tests/test_model.py --disable-warnings -v
+      - name: run ml pipeline
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
+        run: |
+          source .venv/bin/activate
+          dvc repro
 
-    - name: promote model to production
-      if: success()
-      env:
-        DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-        MLFLOW_URI: ${{ secrets.MLLFOW_URI }}
-      run: |
-        python operations/promote_model.py
+      - name: run model tests
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
+        run: |
+          source .venv/bin/activate
+          tox -e test_model
 
-    - name: run app/api tests
-      if: success()
-      env:
-        DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-        MLFLOW_URI: ${{ secrets.MLLFOW_URI }}
-      run: |
-        pytest tests/test_app.py --disable-warnings -v
+      - name: promote model to production
+        if: success()
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
+        run: |
+          source .venv/bin/activate
+          python operations/promote_model.py
+
+      - name: run app/api tests
+        if: success()
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
+        run: |
+          source .venv/bin/activate
+          tox -e test_app
