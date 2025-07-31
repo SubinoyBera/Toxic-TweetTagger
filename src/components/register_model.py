@@ -1,14 +1,10 @@
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-import mlflow.client
-from src.components import *
-import json
-import dagshub
-import mlflow
-from mlflow.tracking import MlflowClient
 import sys
-import pandas as pd
+import json
+import mlflow
+import dagshub
 from pathlib import Path
 from src.core.logger import logging
 from src.core.exception import AppException
@@ -19,14 +15,27 @@ load_dotenv()
 
 # get environment variables
 uri = os.getenv("MLFOW_URI")
-repo_owner = os.getenv("OWNER")
-repo_name = os.getenv("REPO")
+dagshub_token = os.getenv("DAGSHUB_TOKEN")
 
-mlflow.set_tracking_uri(uri)    # type: ignore
+dagshub_token = os.getenv("DAGSHUB_TOKEN")
+if not dagshub_token:
+    raise EnvironmentError("Dagshub Token environment variable is not set")
 
-if repo_owner is None:
-	raise ValueError("Missing dagshub logging environment credentials.")
-dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)   # type: ignore
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+
+# For local use
+# ===============================================================================
+# repo_owner = os.getenv("OWNER")
+# repo_name = os.getenv("REPO")
+#
+# mlflow.set_tracking_uri(uri)
+# if repo_owner is None:
+# 	raise EnvironmentError("Missing dagshub logging environment credentials.")
+# dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
+# ================================================================================
+
+mlflow.set_tracking_uri(uri)         # type: ignore
 
 
 class RegisterModel:
@@ -82,7 +91,7 @@ class RegisterModel:
             model_version = mlflow.register_model(model_uri, register_modelname)
 
             # Transition the model to "Staging" stage
-            client = MlflowClient()
+            client = mlflow.MlflowClient()
             client.transition_model_version_stage(
                 name = register_modelname,
                 version = model_version.version,

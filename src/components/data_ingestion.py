@@ -9,7 +9,7 @@ from pathlib import Path
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
-from src.utils.common import *
+from src.utils.common import create_directory
 
 class DataIngestion:
     def __init__(self, app_config = AppConfiguration()):

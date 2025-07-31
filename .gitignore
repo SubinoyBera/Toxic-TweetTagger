@@ -211,6 +211,7 @@ logs/
 artifacts/*
 notebooks/artifacts/
 notebooks/models/
+models/*
 /artifacts
 dvc_storage/
 .dvc/cache/

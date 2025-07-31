@@ -23,8 +23,6 @@ def new_model():
 
     """
     uri = os.getenv("MLFOW_URI")
-    repo_owner = os.getenv("OWNER")
-    repo_name = os.getenv("REPO")
     
     dagshub_token = os.getenv("DAGSHUB_TOKEN")
     if not dagshub_token:
@@ -34,14 +32,17 @@ def new_model():
     os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
    #  For local use
-   #  ==============================================================================
-   # if repo_owner is None:
-   #	 raise ValueError("Missing dagshub logging environment credentials.")
+   #  ================================================================================
+   # repo_owner = os.getenv("OWNER")
+   # repo_name = os.getenv("REPO")
    #
+   # mlflow.set_tracking_uri(uri) 
+   # if repo_owner is None:
+   #	 raise EnvironmentError("Missing dagshub logging environment credentials.")
    # dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)    
-   #  ==============================================================================
+   # ==================================================================================
 
-    mlflow.set_tracking_uri(uri)            # type: ignore
+    mlflow.set_tracking_uri(uri)       # type: ignore
 
     # load the new model from MLflow model registry
     model_name = "ToxicTagger-Models"

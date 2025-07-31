@@ -1,21 +1,21 @@
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-import gc
+import string
 import pandas as pd
 from pathlib import Path
+from tqdm import tqdm
+import nltk
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
-from src.utils.common import *
-import string
-from tqdm import tqdm
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import stopwords
+from src.utils.common import create_directory
+import gc
 
-import nltk
-#nltk.download('stopwords')
-#nltk.download('wordnet')
+nltk.download('stopwords')
+nltk.download('wordnet')
 
 class HelperFunctions:
     def __init__(self):

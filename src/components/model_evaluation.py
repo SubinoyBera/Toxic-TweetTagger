@@ -1,37 +1,45 @@
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-import numpy as np
 import json
-from typing import Any
-import gc
 import pandas as pd
+from scipy.sparse import csr_matrix
+from typing import Any
 from pathlib import Path
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
-from src.utils.common import *
-from scipy.sparse import csr_matrix
+from src.utils.common import create_directory, read_yaml, load_obj
 from sklearn.metrics import (accuracy_score, precision_score, recall_score,f1_score, roc_auc_score)
+import gc
 import dagshub
 import mlflow
 import mlflow.pyfunc
 from mlflow.pyfunc.model import PythonModel
-
 from dotenv import load_dotenv
 load_dotenv()
 
 # get environment variables
 uri = os.getenv("MLFOW_URI")
-repo_owner = os.getenv("OWNER")
-repo_name = os.getenv("REPO")
+dagshub_token = os.getenv("DAGSHUB_TOKEN")
+if not dagshub_token:
+    raise EnvironmentError("Dagshub Token environment variable is not set")
 
-# set up connection with dagshub
-mlflow.set_tracking_uri(uri)    # type: ignore
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
-if repo_owner is None:
-	raise ValueError("Missing dagshub logging environment credentials.")
-dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)   # type: ignore
+# For local use
+# ==============================================================================
+# repo_owner = os.getenv("OWNER")
+# repo_name = os.getenv("REPO")
+# 
+# mlflow.set_tracking_uri(uri) 
+# if repo_owner is None:
+# 	raise EnvironmentError("Missing dagshub logging environment credentials.")
+# dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True) 
+# ===============================================================================
+
+mlflow.set_tracking_uri(uri)            # type: ignore
 
 
 class CustomModel(PythonModel):
