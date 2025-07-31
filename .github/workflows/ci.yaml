@@ -41,7 +41,7 @@ jobs:
       - name: run linters
         run: |
           source .venv/bin/activate
-          tox -e lint format_check type_check
+          tox -e lint -e format_check -e type_check
 
       - name: run ml pipeline
         env:
