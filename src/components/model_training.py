@@ -4,12 +4,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 import gc
 import pandas as pd
 from pathlib import Path
+import pandas as pd
+from xgboost import XGBClassifier
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
-from src.utils.common import *
-import pandas as pd
-from xgboost import XGBClassifier
+from src.utils.common import read_yaml, save_obj
 
 class ModelTrainer:
     def __init__(self, config = AppConfiguration()):

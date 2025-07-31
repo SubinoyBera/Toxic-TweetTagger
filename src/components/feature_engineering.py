@@ -1,17 +1,16 @@
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-import gc
-import pandas as pd
-from pathlib import Path
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
-from src.utils.common import *
+from src.utils.common import read_yaml, save_obj
+import gc
 import pandas as pd
+from scipy.sparse import csr_matrix
+from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
-from scipy.sparse import csr_matrix
 
 class FeatureEngineering:
     def __init__(self, config = AppConfiguration()):
@@ -26,6 +25,7 @@ class FeatureEngineering:
         except Exception as e:
             logging.error(f"Failed to create feature engineering Configuration: {e}", exc_info=True)
             raise AppException(e, sys)
+
 
     def perform_feature_engineering(self, df):
         """
