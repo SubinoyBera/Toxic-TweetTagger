@@ -10,8 +10,8 @@ from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
 from src.utils.common import *
-from dotenv import load_dotenv
-load_dotenv()
+#from dotenv import load_dotenv
+#load_dotenv()
 
 # get environment variables
 uri = os.getenv("MLFOW_URI")
