@@ -14,14 +14,13 @@ from src.utils.common import *
 #load_dotenv()
 
 # get environment variables
-uri = os.getenv("MLFOW_URI")
+uri = os.getenv("MLFLOW_URI")
 dagshub_token = os.getenv("DAGSHUB_TOKEN")
+dagshub_username = os.getenv("USERNAME")
+if not dagshub_token or not dagshub_username:
+    raise EnvironmentError("Dagshub environment variables is not set")
 
-dagshub_token = os.getenv("DAGSHUB_TOKEN")
-if not dagshub_token:
-    raise EnvironmentError("Dagshub Token environment variable is not set")
-
-os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_username
 os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
 # For local use

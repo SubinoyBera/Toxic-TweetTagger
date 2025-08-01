@@ -46,6 +46,7 @@ jobs:
       - name: run ml pipeline
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          USERNAME: ${{ secrets.USERNAME }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
         run: |
           source .venv/bin/activate
@@ -54,6 +55,7 @@ jobs:
       - name: run model tests
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          USERNAME: ${{ secrets.USERNAME }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
         run: |
           source .venv/bin/activate
@@ -63,6 +65,7 @@ jobs:
         if: success()
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          USERNAME: ${{ secrets.USERNAME }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
         run: |
           source .venv/bin/activate
@@ -72,6 +75,7 @@ jobs:
         if: success()
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          USERNAME: ${{ secrets.USERNAME }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
         run: |
           source .venv/bin/activate

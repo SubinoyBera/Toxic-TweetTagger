@@ -17,12 +17,13 @@ def promote_model():
     """
     try:
         # Set up MLflow tracking URI and authentication
-        uri = os.getenv("MLFOW_URI")
+        uri = os.getenv("MLFLOW_URI")
         dagshub_token = os.getenv("DAGSHUB_TOKEN")
-        if not dagshub_token:
-            raise EnvironmentError("Dagshub Token environment variable is not set")
+        dagshub_username = os.getenv("USERNAME")
+        if not dagshub_token or not dagshub_username:
+            raise EnvironmentError("Dagshub environment variables is not set")
 
-        os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+        os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_username
         os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
         mlflow.set_tracking_uri(uri)        # type: ignore
