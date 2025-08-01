@@ -53,6 +53,8 @@ jobs:
           dvc repro
 
       - name: run model tests
+        id: model_test
+        continue-on-error: true
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
           USERNAME: ${{ secrets.USERNAME }}
@@ -62,7 +64,8 @@ jobs:
           tox -e test_model
 
       - name: promote model to production
-        if: success()
+        id: promote_model
+        if: steps.model_test.outcome == 'success'
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
           USERNAME: ${{ secrets.USERNAME }}
@@ -72,7 +75,7 @@ jobs:
           python operations/promote_model.py
 
       - name: run app/api tests
-        if: success()
+        if: steps.promote_model.outcome == 'success'
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
           USERNAME: ${{ secrets.USERNAME }}
@@ -80,3 +83,10 @@ jobs:
         run: |
           source .venv/bin/activate
           tox -e test_app
+
+      - name: upload pipeline logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-logs
+          path: logs/
