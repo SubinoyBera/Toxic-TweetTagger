@@ -3,8 +3,6 @@ import os, sys
 import mlflow
 from src.core.logger import logging
 from src.core.exception import AppException
-from dotenv import load_dotenv
-load_dotenv()
 
 def promote_model():
     """

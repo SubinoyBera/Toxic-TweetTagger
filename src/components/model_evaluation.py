@@ -16,8 +16,8 @@ import dagshub
 import mlflow
 import mlflow.pyfunc
 from mlflow.pyfunc.model import PythonModel
-from dotenv import load_dotenv
-load_dotenv()
+#from dotenv import load_dotenv
+#load_dotenv()
 
 # get environment variables
 uri = os.getenv("MLFOW_URI")
