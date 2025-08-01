@@ -1,3 +1,0 @@
-Vectorizer has been created
-
- {'vectorizer': 'Tfidf', 'max_features': 3300, 'min_df': 3, 'ngrams': {'min': 1, 'max': 1}}
