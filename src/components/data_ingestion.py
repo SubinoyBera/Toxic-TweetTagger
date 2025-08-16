@@ -1,15 +1,11 @@
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-
-import requests
-import zipfile
 import sys
-import gc
-from pathlib import Path
+from sklearn.model_selection import train_test_split
+from src.constant.constants import DATABASE_NAME, COLLECTION_NAME
+from src.connection.mongo_client import MongoDBClient
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
-from src.utils.common import create_directory
+import gc
 
 class DataIngestion:
     def __init__(self, app_config = AppConfiguration()):
@@ -27,73 +23,63 @@ class DataIngestion:
     
     def download_data(self):
         """
-        Downloads data from the given url and saves it into a zip file into the given location.
+        Downloads data from MongoDB and saves it in csv format, and also
+        splits the data into training and testing sets and saves them in parquet format.
 
-        Returns:
-            str: The path of the downloaded zip file
+        Raises:
+            AppException: If there is an error downloading data from MongoDB
         """
         try:
-            dataset_url = self.data_ingestion_config.data_download_url
-            download_dir = self.data_ingestion_config.raw_data_dir
+            save_ingested_data_path = self.data_ingestion_config.ingested_data_path
+            save_train_data_path = self.data_ingestion_config.train_data_path
+            save_test_data_path = self.data_ingestion_config.test_data_path
 
-            create_directory(download_dir)
-            data_filename = os.path.basename(dataset_url)
-            download_data_path = Path(download_dir, data_filename)
+            logging.info("Connecting to MongoDB")
+            client = MongoDBClient()
 
-            response = requests.get(dataset_url)
-            if response.status_code == 200:
-                with open(download_data_path, 'wb') as f:
-                    f.write(response.content)
-                    logging.info(f"Downloaded data successfully into file: {download_data_path}")
+            data = client.fetch_data(database_name=DATABASE_NAME, collection_name=COLLECTION_NAME)
 
-            return download_data_path
+            data.to_csv(save_ingested_data_path, index=False)
+            logging.info(f"Raw ingested data saved successfully saved at {save_ingested_data_path}")
 
-        except Exception as e:
-            logging.error(f"Failed to download data: {e}", exc_info=True)
-            raise AppException(e, sys)
-        
+            # shuffling data
+            data = data.sample(frac=1, random_state=42).reset_index(drop=True)
 
-    def extract_zipfile(self, file_path: Path):
-        """
-        Extracts the given zip file into a given directory.
-        Args:
-            zip_file_path (str): The path of the zip file to be extracted
-        """
-        try:
-            ingested_dir = self.data_ingestion_config.ingested_data_dir
-            create_directory(ingested_dir)
+            logging.info("Splitting data into training and testing sets")
+            train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
 
-            with zipfile.ZipFile(file_path, 'r') as zip_ref:
-                zip_ref.extractall(ingested_dir)
-            logging.info(f"Extracting zip file: {file_path} into dir: {ingested_dir}")
+            train_data.to_parquet(save_train_data_path, index=False)
+            test_data.to_parquet(save_test_data_path, index=False)
+            logging.info(f"Successfully saved train data and test data")
+            # free memory
+            del data, train_data, test_data
+            gc.collect()
 
         except Exception as e:
-            logging.error(f"Failed to extract Zip file: {e}", exc_info=True)
+            logging.error(f"Failed to download data from MongoDB: {e}", exc_info=True)
             raise AppException(e, sys)
         
 
 def initiate_data_ingestion():
     """
-    Initiates the data ingestion process by downloading the dataset from the given url
-    and extracting it into the specified directory.
+    Main function to initiate the Data Ingestion workflow. It downloads data from MongoDB and
+    saves it to the specified directory using the configuration provided in the
+    data_ingestion_config.
 
     Raises:
-        AppException: If an error occurs during data ingestion
+        AppException: If an error occurs during data ingestion.
     """
     obj = DataIngestion()
     try:
         logging.info(f"{'='*20}Data Ingestion{'='*20}")
-        data = obj.download_data()
-        obj.extract_zipfile(data)
-        # free memory
-        del data
-        gc.collect()
+        obj.download_data()
+
         logging.info(f"{'='*20}Data Ingestion Completed Successfully{'='*20} \n\n")
 
     except Exception as e:
         logging.error(f"Error in Data Ingestion process: {e}", exc_info=True)
         raise AppException(e, sys)
 
-# entry point for the data ingestion process
+
 if __name__ == "__main__":
     initiate_data_ingestion()

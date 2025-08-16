@@ -1,13 +1,23 @@
-name: CI Pipeline
+name: CI ML/MLOps Pipeline
 
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - 'images/*'
+      - 'notebooks/*'
+      - 'airflow/*'
+      - 'templates/*'
+      - 'static/*'
+      - 'app/*'
+
   pull_request:
     branches: [main]
 
+
 jobs:
-  build-and-test-ops:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +27,7 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: cache pip dependencies
         uses: actions/cache@v3
@@ -46,7 +56,7 @@ jobs:
       - name: run ml pipeline
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-          USERNAME: ${{ secrets.USERNAME }}
+          USERNAME: ${{ secrets.OWNER }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
         run: |
           source .venv/bin/activate
@@ -57,28 +67,44 @@ jobs:
         continue-on-error: true
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-          USERNAME: ${{ secrets.USERNAME }}
+          USERNAME: ${{ secrets.OWNER }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
         run: |
           source .venv/bin/activate
           tox -e test_model
 
-      - name: promote model to production
+      - name: promote model to production in registry
         id: promote_model
         if: steps.model_test.outcome == 'success'
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-          USERNAME: ${{ secrets.USERNAME }}
+          USERNAME: ${{ secrets.OWNER }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
         run: |
           source .venv/bin/activate
-          python operations/promote_model.py
+          python -m src.operations.promote_model
 
-      - name: run app/api tests
+      - name: push production model from registry to server
+        id: deploy_model
         if: steps.promote_model.outcome == 'success'
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-          USERNAME: ${{ secrets.USERNAME }}
+          USERNAME: ${{ secrets.OWNER }}
+          MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
+          HUGGINGFACE_TOKEN: $${{ secrets.HUGGINGFACE_TOKEN }}
+        run: |
+          source .venv/bin/activate
+          python -m src.operations.serve_model
+
+      - name: wait for deployment
+        if: steps.deploy_model.outcome == 'success'
+        run: sleep 225
+
+      - name: run app tests
+        if: steps.deploy_model.outcome == 'success'
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          USERNAME: ${{ secrets.OWNER }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
         run: |
           source .venv/bin/activate

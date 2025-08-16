@@ -1,12 +1,12 @@
+# Schema validation for the API response
+
 from pydantic import BaseModel, Field
 from typing import Annotated, Dict
 
-
-class UserInput(BaseModel):
+class InputData(BaseModel):
     comment: Annotated[str, Field(..., description="User tweet or comment to be classified")]
 
-
-class ResponseData(BaseModel):
+class Prediction(BaseModel):
     class_label: int
     confidence: float
     toxic_level: str
@@ -27,5 +27,5 @@ class MetaData(BaseModel):
     developer: str
 
 class APIResponse(BaseModel):
-    response: ResponseData
+    response: Prediction
     metadata: MetaData

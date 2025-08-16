@@ -1,66 +1,44 @@
 import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-
 import json
+import numpy as np
 import pandas as pd
-from scipy.sparse import csr_matrix
 from typing import Any
 from pathlib import Path
+from .data_preprocessing import DataPreprocessing
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
-from src.utils.common import create_directory, read_yaml, load_obj
+from src.utils import create_directory, read_yaml, load_obj
 from sklearn.metrics import (accuracy_score, precision_score, recall_score,f1_score, roc_auc_score)
 import gc
 import dagshub
 import mlflow
-import mlflow.pyfunc
-from mlflow.pyfunc.model import PythonModel
-#from dotenv import load_dotenv
-#load_dotenv()
+from src.script.model_wrapper import CustomModel
+from dotenv import load_dotenv
+load_dotenv()
 
 # get environment variables
 uri = os.getenv("MLFLOW_URI")
 dagshub_token = os.getenv("DAGSHUB_TOKEN")
-dagshub_username = os.getenv("USERNAME")
+dagshub_username = os.getenv("OWNER")
 if not dagshub_token or not dagshub_username:
     raise EnvironmentError("Dagshub environment variables is not set")
 
 os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_username
 os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
+mlflow.set_tracking_uri(uri)            # type: ignore
+
 # For local use
-# ==============================================================================
+# =================================================================================
 # repo_owner = os.getenv("OWNER")
 # repo_name = os.getenv("REPO")
 # 
-# mlflow.set_tracking_uri(uri) 
+# mlflow.set_tracking_uri(uri)
 # if repo_owner is None:
 # 	raise EnvironmentError("Missing dagshub logging environment credentials.")
 # dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True) 
-# ===============================================================================
-
-mlflow.set_tracking_uri(uri)            # type: ignore
-
-
-class CustomModel(PythonModel):
-    def __init__(self, model=None, vectorizer=None):
-        self.model = model
-        self.vectorizer = vectorizer
-
-    def predict(self, context, model_input: pd.DataFrame):
-        texts = model_input["comments"]
-        if self.vectorizer is not None and self.model is not None:
-            X = self.vectorizer.transform(texts)
-            X = csr_matrix(X)
-            X = pd.DataFrame(X.toarray())
-            class_probability_scores = self.model.predict_proba(X)
-            class_label = self.model.predict(X)
-
-        return {
-            "class_probability_scores" : class_probability_scores,
-            "class_label" : class_label
-        }
+# ==================================================================================
 
 
 class ModelEvaluation:
@@ -94,7 +72,7 @@ class ModelEvaluation:
             raise AppException(e, sys)
         
     
-    def save_model_info(self, model_name: str, run_id: str):
+    def save_experiment_info(self, model_name: str, run_id: str):
         """
         Saves the model name and the Mlflow run ID to a JSON file 
         for logging purposes.
@@ -103,53 +81,64 @@ class ModelEvaluation:
             run_id (str): The Mlflow run ID
         """
         try:
-            model_info = {
+            experiment_info = {
                 'model' : model_name,
                 'run_id' : run_id,
             }
-
             exp_info_path = Path("reports/experiment.json")
             with open(exp_info_path, 'w') as f:
-                json.dump(model_info, f, indent=4)
+                json.dump(experiment_info, f, indent=4)
         
         except Exception as e:
             logging.error(f"Failed to save model experiment info: {e}", exc_info=True)
             raise AppException(e, sys)
         
-    def evaluate(self, model: Any , model_name: str, df):
+    def evaluate(self, model:Any, model_name:str, vectorizer:Any, vectorizer_name:str, df:pd.DataFrame) -> tuple[dict, dict]:
         """
-        Evaluates the given model on the test data and returns an evaluation report.
+        Evaluates the given model and vectorizer on the given dataset.
         Args:
-            model: The model to be evaluated.
-            model_name: The name of the model.
-            df: The test dataframe.
-            df: The test dataframe.
-
+            model (Any): The model to evaluate.
+            model_name (str): The name of the model.
+            vectorizer (Any): The vectorizer to use.
+            vectorizer_name (str): The name of the vectorizer.
+            df (pd.DataFrame): The test dataset to evaluate on.
+        
         Returns:
             tuple: A tuple containing the evaluation report and the model parameters.
         """
         try:
-            y_test = df['Label'].values
             X_test = df.drop(columns='Label')
-            logging.info(type(model))
+            # Perform vectorization
+            X_test = vectorizer.transform(X_test["Content"])
             
             logging.info(f"Evaluating model: {model_name}")
+            # Predict using the model
             y_pred = model.predict(X_test)
+            # Get the predicted probabilities for the positive class
             proba_class1 = model.predict_proba(X_test)[:, 1]
+ 
+            # Get the true labels
+            y_test = df['Label'].values
+
+            print(y_pred.shape, proba_class1.shape)
+            print(y_test.shape)
 
             evaluation_report = {
-                "model" : model_name,
-                "accuracy" : accuracy_score(y_test, y_pred),
-                "precision" : precision_score(y_test, y_pred),
-                "recall" : recall_score(y_test, y_pred),
-                "f1 score" : f1_score(y_test, y_pred),
-                "roc_auc" : roc_auc_score(y_test, proba_class1)
+                "model": model_name,
+                "vectorizer": vectorizer_name,
+                "accuracy": accuracy_score(y_test, y_pred),                 # type: ignore
+                "precision": precision_score(y_test, y_pred),               # type: ignore
+                "recall": recall_score(y_test, y_pred),                     # type: ignore
+                "f1 score": f1_score(y_test, y_pred),                       # type: ignore
+                "roc_auc": roc_auc_score(y_test, proba_class1)              # type: ignore
             }
-            model_params = model.get_xgb_params()
+            # Get model parameters
+            model_params: dict = model.get_xgb_params()
 
             return (
                 evaluation_report,
-                model_params )
+                model_params
+            )
         
         except Exception as e:
             logging.error(f"Failed in model evaluation process: {e}", exc_info=True)
@@ -158,39 +147,43 @@ class ModelEvaluation:
 
 def initiate_model_evaluation():
     """
-    Main function to evaluate the model and log the evaluation metrics, parameters, and the model in Mlflow.
-
-    This function reads the test data, loads the trained model, evaluates the model, logs the evaluation metrics and model parameters in Mlflow, and saves the model evaluation metrics to a file.
-
-    Raises:
-        AppException: If an error occurs during model evaluation.
+    Initiates the model evaluation process by creating a ModelEvaluation object,
+    which then evaluates the model using the evaluate method and logs the
+    evaluation metrics in Mlflow.
     """
-    obj = ModelEvaluation()
+    eval_obj = ModelEvaluation()
+    preprocessor = DataPreprocessing()
+    logging.info(f"{'='*20}Model Evaluation{'='*20}")
+
     # get model name
     config_params = read_yaml(Path("params.yaml"))
     model_name = config_params.model_training.model_name
     vectorizer_name = config_params.feature_engineering.vectorizer
 
-    test_data_path = obj.evaluation_config.test_data_path
-    model_path = obj.evaluation_config.models_dir
+    test_data_path = eval_obj.evaluation_config.test_data_path
+    model_path = eval_obj.evaluation_config.models_dir
+
+    test_df = pd.read_parquet(test_data_path)
+    test_df.dropna(how='any', inplace=True)
+    processed_test_df = preprocessor.preprocess(test_df, filename="preprocessed_test_data.feather")
 
     mlflow.set_experiment("DVC Pipeline Model Experiments")
     with mlflow.start_run(run_name=model_name) as run:
         try:
-            test_df = pd.read_feather(test_data_path)
-            test_df.dropna(how='any', inplace=True)
-
             model = load_obj(location_path=model_path, obj_name=f"{model_name}.joblib")
             vectorizer = load_obj(location_path=model_path, obj_name=f"{vectorizer_name}.joblib")
 
-            evaluation_report, model_params = obj.evaluate(model=model, model_name=model_name, df=test_df)
+            evaluation_report, model_params = eval_obj.evaluate(model=model, model_name=model_name, vectorizer=vectorizer,
+                                                                vectorizer_name=vectorizer_name,df=processed_test_df)
 
-            obj.save_report(evaluation_report)
+            eval_obj.save_report(evaluation_report)
             logging.info("Logging model and different parameters in Mlflow")
 
-            # log model metrics in Mlflow
-            model_name = evaluation_report.pop("model", None)
-            
+            # Log model evaluation metrics in Mlflow
+            # remove the model and vectorizer name from the report
+            evaluation_report.pop("model", None)
+            evaluation_report.pop("vectorizer", None)
+
             for metric_name, metric_score in evaluation_report.items():
                mlflow.log_metric(metric_name, metric_score)
 
@@ -198,11 +191,13 @@ def initiate_model_evaluation():
             if model_params is not None:
                 for param_name, param_value in model_params.items():
                     mlflow.log_param(param_name, param_value)
-                    mlflow.log_param("models", model_name)
+                mlflow.log_param("model", model_name)
+                mlflow.log_param("vectorizer", vectorizer_name)
             else:
                 logging.warning("No model parameters found. Skipping parameter logging")   
 
-            # log model in Mlflow
+            # Log the Custom Model in Mlflow
+            # Custom Model wraps the actual model classifer and the vectorizer into a single Python Model object
             final_model = CustomModel(model=model, vectorizer=vectorizer)
             mlflow.pyfunc.log_model(
                 artifact_path = model_name,
@@ -212,20 +207,20 @@ def initiate_model_evaluation():
                     "classifier": os.path.join(model_path, f"{model_name}.joblib")
                 }
             )
-
             # log model evaluation metrics file to Mlfow
             mlflow.log_artifact("reports/metrics.json")
             # save model info
-            obj.save_model_info(model_name=model_name, run_id=run.info.run_id)
+            eval_obj.save_experiment_info(model_name=model_name, run_id=run.info.run_id)
             logging.info("Model evaluation completed")
 
-            del model, vectorizer
+            #free memory
+            del test_df, processed_test_df, model, vectorizer
             gc.collect()
 
         except Exception as e:
             logging.error(f"Error during model evaluation: {e}", exc_info=True)
             raise AppException(e, sys)
 
-# entry point for the model evaluation process  
+ 
 if __name__ == "__main__":
     initiate_model_evaluation()

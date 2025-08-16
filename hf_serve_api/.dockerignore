@@ -1,0 +1,42 @@
+# Ignore Python cache
+__pycache__/
+*.py[cod]
+*.so
+
+# Ignore Jupyter notebooks (if not used)
+*.ipynb
+.ipynb_checkpoints/
+
+# Ignore logs and temp files
+*.log
+*.tmp
+*.DS_Store
+
+# Ignore version control and dev files
+.git/
+.github/
+.vscode/
+*.env
+.env*
+.gitignore
+
+# MLflow & DVC metadata (keep only if you need them at runtime)
+.mlflow/
+.dvc/
+.dvcignore
+
+# CI/CD config files
+tox.ini
+pytest.ini
+setup.cfg
+setup.py
+requirements-dev.txt
+
+# Ignore Docker build context bloat
+*.tar
+*.zip
+*.gz
+*.egg-info/
+
+# Ignore Hugging Face cache
+~/.cache/huggingface/

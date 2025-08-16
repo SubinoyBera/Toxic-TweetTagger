@@ -1,3 +1,4 @@
+# Core ML Pipeline
 import sys
 from ..core.logger import logging
 from ..core.exception import AppException
@@ -6,10 +7,8 @@ from ..components.data_preprocessing import initiate_data_preprocessing
 from ..components.feature_engineering import initiate_feature_engineering
 from ..components.model_training import initiate_model_training
 from ..components.model_evaluation import initiate_model_evaluation
-from ..components.register_model import initiate_model_registration
 
-
-def run_pipeline():
+def run_ml_pipeline():
     """
     This function is the entry point for the Machine Learning pipeline.
     It starts all the stages of the pipeline one by one and logs the status of each stage.
@@ -19,22 +18,19 @@ def run_pipeline():
     """
     try:
         logging.info("STAGE:1 Data Ingestion Stage Initiated")
-        #initiate_data_ingestion()
+        initiate_data_ingestion()
 
         logging.info("STAGE:2 Data Preprocessing Stage Initiated")
-        #initiate_data_preprocessing()
+        initiate_data_preprocessing()
 
         logging.info("STAGE:3 Feature Engineering Stage Initiated")
-        #initiate_feature_engineering()
+        initiate_feature_engineering()
 
         logging.info("STAGE:4 Model Training Stage Initiated")
-        #   initiate_model_training()
+        initiate_model_training()
 
         logging.info("STAGE:5 Model Evaluation Stage Initiated")
-        #initiate_model_evaluation()
-
-        logging.info("STAGE:6 Model Registration Stage Initiated")
-        initiate_model_registration()
+        initiate_model_evaluation()
 
         logging.info("ML Pipeline Completed")
 
@@ -42,6 +38,6 @@ def run_pipeline():
         logging.error(f"ML Pipeline Terminated: {e}", exc_info=True)
         raise AppException(e, sys)
     
-# entry point for running the ML Pipeline
+# entry point for running the Pipeline
 if __name__ == "__main__":
-    run_pipeline()
+    run_ml_pipeline()

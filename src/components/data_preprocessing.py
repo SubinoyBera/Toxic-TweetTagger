@@ -1,21 +1,21 @@
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+import nltk
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger_eng')
 
+import sys
 import string
 import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
-import nltk
+from nltk import pos_tag
 from nltk.stem import WordNetLemmatizer
-from nltk.corpus import stopwords
+from nltk.corpus import stopwords, wordnet
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
-from src.utils.common import create_directory
 import gc
 
-nltk.download('stopwords')
-nltk.download('wordnet')
 
 class HelperFunctions:
     def __init__(self):
@@ -27,38 +27,41 @@ class HelperFunctions:
         """
         pass
     
-    def lower_case(self, text):
+    def lower_case(self, text) -> str:
         """Converts the given text to lowercase."""
         return text.lower()
     
-    def remove_punctuations(self, text):
+    def remove_punctuations(self, text) -> str:
         """Removes all punctuation marks from the given text."""
         exclude = string.punctuation
         return text.translate(str.maketrans("", "", exclude))
     
-    def remove_stopwords(self, text):
+    def remove_stopwords(self, text) -> str:
         """Removes all English stopwords from the given text."""
         stop_words = set(stopwords.words('english'))
         text = [word for word in text.split() if word not in stop_words]
         return " ".join(text)
-    
-    def lemmatization(self, text):
-        """Converts all words in the given text to their base form using WordNet lemmatization."""
+
+    def lemmatization(self, text) -> str:
+        """
+        Does parts of speech tagging and then converts words to their base form 
+        using WordNetLemmatizer.
+        """
         lemmatizer = WordNetLemmatizer()
-        text_words = text.split()
-        text = [lemmatizer.lemmatize(word) for word in text_words]
+        wordnet_map = {"N": wordnet.NOUN, "V": wordnet.VERB, "J": wordnet.ADJ, "R": wordnet.ADV}
+        # Perform POS tagging and lemmatization
+        pos_text = pos_tag(text.split())
+        text = [lemmatizer.lemmatize(word, wordnet_map.get(pos[0], wordnet.NOUN)) for word, pos in pos_text]
         return " ".join(text)
 
 
 class DataPreprocessing:
     def __init__(self, config = AppConfiguration()):
         """
-        Initializes the DataPreprocessing object by creating a data preprocessing configuration.
-
-        Raises:
-            AppException: If error occurs during creation of data preprocessing configuration
+        Initializes the DataPreprocessing object by creating the data prepocessing configuration.
+        Args:
+            config (AppConfiguration): The configuration object containing the application configuration.
         """
-
         try:
             self.data_preprocessing_config = config.data_preprocessing_config()
 
@@ -67,51 +70,42 @@ class DataPreprocessing:
             raise AppException(e, sys)
 
 
-    def preprocess(self, df):
+    def preprocess(self, df: pd.DataFrame, filename: str) -> pd.DataFrame:
         """
-        Performs different data processing steps on the given dataframe
-            Lowercasing the content,
-            Removing punctuations from the content,
-            Removing english stopwords, and Lemmatizing the content.
-        
-        Saves the preprocessed data in csv file after performing data preprocessing.
+        Preprocesses the given dataframe by performing lowercasing, removing punctuation, 
+        removing stopwords and performing lemmatization with parts of speech tagging.
+        Args:
+            df (pd.DataFrame): The dataframe to be preprocessed
+            filename (str): The filename to save the preprocessed dataframe
 
-        Raises:
-            AppException: If error occurs during data preprocessing
+        Returns:
+            pd.DataFrame: The preprocessed dataframe
         """
-        # Sampling from dataframe to create a smaller working dataset
-        df['Label'] = df['Label'].astype(int)
-        subset_hate_df = df[df['Label']==1].sample(n=60000, random_state=42)
-        subset_nornal_df = df[df['Label']==0].sample(n=60000, random_state=42)
-
-        subset_df = pd.concat([subset_hate_df, subset_nornal_df])
-
         fn = HelperFunctions()
         # Preprocessing steps
         try:
-            subset_df.dropna(how='any', inplace=True)
+            df.dropna(how='any', inplace=True)
             tqdm.pandas()
+
             logging.info("Performing lowercasing")
-            subset_df['Content'] = subset_df['Content'].progress_apply(fn.lower_case)
+            df['Content'] = df['Content'].progress_apply(fn.lower_case)
 
             logging.info("Removing punctuations")
-            subset_df['Content'] = subset_df['Content'].progress_apply(fn.remove_punctuations)
+            df['Content'] = df['Content'].progress_apply(fn.remove_punctuations)
+
+            logging.info("Performing pos tagging and lemmatization")
+            df['Content'] = df['Content'].progress_apply(fn.lemmatization)
 
             logging.info("Removing stopwords")
-            subset_df['Content'] = subset_df['Content'].progress_apply(fn.remove_stopwords)
-
-            logging.info("Performing lemmatization")
-            subset_df['Content'] = subset_df['Content'].progress_apply(fn.lemmatization)
+            df['Content'] = df['Content'].progress_apply(fn.remove_stopwords)
 
             logging.info("Finished preprocessing operations successfully")
 
-            processed_data_dir = self.data_preprocessing_config.preprocessed_data_dir
-            create_directory(processed_data_dir)
-            subset_df.to_feather(Path(processed_data_dir, 'clean_data.feather'))
-            # free memory
-            del subset_df
-            gc.collect()
-            logging.info(f"Data successfully saved at {processed_data_dir}")
+            preprocessed_data_dir = self.data_preprocessing_config.preprocessed_data_dir
+            df.to_feather(Path(preprocessed_data_dir, filename))
+            
+            logging.info(f"Data successfully saved at {preprocessed_data_dir}")
+            return df
         
         except Exception as e:
             logging.error(f"Data preprocessing failed: {e}", exc_info=True)
@@ -128,12 +122,13 @@ def initiate_data_preprocessing():
     obj = DataPreprocessing()
     try:
         logging.info(f"{'='*20}Data Preprocessing{'='*20}")
-        data_path = obj.data_preprocessing_config.ingested_dataset_path
+        data_path = obj.data_preprocessing_config.data_path
         if not data_path:
-            logging.error("No data path found")
-            return
-        df = pd.read_csv(data_path, encoding='utf-8')
-        obj.preprocess(df)
+            raise ValueError("No data path found")
+        
+        df = pd.read_parquet(data_path)
+        preprocessed_dataset_name = obj.data_preprocessing_config.preprocessed_data_filename
+        obj.preprocess(df, preprocessed_dataset_name)
         del df
         gc.collect()
         logging.info(f"{'='*20}Data Preprocessing Completed Successfully{'='*20} \n\n")
@@ -142,6 +137,6 @@ def initiate_data_preprocessing():
         logging.error(f"Error in Data Preprocessing process: {e}", exc_info=True)
         raise AppException(e, sys)
     
-# entry point for the data preprocessing process
+
 if __name__ == "__main__":
     initiate_data_preprocessing()

@@ -1,16 +1,14 @@
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-
+import sys
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
-from src.utils.common import read_yaml, save_obj
+from src.utils import read_yaml, save_obj
 import gc
 import pandas as pd
 from scipy.sparse import csr_matrix
 from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
+
 
 class FeatureEngineering:
     def __init__(self, config = AppConfiguration()):
@@ -27,14 +25,11 @@ class FeatureEngineering:
             raise AppException(e, sys)
 
 
-    def perform_feature_engineering(self, df):
+    def perform_feature_engineering(self, df: pd.DataFrame):
         """
-        Performs feature engineering on the given dataframe by extracting features with 
-        TF-IDF vectorization and also splits data into training and testing sets.
-        Saves the vectorizer object and train-test datasets.
-
-        Raises:
-            AppException: If error occurs during feature engineering
+        Performs feature engineering on the given dataframe by extracting features with TF-IDF vectorization 
+        and also splits data into training and testing sets.
+        Saves the vectorizer object and training dataset.
         """
         try:
             config_params = read_yaml(Path("params.yaml"))
@@ -50,29 +45,22 @@ class FeatureEngineering:
             X_tfidf = vectorizer.fit_transform(df['Content'])
             X_tfidf = csr_matrix(X_tfidf)
 
-            featured_data = pd.DataFrame(X_tfidf.toarray())
-            featured_data['Label'] = df['Label'].values
+            training_data = pd.DataFrame(X_tfidf.toarray())
+            training_data['Label'] = df['Label'].values
 
             save_model_path = self.eng_config.models_dir
             save_obj(location_path=save_model_path, obj_name=f"{vectorizer_name}.joblib", obj=vectorizer)
             
             with open(Path(save_model_path, "vectorizer_meta.txt"), 'w') as f:
                 f.write(f"Vectorizer has been created\n\n {params}")
-
-            train_data, test_data = train_test_split(featured_data, test_size=0.2, random_state=42)
             
-            logging.info("Saving training and testing datasets")
-            train_test_datapath = self.eng_config.train_test_data_path
-            train_data.to_feather(Path(train_test_datapath, 'train_data.feather'))
-            test_data.to_feather(Path(train_test_datapath, 'test_data.feather'))
-            # free memory
-            del featured_data, X_tfidf, train_data, test_data
-            gc.collect()
+            logging.info("Saving training dataset")
+            training_data.to_feather(self.eng_config.training_data_path)
 
             logging.info("Feature engineering operation done")
 
         except Exception as e:
-            logging.error(f"Feature engineering operation terminated: {e}", exc_info=True)
+            logging.error(f"Error - feature engineering operation terminated: {e}", exc_info=True)
             raise AppException(e, sys)
 
 
@@ -101,6 +89,6 @@ def initiate_feature_engineering():
         logging.error(f"Error during Feature Engineering: {e}", exc_info=True)
         raise AppException(e, sys)
     
-# entry point for the feature engineering process
+
 if __name__ == "__main__":
     initiate_feature_engineering()
