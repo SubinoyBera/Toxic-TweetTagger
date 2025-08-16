@@ -10,13 +10,12 @@
 <body>
     <header class="header">
         <div class="project_name">
-            <h4>ToxicTweet-Tagger</h4>
+            <h4>Subinoy Bera : ToxicTweet-Tagger</h4>
         </div>
         
         <nav class="nav-links">
             <a href="/">Home</a>
             <a href="/about.html">About</a>
-            <a href="#">Contact</a>
         </nav>
     </header>
 
@@ -33,13 +32,13 @@
                 <p style="font-size: 20px;"><h3>RESULT</h3></p>
                 {% if toxicity_level == 'strong' %}
                 <p>⚠️🔴 This comment is highly toxic!!</p>
-                <a href="/api_response" style="font-size: 14px;">View API response ↗</a>
+                <a href="/api_response" style="font-size: 14px;">View API response</a> ↗
                 {% elif toxicity_level == 'high' %}
                 <p>❌ This comment is toxic!</p>
-                <a href="/api_response" style="font-size: 14px;">View API response ↗</a>
+                <a href="/api_response" style="font-size: 14px;">View API response</a> ↗
                 {% elif toxicity_level == 'light' %}
                 <p>🤔 This comment looks likely to be toxic!</p>
-                <a href="/api_response" style="font-size: 14px;">View API response ↗</a>
+                <a href="/api_response" style="font-size: 14px;">View API response</a> ↗
                 {% elif toxicity_level == 'none' %}
                 <p>✅😃 This comment looks safe!</p>
                 <a href="/api_response" style="font-size: 14px;">View API response</a> ↗
