@@ -1,7 +1,6 @@
 # Upload the production model from registry to huggingface spaces for serving
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
+import os, sys
 import mlflow
 import dagshub
 from mlflow import artifacts
