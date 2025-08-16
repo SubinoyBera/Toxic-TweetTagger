@@ -5,6 +5,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from typing import Optional, Any
 from lime.lime_text import LimeTextExplainer
 
 # load yaml files to get model meta data.
@@ -14,8 +15,12 @@ try:
 except:
     raise FileNotFoundError("Failed to load file having model metadata")
 
+
+model: Optional[Any] = None
+
 # Intialize lime explainer with class names
 _global_explainer = LimeTextExplainer(class_names=["hate", "non-hate"], bow=False)
+
 
 class LimeExplainer:
     def __init__(self):
@@ -36,6 +41,8 @@ class LimeExplainer:
         input_df = pd.DataFrame({
             "comments": tweet
         })
+        if model is None:
+            raise RuntimeError("Model is not loaded. Please load the model before prediction.")
         self.prediction = model.predict(context=None, model_input=input_df)
         return np.array(self.prediction["class_probability_scores"])
     
