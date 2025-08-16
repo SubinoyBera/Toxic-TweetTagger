@@ -5,7 +5,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from typing import Optional, Any
+from typing import Any
 from lime.lime_text import LimeTextExplainer
 
 # load yaml files to get model meta data.
@@ -16,14 +16,12 @@ except:
     raise FileNotFoundError("Failed to load file having model metadata")
 
 
-model: Optional[Any] = None
-
 # Intialize lime explainer with class names
 _global_explainer = LimeTextExplainer(class_names=["hate", "non-hate"], bow=False)
 
 
 class LimeExplainer:
-    def __init__(self):
+    def __init__(self, model: Any):
         """
         Initializes an instance of LimeExplainer.
 
@@ -32,6 +30,7 @@ class LimeExplainer:
         """
         self.explainer = _global_explainer
         self.prediction = None
+        self.model = model
 
     def _get_prediction_explaination(self, tweet) -> np.ndarray:
         """
@@ -41,9 +40,7 @@ class LimeExplainer:
         input_df = pd.DataFrame({
             "comments": tweet
         })
-        if model is None:
-            raise RuntimeError("Model is not loaded. Please load the model before prediction.")
-        self.prediction = model.predict(context=None, model_input=input_df)
+        self.prediction = self.model.predict(context=None, model_input=input_df)
         return np.array(self.prediction["class_probability_scores"])
     
     def explain(self, tweet) -> dict:
@@ -69,7 +66,6 @@ def load_model():
     """Loads ML model from location path and returns the model."""
     try:
         with open(Path("model/python_model.pkl"), "rb") as f:
-            global model
             model = joblib.load(f)
         return model
     

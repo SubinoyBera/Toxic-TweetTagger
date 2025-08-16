@@ -41,7 +41,7 @@ def api_response(payload: InputData):
     start_time = time.perf_counter()
 
     tweet = payload.comment
-    explainer = LimeExplainer()
+    explainer = LimeExplainer(model)
     explaination = explainer.explain(tweet)
     prediction = explainer.prediction
 
