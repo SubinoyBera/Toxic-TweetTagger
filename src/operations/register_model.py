@@ -1,3 +1,4 @@
+# Register model in the Mlflow model registry and transition it to the "Staging" stage.
 import sys, os
 import json
 import mlflow
