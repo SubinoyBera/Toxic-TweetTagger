@@ -9,10 +9,9 @@ from typing import Any
 from lime.lime_text import LimeTextExplainer
 
 # load yaml files to get model meta data.
-model_metadata: dict[str, Any]
 try:
     with open(Path("model/registered_model_meta"), 'r') as f:
-        model_metadata = yaml.safe_load(f) or {}
+        model_metadata = yaml.safe_load(f) 
 except:
     raise FileNotFoundError("Failed to load file having model metadata")
 
