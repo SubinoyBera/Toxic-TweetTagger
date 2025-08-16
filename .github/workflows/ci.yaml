@@ -58,6 +58,9 @@ jobs:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
           USERNAME: ${{ secrets.OWNER }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
+          MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+          MONGO_URL: ${{ secrets.MONGO_URL }}
         run: |
           source .venv/bin/activate
           dvc repro
