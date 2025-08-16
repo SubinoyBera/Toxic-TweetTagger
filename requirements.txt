@@ -16,6 +16,7 @@ mlflow==2.22.1
 dagshub==0.5.10
 fastapi==0.116.1
 gunicorn==23.0.0
+huggingface-hub==0.33.2
 pydantic==2.11.7
 tqdm==4.67.1
 requests==2.32.4

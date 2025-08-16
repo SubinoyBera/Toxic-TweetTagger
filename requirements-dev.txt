@@ -28,6 +28,7 @@ tqdm==4.67.1
 requests==2.32.4
 kaggle==1.7.4.5
 kagglehub==0.3.12
+huggingface-hub==0.33.2
 jupyter_core==5.8.1
 Jinja2==3.1.6
 ipykernel==6.29.5
