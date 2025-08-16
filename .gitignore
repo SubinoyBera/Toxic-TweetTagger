@@ -211,7 +211,7 @@ logs/
 artifacts/*
 notebooks/artifacts/
 notebooks/models/
-models/*
+models/
 /artifacts
 dvc_storage/
-.dvc/cache/
+hf_serve_api/model/*

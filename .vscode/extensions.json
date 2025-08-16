@@ -1,0 +1,30 @@
+{
+  "recommendations": [
+    // --- Python ---
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-toolsai.jupyter",
+    "christian-kohler.path-intellisense",
+    "esbenp.prettier-vscode",
+    "ritwickdey.liveserver",
+
+    // --- Coding Assistance ---
+    "GitHub.copilot",
+    "codeium.codeium",
+    "njpwerner.autodocstring",
+
+    // --- Icons / Themes ---
+    "fluent-icon-theme.fluent-icons",
+    "vscode-icons-team.vscode-icons",
+
+    // --- Docker / CI/CD ---
+    "ms-azuretools.vscode-docker",
+    "docker.docker",
+    "eamodio.gitlens",
+
+    // --- YAML / JSON ---
+    "redhat.vscode-yaml",
+    "zainchen.json"
+  ],
+  "unwantedRecommendations": ["ms-vscode.cpptools"]
+}

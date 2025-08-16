@@ -2,4 +2,3 @@
 # the performance. Learn more at
 # https://dvc.org/doc/user-guide/dvcignore
 
-artifacts/feature_engineering/*

@@ -1,29 +1,30 @@
-aretfacts: artifacts
-
 data_ingestion:
   root_dir: artifacts/data_ingestion
-  raw_data_dir: raw
-  ingested_data_dir: ingested_data
-  download_url: https://raw.githubusercontent.com/SubinoyBera/Project-Datasets/main/Toxic-TweetTagger-dataset.zip
+  ingested_data_dir: raw
+  ingested_dataset: tweet_data.csv
+  train_dataset: train_data.parquet
+  test_dataset: test_data.parquet
+
+data_validation:
+  root_dir: artifacts/data_validation
+  reports_dir: reports
+  status_file: validation_status.txt
 
 data_preprocessing:
   root_dir: artifacts/data_preprocessing
-  dataset: tweet_data.csv
+  preprocessed_dataset: preprocessed_train_data.feather
 
 feature_engineering:
   root_dir: artifacts/feature_engineering
   models_dir: models
-  preprocessed_dataset: clean_data.feather
+  training_dataset: train_data.feather
 
 model_training:
   models_dir: models
-  train_dataset: train_data.feather
+  train_data: train_data.feather
 
 model_evaluation:
-  test_dataset: test_data.feather
+  test_dataset: test_data.parquet
   reports_dir: reports
   evaluation_report: metrics.json
-  experiment_info: experiment.json
-
-model_registration:
   experiment_info: experiment.json

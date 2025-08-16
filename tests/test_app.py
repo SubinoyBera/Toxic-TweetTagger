@@ -6,7 +6,6 @@ from fastapi.testclient import TestClient
 
 client = TestClient(app)
 
-
 @pytest.mark.asyncio
 async def test_health_check():
     """
@@ -29,7 +28,7 @@ async def test_home_page():
     """
     Test the home page endpoint.
 
-    This test sends a GET request to the / endpoint and verifies that the response is 200 OK, 
+    This test sends a GET request to the home endpoint and verifies that the response is 200 OK, 
     and that the response contains the HTML content type in its headers.
     
     """
@@ -56,10 +55,10 @@ async def test_predict_page():
     assert any(
         phrase in response.text
         for phrase in [
-            "highly toxic", 
-            "toxic", 
-            "likely to be toxic", 
-            "looks safe"
+            "strong", 
+            "high", 
+            "light", 
+            "none"
         ]
     )
 

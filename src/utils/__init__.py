@@ -32,9 +32,9 @@ def read_yaml(path_to_yaml: Path) -> ConfigBox:
     
 def create_directory(path_to_directory: Path, verbose=True):
     """
-    Creates directories specified in the given list of paths.
+    Creates directory at the specified location path.
     Args:
-        path_to_directories (list): List of directory paths to be created.
+        path_to_directory : Directory path location where it is to be created.
         verbose (bool, optional): If True, logs the creation of each directory. Defaults to True.
     """
     try:
@@ -55,11 +55,11 @@ def create_directory(path_to_directory: Path, verbose=True):
 
 def save_obj(location_path: Path, obj, obj_name: str):
     """
-    Saves a given object to a given path in .pkl format using the pickle library.
+    Saves a given object to the given path in joblib format.
     Args:
         location_path (Path): The path to the directory where the object should be saved.
         obj (object): The object to be saved.
-        obj_name (str): The name of the object to be saved (should include .pkl extension).
+        obj_name (str): The name of the object to be saved (should include .joblib extension).
     """
     try:
         if not obj_name.endswith(".joblib"):
@@ -77,10 +77,10 @@ def save_obj(location_path: Path, obj, obj_name: str):
 
 def load_obj(location_path: Path, obj_name: str):
     """
-    Saves a given object to a given path in .pkl format using the pickle library.
+    Loads a given object from the given path.
     Args:
-        location_path (Path): The path to the directory where the object should be saved.
-        obj_name (str): The name of the object to be saved (should include .pkl extension).
+        location_path (Path): The directory path from where the object is to be loaded.
+        obj_name (str): The name of the object to be loaded (should have .joblib extension).
     """
     try:
         if not obj_name.endswith(".joblib"):

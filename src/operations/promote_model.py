@@ -1,8 +1,11 @@
-# This script promotes a model from staging to production in MLflow.
+# This script promotes model from staging to production in MLflow model registry.
 import os, sys
 import mlflow
 from src.core.logger import logging
 from src.core.exception import AppException
+from dotenv import load_dotenv
+load_dotenv()
+
 
 def promote_model():
     """
@@ -19,7 +22,7 @@ def promote_model():
         # Set up MLflow tracking URI and authentication
         uri = os.getenv("MLFLOW_URI")
         dagshub_token = os.getenv("DAGSHUB_TOKEN")
-        dagshub_username = os.getenv("USERNAME")
+        dagshub_username = os.getenv("OWNER")
         if not dagshub_token or not dagshub_username:
             raise EnvironmentError("Dagshub environment variables is not set")
 
@@ -27,6 +30,17 @@ def promote_model():
         os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
         mlflow.set_tracking_uri(uri)        # type: ignore
+
+        # For local use
+        # =================================================================================
+        # repo_owner = os.getenv("OWNER")
+        # repo_name = os.getenv("REPO")
+        # 
+        # mlflow.set_tracking_uri(uri)
+        # if repo_owner is None:
+        # 	raise EnvironmentError("Missing dagshub logging environment credentials.")
+        # dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)    
+        # ==================================================================================
 
         client = mlflow.MlflowClient()
 
@@ -51,7 +65,7 @@ def promote_model():
         logging.info(f"Model version {model_version_staging} successfully promoted to production stage")
 
     except Exception as e:
-        logging.error(f"Failed to promote model to production stage: {e}", exc_info=True)
+        logging.error(f"Failed promoting model to production in mlflow model registry: {e}", exc_info=True)
         raise AppException(e, sys)
 
 

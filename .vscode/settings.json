@@ -1,7 +1,22 @@
 {
+  // Testing
   "python.testing.pytestArgs": [
-    "."
+    "tests"
   ],
+  
   "python.testing.unittestEnabled": false,
-  "python.testing.pytestEnabled": true
+  "python.testing.pytestEnabled": true,
+
+  // Python Interpreter
+  "python.defaultInterpreterPath": "C:\\Users\\subin\\.conda\\envs\\ml-dl.env\\python.exe",
+  "python.terminal.activateEnvironment": true,
+
+  // Formatting
+  "editor.formatOnSave": true,
+
+  // Type Checking
+  "python.analysis.typeCheckingMode": "basic",
+
+  // Optional: auto docstrings
+  "autoDocstring.docstringFormat": "google"
 }

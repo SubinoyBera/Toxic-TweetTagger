@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToxicTweet-Tagger</title>
-    <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
 </head>
 
 <body>
     <header class="header">
-        <div class="dev">
-            <h4>Subinoy Bera</h4>
+        <div class="project_name">
+            <h4>ToxicTweet-Tagger</h4>
         </div>
         
         <nav class="nav-links">
-            <a href="#">Home</a>
-            <a href="#">About</a>
+            <a href="/">Home</a>
+            <a href="/about.html">About</a>
             <a href="#">Contact</a>
         </nav>
     </header>
@@ -23,22 +23,28 @@
     <div class="container"> 
         <h1>Hate Tweet Detection</h1>
         <form action="/predict" method="POST">
-            <label for="text">Write text:</label><br>
-            <textarea id="text" name="tweet" class="textarea" rows="5" placeholder="Enter your text here ...">{{ user_input if user_input else '' }}</textarea><br>
+            <label for="text" style="font-size: 18px;">Write text:</label><br>
+            <textarea id="text" name="tweet" class="textarea" rows="5" placeholder="Enter your comment here ...">{{ user_input if user_input else '' }}</textarea><br>
             <button type="submit"><p>Predict</p></button>
         </form>
         
         {% if result is not none %}
-            <div class="result {{ prediction_class1 }}">
-                <p><strong>Result</strong></p>
-                {% if prediction_class1 > 0.70 %}
+            <div class="result {{ toxicity_level }}">
+                <p style="font-size: 20px;"><h3>RESULT</h3></p>
+                {% if toxicity_level == 'strong' %}
                 <p>⚠️🔴 This comment is highly toxic!!</p>
-                {% elif prediction_class1 > 0.54 %}
+                <a href="/api_response" style="font-size: 14px;">View API response ↗</a>
+                {% elif toxicity_level == 'high' %}
                 <p>❌ This comment is toxic!</p>
-                {% elif prediction_class1 > 0.46 %}
+                <a href="/api_response" style="font-size: 14px;">View API response ↗</a>
+                {% elif toxicity_level == 'light' %}
                 <p>🤔 This comment looks likely to be toxic!</p>
-                {% else %}
+                <a href="/api_response" style="font-size: 14px;">View API response ↗</a>
+                {% elif toxicity_level == 'none' %}
                 <p>✅😃 This comment looks safe!</p>
+                <a href="/api_response" style="font-size: 14px;">View API response</a> ↗
+                {% else %}
+                <p>😖 Fatal: Model Inference API didn't respond!</p>
                 {% endif %}
             </div>
         {% endif %}

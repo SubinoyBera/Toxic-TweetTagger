@@ -1,7 +1,4 @@
-import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-
-import gc
+import sys
 import pandas as pd
 from pathlib import Path
 import pandas as pd
@@ -9,7 +6,8 @@ from xgboost import XGBClassifier
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
-from src.utils.common import read_yaml, save_obj
+from src.utils import read_yaml, save_obj
+import gc
 
 class ModelTrainer:
     def __init__(self, config = AppConfiguration()):
@@ -77,7 +75,7 @@ def initiate_model_training():
     obj = ModelTrainer()
     try:
         logging.info(f"{'='*20}Model Training{'='*20}")
-        train_data_path = obj.model_training_config.train_data_path
+        train_data_path = obj.model_training_config.training_data_path
         if not train_data_path:
             logging.error("Training dataset path not found")
             return
@@ -92,6 +90,6 @@ def initiate_model_training():
         logging.error(f"Error during model training: {e}", exc_info=True)
         raise AppException(e, sys)
     
-# entry point for the model training process
+
 if __name__ == "__main__":  
     initiate_model_training()
