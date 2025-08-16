@@ -7,7 +7,6 @@ on:
       - '**/*.md'
       - 'images/*'
       - 'notebooks/*'
-      - 'airflow/*'
       - 'templates/*'
       - 'static/*'
       - 'app/*'
@@ -94,7 +93,7 @@ jobs:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
           OWNER: ${{ secrets.OWNER }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
-          HUGGINGFACE_TOKEN: $${{ secrets.HUGGINGFACE_TOKEN }}
+          HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
         run: |
           source .venv/bin/activate
           python -m src.operations.serve_model

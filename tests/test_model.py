@@ -25,8 +25,8 @@ def new_model():
     uri = os.getenv("MLFLOW_URI")
     dagshub_token = os.getenv("DAGSHUB_TOKEN")
     dagshub_username = os.getenv("OWNER")
-    if not dagshub_token or not dagshub_username:
-        raise EnvironmentError("Dagshub environment variables is not set")
+    if not (uri and dagshub_token and dagshub_username):
+        pytest.skip("Skipping model load test: missing DagsHub environment variables")
     
     os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_username
     os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token

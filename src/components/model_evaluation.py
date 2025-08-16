@@ -120,9 +120,6 @@ class ModelEvaluation:
             # Get the true labels
             y_test = df['Label'].values
 
-            print(y_pred.shape, proba_class1.shape)
-            print(y_test.shape)
-
             evaluation_report = {
                 "model": model_name,
                 "vectorizer": vectorizer_name,
