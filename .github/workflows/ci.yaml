@@ -56,7 +56,7 @@ jobs:
       - name: run ml pipeline
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-          USERNAME: ${{ secrets.OWNER }}
+          OWNER: ${{ secrets.OWNER }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
           MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
           MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
