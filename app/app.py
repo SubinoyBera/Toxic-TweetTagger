@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.exceptions import HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from typing import Optional
 from app.utils import *
 import requests
 
@@ -12,6 +13,7 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+response: Optional[requests.Response] = None
 
 @app.get('/', response_class=HTMLResponse)
 async def Home(request: Request):
@@ -96,6 +98,8 @@ async def api_response():
     Returns the raw JSON response from the model inference API 
     for the prediction made.
     """
+    if response is None:
+        raise HTTPException(status_code=404, detail="No prediction found.")
     return response.json()
 
 
