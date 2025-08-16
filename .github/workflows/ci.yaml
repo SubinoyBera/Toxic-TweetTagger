@@ -81,7 +81,7 @@ jobs:
         if: steps.model_test.outcome == 'success'
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-          USERNAME: ${{ secrets.OWNER }}
+          OWNER: ${{ secrets.OWNER }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
         run: |
           source .venv/bin/activate
@@ -92,7 +92,7 @@ jobs:
         if: steps.promote_model.outcome == 'success'
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-          USERNAME: ${{ secrets.OWNER }}
+          OWNER: ${{ secrets.OWNER }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
           HUGGINGFACE_TOKEN: $${{ secrets.HUGGINGFACE_TOKEN }}
         run: |
@@ -107,7 +107,7 @@ jobs:
         if: steps.deploy_model.outcome == 'success'
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-          USERNAME: ${{ secrets.OWNER }}
+          OWNER: ${{ secrets.OWNER }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
         run: |
           source .venv/bin/activate
