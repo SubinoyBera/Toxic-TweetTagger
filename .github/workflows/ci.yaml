@@ -95,7 +95,8 @@ jobs:
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
           HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
         run: |
-          .venv/bin/python -m src.operations.serve_model
+          source .venv/bin/activate
+          python -m src.operations.serve_model
 
       - name: wait for deployment
         if: steps.deploy_model.outcome == 'success'

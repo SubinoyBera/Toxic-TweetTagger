@@ -1,5 +1,4 @@
 # Upload the production model from registry to huggingface spaces for serving
-
 import os, sys
 import mlflow
 import dagshub
@@ -66,3 +65,7 @@ def serve_model():
     except Exception as e:
         logging.error(f"Model serving operation failed: {e}", exc_info=True)
         raise AppException(e, sys)
+    
+
+if __name__ == "__main__":
+    serve_model()
