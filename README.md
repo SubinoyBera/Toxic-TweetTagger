@@ -46,11 +46,12 @@ In essence, its <b>not just about building a machine learning model</b> with som
 ## 🎯 Application Preview :
 
 <p>
-    <img src="images/app_preview.png" alt="Application image" height="300" width="610">
+    <img src="images/app_preview.png" alt="Application image" height="300" width="600">
 </p>
 
-<b style="font-size: 16px;"> ↗️ <a href=""> Visit App</a></b><br>
-<b style="font-size: 16px;"> 🤗 <a href="https://huggingface.co/spaces/Subi003/ToxicTagger_serveAPI/tree/main"> HuggingFace </a></b>
+<b style="font-size: 16px;"><a href="">Visit App</a> ↗️ </b>
+<br>
+<b style="font-size: 16px;"><a href="https://huggingface.co/spaces/Subi003/ToxicTagger_serveAPI/tree/main">HuggingFace</a> 🤗 </b>
 
 📌 <b>PLEASE NOTE</b> :
 This project focuses on Machine Learning engineering, MLOps, and model deployment aspects rather than full-stack web development.
@@ -65,7 +66,7 @@ Used LIME for model observability, which increased inference time to more than 5
 <br>
 
 
-## 📊 Some Visualizations :
+## 📊 Experiment Results :
 
 <p>
     <img src="images/vizualization1.png" alt="Pair-plot visualization" height="300" width="600" style="margin-bottom: 10px;">
@@ -122,7 +123,7 @@ Write your comment and click on `predict` button. To view the full respose from 
 <br>
 <hr>
 
-### 💥 UPCOMING UPDATE :
+### 💥 Upcoming Update :
 Event Driven System Architecture with Kafka backbone for scalability, high performance and low latency. Also improving both model and system performance overall for creating a robust ML system.
 
 <br>
