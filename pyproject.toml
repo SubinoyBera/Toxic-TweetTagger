@@ -62,7 +62,10 @@ testing = [
     "pytest >= 8.0.0",
     "black",
     "flake8",
-    "mypy"
+    "mypy",
+    "mlflow",
+    "dagshub",
+    "requests"
 ]
 
 [tool.setuptools]
