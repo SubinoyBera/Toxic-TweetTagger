@@ -5,6 +5,7 @@ import pandas as pd
 from typing import Any
 from pathlib import Path
 from .data_preprocessing import DataPreprocessing
+from src.constant.constants import PARAMS_FILE
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
@@ -153,7 +154,7 @@ def initiate_model_evaluation():
     logging.info(f"{'='*20}Model Evaluation{'='*20}")
 
     # get model name
-    config_params = read_yaml(Path("params.yaml"))
+    config_params = read_yaml(PARAMS_FILE)
     model_name = config_params.model_training.model_name
     vectorizer_name = config_params.feature_engineering.vectorizer
 
