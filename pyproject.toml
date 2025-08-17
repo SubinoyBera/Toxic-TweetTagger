@@ -37,7 +37,7 @@ dependencies = [
     "tqdm",
     "huggingface-hub",
     "fastapi",
-    "uvicorn".
+    "uvicorn",
     "gunicorn"
 ]
 
