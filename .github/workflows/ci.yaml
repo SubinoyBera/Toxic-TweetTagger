@@ -28,13 +28,15 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: cache pip dependencies
+      - name: cache uv and pip dependencies
         uses: actions/cache@v3
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          path: |
+            ~/.cache/pip
+            ~/.uv_cache
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
-            ${{ runner.os }}-pip-
+            ${{ runner.os }}-deps-
 
       - name: install uv package manager
         run: |

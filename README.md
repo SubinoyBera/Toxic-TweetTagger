@@ -1,12 +1,14 @@
 # Toxic-TweetTagger
 
-## ⭐ End to End Production Grade Hate Speech Detection Application 
+## ⭐ Overview :
+
+<u><b>End to End Production-Grade Hate Speech Detection Application</b></u>
 
 Unlike <b>typical ML Demos</b>, this project aims to represent <b>real-world production level workflows!</b><br>  It covers the <b>complete lifecycle</b> from developing <b>core ML pipeline</b>, implementing <b>MLOps principles</b>, creating <b>inference API</b>, including <b>automated testing, experimentation tracking, CI/CD</b> and much more! Built to demonstrate how industries deploy ML solutions at scale, - ensuring <b>scalibility</b>, <b>reproducibility</b> and <b>maintainablity</b>. <br>
 In essence, its <b>not just about building a machine learning model</b> with some fancy accuracy — it is about building a <b>complete ecosystem</b> around the model. It demonstrates how to design a ML system following  the best practices used by ML teams and Engineers in <b>production environments</b>.
 
 
-## 🚀 Features / Highlights :
+## 🚀 Highlights :
 
 * 📂 <b>End-to-End ML Pipeline</b> – Complete ML lifecycle starting from data ingestion and preprocessing to model training, evaluation. Every stage is modular and reusable, making the pipeline easy to extend or adapt to new datasets.
 
@@ -41,21 +43,40 @@ In essence, its <b>not just about building a machine learning model</b> with som
 * <b>Deployment</b>: Vercel 
 
 
-## 🎯 Experiment Results :
+```mermaid
+flowchart TD
+    A[Data Source (MongoDB)] --> B[Data Ingestion]
+    B --> C[Data Validation]
+    C --> D[Feature Engineering]
+    D --> E[Model Training]
+    E --> F[Model Evaluation]
+    F --> G[Model Registry]
+    G --> H[Deployment (API / Service)]
+    H --> I[Monitoring & Logging]
 
-<p style="display: flex; align-items: center;">
-    <img src="images/all_experiments.png" alt="MLflow Experiment Plot" height="400" width="700" style="margin-right: 20px;/">
-    <img src="images/tuning_xgb.png" alt="MLflow Experiment Plot" height="400" width="700"><vr>
+```
+
+## 🎯 Vizualizations :
+
+<p style="display: flex;">
+      <img src="images/vizualization1.png" alt="MLflow Experiment Plot" height="200" width="300" style="margin-right: 10px;">
+    <img src="images/vizualization2.png" alt="MLflow Experiment Plot" height="200" width="300" style="margin-bottom: 10px;">
+ 
+
+ </p>
+
+<p>
+    <img src="images/all_experiments.png" alt="MLflow Experiment Plot" height="300" width="610" style="margin-bottom: 10px;">
+    <img src="images/tuning_xgb.png" alt="MLflow Experiment Plot" height="300" width="610" style="margin-bottom: 10px;">
+    <img src="images/data_drift-report.png" alt="MLflow Experiment Plot" height="300" width="610" style="margin-bottom: 10px;">
     </p>
 </p>
 
 
 ## 📌 Preview :
 
-<p style="display: flex">
-    <img src="images/app_preview.png" alt="MLflow Experiment Plot" height="500" width="800" style="margin-right: 25px;/">
-    <img src="images/api_response.png" alt="MLflow Experiment Plot" height="500" width="595"><vr>
-    </p>
+<p>
+    <img src="images/app_preview.png" alt="MLflow Experiment Plot" height="300" width="610">
 </p>
 
 

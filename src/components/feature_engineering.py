@@ -1,7 +1,8 @@
 import sys
+from src.constant.constants import PARAMS_FILE
+from src.core.configuration import AppConfiguration
 from src.core.logger import logging
 from src.core.exception import AppException
-from src.core.configuration import AppConfiguration
 from src.utils import read_yaml, save_obj
 import gc
 import pandas as pd
@@ -32,7 +33,7 @@ class FeatureEngineering:
         Saves the vectorizer object and training dataset.
         """
         try:
-            config_params = read_yaml(Path("params.yaml"))
+            config_params = read_yaml(PARAMS_FILE)
             params = config_params.feature_engineering
             vectorizer_name = params.vectorizer
 

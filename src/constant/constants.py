@@ -8,8 +8,11 @@ from pathlib import Path
 ROOT_DIR = os.getcwd()
 
 # configuration file path
-CONFIG_FILE_NAME = "config.yaml"
-CONFIG_FILE_PATH = Path(ROOT_DIR, CONFIG_FILE_NAME)
+CONFIG_DIR = Path(ROOT_DIR, "configs")
+CONFIG_FILE = Path(CONFIG_DIR, "config.yaml")
+
+# Params file path
+PARAMS_FILE = Path(CONFIG_DIR, "params.yaml")
 
 # Database Constants
 DATABASE_NAME = "Toxic_Tweets"
