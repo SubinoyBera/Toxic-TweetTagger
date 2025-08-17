@@ -6,8 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "toxictweet-tagger"
 version = "1.0.0"
 authors = [
-  { name="Subinoy Bera", 
-    email="subinoyberadgp@gmail.com" }
+  { name="Subinoy Bera", email="subinoyberadgp@gmail.com" }
 ]
 
 description = "End-to-End Hate-Tweet Detection Application."
