@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "toxictweet-tagger"
+version = "1.0.0"
+authors = [
+  { name="Subinoy Bera", 
+    email="subinoyberadgp@gmail.com" }
+]
+
+description = "End-to-End Hate-Tweet Detection Application."
+readme = "README.md"
+license = { file = "LICENSE" }
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "pandas",
+    "scipy",
+    "scikit-learn",
+    "xgboost",
+    "nltk",
+    "python-box",
+    "ensure",
+    "pymongo",
+    "PyYAML",
+    "requests",
+    "pydantic",
+    "tqdm",
+    "huggingface-hub",
+    "fastapi",
+    "uvicorn".
+    "gunicorn"
+]
+
+[project.optional-dependencies]
+mlops = [
+    "dvc",
+    "dagshub",
+    "mlflow",
+    "evidently",
+    "lime",
+    "python-dotenv"
+]
+dev = [
+    "pytest",
+    "tox",
+    "docker",
+    "matplotlib",
+    "ipykernel",
+    "tensorflow"
+]
+testing = [
+    "pytest >= 8.0.0",
+    "black",
+    "flake8",
+    "mypy"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

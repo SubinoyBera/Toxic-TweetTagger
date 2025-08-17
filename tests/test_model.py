@@ -99,8 +99,8 @@ def test_model_performance():
         metrics = json.load(f)
 
     # expected thresholds of the performance metrics for model promotion
-    assert metrics["accuracy"] >= 0
-    assert metrics["precision"] >= 0
-    assert metrics["recall"] >= 0
-    assert metrics["f1 score"] >= 0
-    assert metrics["roc_auc"] >= 0
+    assert metrics["accuracy"] >= 0.8191
+    assert metrics["precision"] >= 0.8272
+    assert metrics["recall"] >= 0.80
+    assert metrics["f1 score"] >= 0.80
+    assert metrics["roc_auc"] >= 0.85

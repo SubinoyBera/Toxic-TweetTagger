@@ -210,7 +210,7 @@ __marimo__/
 logs/
 artifacts/*
 notebooks/artifacts/
-notebooks/models/
+notebooks/dl-models/
 models/
 /artifacts
 dvc_storage/

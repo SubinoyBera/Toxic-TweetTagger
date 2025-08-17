@@ -1,7 +1,7 @@
 # Project pipeline configuration 
 import sys
 from pathlib import Path
-from ..constant.constants import *
+from ..constant.constants import CONFIG_FILE
 from ..utils import read_yaml, create_directory
 from ..core.logger import logging
 from ..core.exception import AppException
@@ -12,7 +12,7 @@ from ..core.config_entity import (DataIngestionConfig, DataValidationConfig, Dat
 class AppConfiguration:
     # class variable to hold the configuration
     _config = None
-    def __init__(self, config_filepath: Path = CONFIG_FILE_PATH):
+    def __init__(self, config_filepath: Path = CONFIG_FILE):
         
         """
         Initializes the AppConfiguration object by loading the configuration from the given file path.
