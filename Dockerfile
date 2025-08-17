@@ -8,8 +8,6 @@ COPY app/ /app/
 
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
-    
-RUN python -m nltk.downloader stopwords wordnet averaged_perceptron_tagger_eng
 
 EXPOSE 8000
 

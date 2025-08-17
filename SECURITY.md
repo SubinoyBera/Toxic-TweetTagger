@@ -51,7 +51,8 @@ Responsible disclosure policy is adopted. Once a vulnerability is reported:
 2. The reporter will be kept updated on the status of the fix.
 3. A public disclosure may be made only after the issue is resolved to prevent exploitation.
 
-⭐ Thank you for helping to maintain security of the project.<br>Your contributions make a significant difference!
+Thank you for helping to maintain security of project<br>
+Your contributions make a significant difference!
 🙏 ❤️
 ---
 
