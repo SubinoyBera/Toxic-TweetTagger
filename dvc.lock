@@ -90,7 +90,7 @@ stages:
       md5: a43ba3242f18d9deb9d5289dbcb7be3b
       size: 9829
     params:
-      config/params.yaml:
+      configs/params.yaml:
         feature_engineering.max_features: 1000
     outs:
     - path: artifacts/feature_engineering/train_data.feather
@@ -117,7 +117,7 @@ stages:
       md5: a43ba3242f18d9deb9d5289dbcb7be3b
       size: 9829
     params:
-      config/params.yaml:
+      configs/params.yaml:
         model_training.hyperparameters:
           n_estimators: 100
           learning_rate: 0.1
@@ -157,8 +157,8 @@ stages:
       md5: bee262a1a0aadb13d4d36dd27500577a
       size: 1620
     params:
-      params.yaml:
-        model_training.model_name: XGB-test01
+      configs/params.yaml:
+        model_training.model_name: XGB-test02
     outs:
     - path: reports/experiment.json
       hash: md5

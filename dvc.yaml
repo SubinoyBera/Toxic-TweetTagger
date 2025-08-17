@@ -64,7 +64,8 @@ stages:
       - artifacts/data_ingestion/test_data.parquet
       - models/model_meta.txt
     params:
-      - model_training.model_name
+      - configs/params.yaml:
+        - model_training.model_name
     outs:
       - reports/metrics.json
       - reports/experiment.json
