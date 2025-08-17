@@ -49,9 +49,12 @@ In essence, its <b>not just about building a machine learning model</b> with som
     <img src="images/app_preview.png" alt="Application image" height="300" width="600">
 </p>
 
-<b style="font-size: 16px;"><a href="">Visit App</a> ↗️ </b>
-<br>
-<b style="font-size: 16px;"><a href="https://huggingface.co/spaces/Subi003/ToxicTagger_serveAPI/tree/main">HuggingFace</a> 🤗 </b>
+<p>
+    <b style="font-size: 18px;"><a href="">Visit App</a> ↗️ </b>
+</p>
+<p>
+    <b style="font-size: 18px;"><a href="https://huggingface.co/spaces/Subi003/ToxicTagger_serveAPI/tree/main">HuggingFace</a> 🤗 </b>
+</p>
 
 📌 <b>PLEASE NOTE</b> :
 This project focuses on Machine Learning engineering, MLOps, and model deployment aspects rather than full-stack web development.
@@ -120,12 +123,10 @@ python run_app.py
 ```
 Open your browser and open the local URL : `http://localhost:8000/`.<br>
 Write your comment and click on `predict` button. To view the full respose from the model inference API click on the link shown below the prediction result: `view API response`
-<br>
 <hr>
 
 ### 💥 Upcoming Update :
 Event Driven System Architecture with Kafka backbone for scalability, high performance and low latency. Also improving both model and system performance overall for creating a robust ML system.
-
 <br>
 
 🎗️🙏 **THANK YOU !!** :) <br> 
