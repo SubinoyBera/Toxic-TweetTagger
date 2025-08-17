@@ -3,6 +3,7 @@ import pandas as pd
 from pathlib import Path
 import pandas as pd
 from xgboost import XGBClassifier
+from src.constant.constants import PARAMS_FILE
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
@@ -35,7 +36,7 @@ class ModelTrainer:
         X_train = df.drop(columns='Label')
 
         try:
-            config_params = read_yaml(Path("params.yaml"))
+            config_params = read_yaml(PARAMS_FILE)
             params = config_params.model_training
 
             model = XGBClassifier(n_estimators=params.hyperparameters.n_estimators,
