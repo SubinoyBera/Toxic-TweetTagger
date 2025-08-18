@@ -57,7 +57,7 @@ dev = [
     "matplotlib",
     "ipykernel",
     "tensorflow",
-    ""python-dotenv",
+    "python-dotenv",
 ]
 testing = [
     "pytest >= 8.0.0",
