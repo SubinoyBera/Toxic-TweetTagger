@@ -57,13 +57,13 @@ dev = [
     "matplotlib",
     "ipykernel",
     "tensorflow",
-    ""python-dotenv"
+    ""python-dotenv",
 ]
 testing = [
     "pytest >= 8.0.0",
     "black",
     "flake8",
-    "mypy"
+    "mypy",
 ]
 
 [tool.setuptools]
