@@ -35,6 +35,7 @@ dependencies = [
     "requests",
     "pydantic",
     "tqdm",
+    "httpx",
     "huggingface-hub",
     "fastapi",
     "uvicorn",
@@ -48,7 +49,6 @@ mlops = [
     "mlflow",
     "evidently",
     "lime",
-    "python-dotenv"
 ]
 dev = [
     "pytest",
@@ -56,16 +56,14 @@ dev = [
     "docker",
     "matplotlib",
     "ipykernel",
-    "tensorflow"
+    "tensorflow",
+    ""python-dotenv"
 ]
 testing = [
     "pytest >= 8.0.0",
     "black",
     "flake8",
-    "mypy",
-    "mlflow",
-    "dagshub",
-    "requests"
+    "mypy"
 ]
 
 [tool.setuptools]
