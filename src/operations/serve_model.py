@@ -44,10 +44,10 @@ def serve_model():
     try:
         model_name = "ToxicTagger-Models"
         stage = "Production"
-        #model_uri = f"models:/{model_name}/{stage}"
+        model_uri = f"models:/{model_name}/{stage}"
 
-        #logging.info(f"Downloading model artifacts from MLflow model registry")
-        #artifacts.download_artifacts(artifact_uri=model_uri, dst_path="hf_serve_api/model")
+        logging.info(f"Downloading model artifacts from MLflow model registry")
+        artifacts.download_artifacts(artifact_uri=model_uri, dst_path="hf_serve_api/model")
 
         if not hf_token:
             raise EnvironmentError("Huggingface access token is not set")

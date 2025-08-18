@@ -13,7 +13,7 @@ In essence, its <b>not just about building a machine learning model</b> with som
 
 - ⚓ <b>Data Drift check with Evidently</b> – Right after data ingestion, Evidently is used for data validation to ensure data quality, schema consistency, and distribution checks. This helps catch potential issues early and ensures only valid data flows into the training pipeline.
 
-- 🔗 <b>Data & Pipeline Tracking with DVC</b> – Datasets, artifacts and pipeline all are tracked with DVC, providing transparency, version-control and detect changes in any data or pipeline. Prevents recomputation if no changes is detected.
+- ✒️ <b>Data & Pipeline Tracking with DVC</b> – Datasets, artifacts and pipeline all are tracked with DVC, providing transparency, version-control and detect changes in any data or pipeline. Prevents recomputation if no changes is detected.
 
 - 🔍 <b>Experiment Tracking, Model Versioning & Registration in MLflow</b> – Every training run is logged with metrics, hyperparameters, artifacts, and model versions, ensuring that results are fully reproducible and enabling easy comparison of experiments. Models are also saved in model registry with stages for reproducibility and identification which model is currently at production.
 
@@ -59,7 +59,7 @@ The application interface is built using basic HTML & CSS only, just enough to d
 * Model versioning & experiment management with MLflow.
 * MLOps best practices (CI/CD, testing, observability, deployment)
 
-Used LIME for model observability, which increased inference time to more than 5 secs! Performed optimization and reduce it arround 0.7 secs. Still it can have latency issues and cold start delays upto 10 secs.<br>
+Used LIME for model observability, which increased inference time for each prediction to about 5+ secs! Performed optimization and reduced it around 0.5-0.8 secs. However, still it might have latency issues and cold start delays upto 10 secs.<br>
 <b> 📍 All open source tools and free services have been used to develop this application!! 🙏✨</b>
 <br>
 
