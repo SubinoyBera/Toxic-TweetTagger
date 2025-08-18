@@ -59,7 +59,7 @@ The application interface is built using basic HTML & CSS only, just enough to d
 * Model versioning & experiment management with MLflow.
 * MLOps best practices (CI/CD, testing, observability, deployment)
 
-Used LIME for model observability, which increased inference time to more than 5 secs! Performed optimization and reduce it arround 0.4-0.7 secs. Still it can have latency issues and cold start delays upto 10 secs.<br>
+Used LIME for model observability, which increased inference time to more than 5 secs! Performed optimization and reduce it arround 0.7 secs. Still it can have latency issues and cold start delays upto 10 secs.<br>
 <b> 📍 All open source tools and free services have been used to develop this application!! 🙏✨</b>
 <br>
 
