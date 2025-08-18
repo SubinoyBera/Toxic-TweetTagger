@@ -49,7 +49,7 @@ In essence, its <b>not just about building a machine learning model</b> with som
 
 - ### [Visit App ↗️](https://toxictweet-tagger.vercel.app)
 - ### [Hugging Face 🤗](https://huggingface.co/spaces/Subi003/ToxicTagger_serveAPI/tree/main)
-<hr>
+
 📌 <b>PLEASE NOTE</b> :
 This project focuses on Machine Learning engineering, MLOps, and model deployment aspects rather than full-stack web development.
 The application interface is built using basic HTML & CSS only, just enough to demonstrate how end users can interact with the deployed model.

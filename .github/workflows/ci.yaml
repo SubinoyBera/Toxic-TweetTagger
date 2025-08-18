@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - '**/*.md'
+      - '*.md'
       - 'images/*'
       - 'notebooks/*'
       - 'templates/*'
@@ -13,6 +13,13 @@ on:
 
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '*.md'
+      - 'images/*'
+      - 'notebooks/*'
+      - 'templates/*'
+      - 'static/*'
+      - 'app/*'
 
 
 jobs:
