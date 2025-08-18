@@ -1,4 +1,4 @@
-# Toxic-TweetTagger
+# Toxic-Tweet Tagger
 
 ## ⭐ Overview :
 
@@ -37,7 +37,6 @@ In essence, its <b>not just about building a machine learning model</b> with som
 * <b>ML /DL/ NLP</b> : Pandas, numpy, scipy, scikit-learn, nltk, tensorflow 
 * <b>MLOps Tools</b> : Github Actions, Docker, MLflow, DVC, Evidently
 * <b>Database Store</b> : MongoDB Atlas
-
 * <b>API & Serving</b> : FastAPI, HuggingFace spaces (model inference server)
 * <b>Testing & Code Quality</b> : tox, pytest, black, flake8, mypy
 * <b>Deployment</b> : Vercel 
@@ -50,21 +49,21 @@ In essence, its <b>not just about building a machine learning model</b> with som
 </p>
 
 <p>
-    <b style="font-size: 18px;"><a href="">Visit App</a> ↗️ </b>
+    <b style="font-size: 20px;"><a href="https://toxictweet-tagger.vercel.app">Visit App</a> ↗️ </b>
 </p>
 <p>
-    <b style="font-size: 18px;"><a href="https://huggingface.co/spaces/Subi003/ToxicTagger_serveAPI/tree/main">HuggingFace</a> 🤗 </b>
+    <b style="font-size: 20px;"><a href="https://huggingface.co/spaces/Subi003/ToxicTagger_serveAPI/tree/main">Hugging Face</a> 🤗 </b>
 </p>
 
 📌 <b>PLEASE NOTE</b> :
 This project focuses on Machine Learning engineering, MLOps, and model deployment aspects rather than full-stack web development.
 The application interface is built using basic HTML & CSS only, just enough to demonstrate how end users can interact with the deployed model.
 <br> The core emphasis of this work is on:
-* Data pipeline design (ingestion → validation → preprocessing → training → serving)
-* Model versioning & experiment management with MLflow
+* Data pipeline design.
+* Model versioning & experiment management with MLflow.
 * MLOps best practices (CI/CD, testing, observability, deployment)
 
-Used LIME for model observability, which increased inference time to more than 5 secs! Performed optimization and reduce it arround 0.4-0.7 secs. Still it can have latency issues and cold start delays upto 8-10 secs.<br> 
+Used LIME for model observability, which increased inference time to more than 5 secs! Performed optimization and reduce it arround 0.4-0.7 secs. Still it can have latency issues and cold start delays upto 10 secs.<br> 
 <b> 📍 All open source tools and free services have been used to develop this application!! 🙏✨</b> 
 <br>
 
@@ -79,7 +78,7 @@ Used LIME for model observability, which increased inference time to more than 5
     </p>
 </p>
 
-## ⚙️ Installation & Setup :
+## ⚙️ Installation :
 
 STEP: 01 - Clone this repository
 
@@ -126,7 +125,7 @@ Write your comment and click on `predict` button. To view the full respose from 
 <hr>
 
 ### 💥 Upcoming Update :
-Event Driven System Architecture with Kafka backbone for scalability, high performance and low latency. Also improving both model and system performance overall for creating a robust ML system.
+Event Driven System Architecture with Kafka backbone for scalability, high performance and low latency with monitoring using prometheus and grafana. Also improving both model and system performance overall for creating a robust ML system. 
 <br>
 
 🎗️🙏 **THANK YOU !!** :) <br> 
