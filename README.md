@@ -4,7 +4,7 @@
 
 <u><b>End to End Production-Grade Hate Speech Detection Application</b></u>
 
-Unlike <b>typical ML Demos</b>, this project aims to represent <b>real-world production level workflows!</b> It covers the <b>complete lifecycle</b> from developing <b>core ML pipeline</b>, implementing <b>MLOps principles</b>, creating <b>inference API</b>, including <b>automated testing, experimentation tracking, CI/CD</b> and much more! Built to demonstrate how industries deploy ML solutions at scale, - ensuring <b>scalibility</b>, <b>reproducibility</b> and <b>maintainablity</b>. <br>
+Unlike <b>typical ML Demos</b>, this project aims to represent <b>real-world production level workflows!</b> It covers the <b>complete lifecycle</b> from developing <b>core ML pipeline</b>, implementing <b>MLOps principles</b>, creating <b>inference API</b>, including <b>automated testing, experimentation tracking, CI/CD</b> and much more! Built to demonstrate how industries deploy ML solutions at scale, - ensuring <b> scalability </b>, <b>reproducibility</b> and <b> maintainability </b>. <br>
 In essence, its <b>not just about building a machine learning model</b> with some fancy accuracy — it is about building a <b>complete ecosystem</b> around the model. It demonstrates how to design a ML system following the best practices used by ML teams and Engineers in <b>production environments</b>.
 
 ## 🚀 Highlights :
@@ -13,9 +13,9 @@ In essence, its <b>not just about building a machine learning model</b> with som
 
 - ⚓ <b>Data Drift check with Evidently</b> – Right after data ingestion, Evidently is used for data validation to ensure data quality, schema consistency, and distribution checks. This helps catch potential issues early and ensures only valid data flows into the training pipeline.
 
-- ✒️ <b>Data & Pipeline Tracking with DVC</b> – Datasets, artifacts and pipeline all are tracked with DVC, providing transparency, version-control and detect changes in any data or pipeline. Prevents recomputation if no changes is detected.
+- ✒️ <b>Data & Pipeline Tracking with DVC</b> – Datasets, artifacts and pipeline all are tracked with DVC, providing transparency, version-control and detecting changes in any data or pipeline. Prevents recomputation if no changes is detected.
 
-- 🔍 <b>Experiment Tracking, Model Versioning & Registration in MLflow</b> – Every training run is logged with metrics, hyperparameters, artifacts, and model versions, ensuring that results are fully reproducible and enabling easy comparison of experiments. Models are also saved in model registry with stages for reproducibility and identification which model is currently at production.
+- 🔍 <b>Experiment Tracking, Model Versioning & Registration in MLflow</b> – Every training run is logged with metrics, hyperparameters, artifacts, and model versions, ensuring that results are fully reproducible and enabling easy comparison of experiments. Models are also saved in the model registry with stages for reproducibility and identification which model is currently at production.
 
 - 🧪 <b>Automated Testing & Code Quality Checks</b> – The project is production-hardened with unit tests, integration tests, and linting/formatting tools. CI ensures that code remains clean, reliable, and maintainable at scale.
 
@@ -82,7 +82,7 @@ git clone https://github.com/SubinoyBera/ToxicTweet-Tagger
 cd ToxicTweet-Tagger
 ```
 
-STEP: 02 - Create and activate conda evironment
+STEP: 02 - Create and activate conda environment
 
 ```bash
 conda create -p venv python=3.11.5 -y
@@ -90,7 +90,7 @@ conda activate venv
 ```
 
 STEP: 03 - Install project requirements. <br>
-For running the application, only install app requiremnts
+To run the application, only install the app requirements
 
 ```bash
 pip install -r app/requirements.txt
@@ -109,8 +109,8 @@ STEP: 04 - Build the package
 python -m build
 ```
 
-STEP: 05 - If you want to try out the ML pipeline then only perform this step, else please `skip this` and directly go to `STEP: 06`. <br>
-Create a `.env` file in the root directory and add the required environment variables as mentioned in the given `.env.example` file. Make sure you have accounts in Dagshub, MongoDB Atlas and HuggingFace. Get your hate-tweet dataset, perform EDA, experiments and upload it to MongoDB. Update the files in the `src/` folder with your implementation and model parameters in the `params.yaml` file. Run this command to execute your ML pipeline :
+STEP: 05 - If you want to try out the ML pipeline, perform this step only; otherwise, please `skip this` and go directly to `STEP: 06`. <br>
+Create a `.env` file in the root directory and add the required environment variables as mentioned in the given `.env.example` file. Make sure you have accounts in Dagshub, MongoDB Atlas and HuggingFace. Get your hate-tweet dataset, perform EDA, experiments, and upload it to MongoDB. Update the files in the `src/` folder with your implementation and model parameters in the `params.yaml` file. Run this command to execute your ML pipeline :
 
 ```bash
 dvc repro
@@ -123,13 +123,13 @@ python run_app.py
 ```
 
 Open your browser and open the local URL : `http://localhost:8000/`.<br>
-Write your comment and click on `predict` button. To view the full respose from the model inference API click on the link shown below the prediction result: `view API response`
+Write your comment and click on the `predict` button. To view the full response from the model inference API, click on the link shown below the prediction result: `view API response`
 
 <hr>
 
 ### 💥 Upcoming Update :
 
-Event Driven System Architecture with Kafka backbone for scalability, high performance and low latency with monitoring using prometheus and grafana. Also improving both model and system performance overall for creating a robust ML system.
+Event Driven System Architecture with Kafka backbone for scalability, high performance, and low latency, with monitoring using Prometheus and Grafana. Also, improving both model and system performance overall for creating a robust ML system.
 <br>
 
 🎗️🙏 **THANK YOU !!** :) <br>
