@@ -15,7 +15,7 @@ CONFIG_FILE = Path(CONFIG_DIR, "config.yaml")
 PARAMS_FILE = Path(CONFIG_DIR, "params.yaml")
 
 # Database Constants
-DATABASE_NAME = "Toxic_Tweets"
+DATABASE_NAME = "Tweets_DB"
 COLLECTION_NAME = "toxic_tweet_data"
 
 # HuggingFace Repo
