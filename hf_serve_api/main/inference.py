@@ -4,8 +4,12 @@ from main.schema import InputData, APIResponse
 from datetime import datetime
 from main.utils import *
 import uuid, time
+from src.db.mongo_client import MongoDBClient
+from db_logging import BufferedBatchWriter
 
 model = load_model()
+
+writer = BufferedBatchWriter()
 
 inference_api = FastAPI()
 
@@ -52,8 +56,6 @@ def api_response(payload: InputData):
         proba_class1 = float(probability_scores[1])
     else:
         raise ValueError("Model prediction could not be made.")
-   
-    end_time = time.perf_counter()
 
     if proba_class1 > 0.70:
         toxic_level = "strong"
@@ -64,15 +66,24 @@ def api_response(payload: InputData):
     else:
         toxic_level = "none"
 
+    record = {
+        "request_id": request_id,
+        "timestamp": timestamp,
+        "comment": tweet,
+        "prediction": label,
+        "confidence": round(max(proba_class0, proba_class1), 4),
+        "feedback": None
+    }
+
+    writer.add(record)
+
+    end_time = time.perf_counter()
+    
     response = {
         "prediction": {
             "class_label": label,
-            "confidence": round(abs(proba_class0 - proba_class1), 4),
+            "confidence": round(max(proba_class0, proba_class1), 4),
             "toxic_level": toxic_level,
-            "pred_scores": {
-                "0": round(proba_class0, 4),
-                "1": round(proba_class1, 4)
-            },
             "explaination": explaination
         },
         "metadata": {

@@ -72,11 +72,11 @@ class MongoDBClient:
             database = self.client[database_name]
             collection = database[collection_name]
 
-            collection.insert_many(docs)
+            collection.insert_many(docs, ordered=False)
             logging.info("Data inserted successfully")
         
         except Exception as e:
-            logging.error(f"Failed to insert data into MongoDB: {e}", exc_info=True)
+            logging.warning(f"Failed to insert docs into MongoDB collection: {e}", exc_info=True)
             raise AppException(e, sys)
         
 

@@ -1,6 +1,6 @@
 import sys
 from sklearn.model_selection import train_test_split
-from src.constant.constants import DATABASE_NAME, COLLECTION_NAME
+from src.constant.constants import DATABASE_NAME, TRAINING_COLLECTION_NAME
 from src.db.mongo_client import MongoDBClient
 from src.core.logger import logging
 from src.core.exception import AppException
@@ -37,7 +37,7 @@ class DataIngestion:
             logging.info("Connecting to MongoDB")
             client = MongoDBClient()
 
-            data = client.get_all_docs(database_name=DATABASE_NAME, collection_name=COLLECTION_NAME)
+            data = client.get_all_docs(database_name=DATABASE_NAME, collection_name=TRAINING_COLLECTION_NAME)
 
             data.to_csv(save_ingested_data_path, index=False)
             logging.info(f"Raw ingested data saved successfully saved at {save_ingested_data_path}")

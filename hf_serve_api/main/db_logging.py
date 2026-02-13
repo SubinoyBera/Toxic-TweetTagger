@@ -1,11 +1,12 @@
 import time
 import threading
-from queue import Queue, Empty
-from pymongo.collection import Collection
+from queue import Queue, Empty, Full
+from src.db.mongo_client import MongoDBClient
+from src.constant.constants import DATABASE_NAME, PRODUCTION_COLLECTION_NAME
 from src.core.logger import logging 
 
 class BufferedBatchWriter:
-    def __init__(self, collection: Collection):
+    def __init__(self):
         """
         Initializes the buffered batch writer.
         The buffered batch writer will write records to the MongoDB collection in batches.
@@ -13,14 +14,16 @@ class BufferedBatchWriter:
         The worker thread will flush the batch to the collection when the batch reaches its max size or when the flush
         interval has elapsed since the last flush.
         """
-        self.collection = collection
         self.queue = Queue(maxsize=500)
         self.max_batch_size = 200                 
         self.flush_interval = 30
         self.shutdown_flag = threading.Event()
 
-        self.worker = threading.Thread(target=self._writer_worker)
-        self.worker.daemon = True
+        self.client = MongoDBClient()
+        self.database_name = DATABASE_NAME
+        self.collection_name = PRODUCTION_COLLECTION_NAME
+
+        self.worker = threading.Thread(target=self._writer_worker, daemon=True)
         self.worker.start()
 
 
@@ -30,9 +33,11 @@ class BufferedBatchWriter:
 
         Args:
             record (dict): The record to be added to the batch.
-
         """
-        self.queue.put(record)
+        try:
+            self.queue.put_nowait(record)
+        except Full:
+            logging.warning(f"Failed to add record in buffer queue: Queue is full")
 
     def _writer_worker(self):
         """
@@ -92,11 +97,11 @@ class BufferedBatchWriter:
             batch_records (list): A list of records to be flushed to the MongoDB collection.
         """
         try:
-            self.collection.insert_many(batch_records, ordered=False)
-            print(f"Flushed {len(batch_records)} records to MongoDB")
+            self.client.insert_docs(self.collection_name, self.database_name, batch_records)
+            logging.info(f"Flushed {len(batch_records)} records to MongoDB")
         
         except Exception as e:
-            logging.warning(f"MongoDB write failed: {e}")
+            logging.warning(f"BufferedBatchWriter failed to flush: {e}")
 
 
     def shutdown(self):
@@ -107,5 +112,5 @@ class BufferedBatchWriter:
         that all records are flushed to the database.
         """
         self.shutdown_flag.set()
-        # Wait for the worker thread to finish
+        # Wait the main thread until worker fully exits.
         self.worker.join()
