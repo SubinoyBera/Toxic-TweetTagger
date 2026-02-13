@@ -1,0 +1,291 @@
+Folder map of d:\My Projects\Toxic Tweet-Tagger
+==================================================
+
+├── __pycache__/
+│   └── test.cpython-311.pyc
+├── .dvc/
+
+├── .git/
+│   ├── hooks/
+│   │   ├── applypatch-msg.sample
+│   │   ├── commit-msg.sample
+│   │   ├── fsmonitor-watchman.sample
+│   │   ├── post-update.sample
+│   │   ├── pre-applypatch.sample
+│   │   ├── pre-commit.sample
+│   │   ├── pre-merge-commit.sample
+│   │   ├── pre-push.sample
+│   │   ├── pre-rebase.sample
+│   │   ├── pre-receive.sample
+│   │   ├── prepare-commit-msg.sample
+│   │   ├── push-to-checkout.sample
+│   │   ├── sendemail-validate.sample
+│   │   └── update.sample
+│   ├── info/
+│   │   └── exclude
+│   ├── logs/
+│   │   ├── refs/
+│   │   │   ├── heads/
+│   │   │   │   ├── feature/
+│   │   │   │   │   └── async-inference-logging
+│   │   │   │   └── main
+│   │   │   └── remotes/
+│   │   │       └── origin/
+│   │   │           ├── feature/
+│   │   │           │   └── async-inference-logging
+│   │   │           └── main
+│   │   └── HEAD
+│   │   ├── info/
+│   │   └── pack/
+│   ├── refs/
+│   │   ├── heads/
+│   │   │   ├── feature/
+│   │   │   │   └── async-inference-logging
+│   │   │   └── main
+│   │   ├── remotes/
+│   │   │   └── origin/
+│   │   │       ├── feature/
+│   │   │       │   └── async-inference-logging
+│   │   │       └── main
+│   │   └── tags/
+│   │       └── v1.0.0
+│   ├── COMMIT_EDITMSG
+│   ├── config
+│   ├── description
+│   ├── FETCH_HEAD
+│   ├── HEAD
+│   ├── index
+│   └── ORIG_HEAD
+├── .github/
+│   └── workflows/
+│       ├── ci.yaml
+│       └── release.yaml
+├── .pytest_cache/
+│   ├── v/
+│   │   └── cache/
+│   │       ├── lastfailed
+│   │       └── nodeids
+│   ├── .gitignore
+│   ├── CACHEDIR.TAG
+│   └── README.md
+├── .vscode/
+│   ├── extensions.json
+│   └── settings.json
+├── app/
+│   ├── __pycache__/
+│   │   ├── __init__.cpython-311.pyc
+│   │   ├── app.cpython-311.pyc
+│   │   ├── preprocessor.cpython-311.pyc
+│   │   ├── schema.cpython-311.pyc
+│   │   ├── service_utils.cpython-311.pyc
+│   │   ├── services.cpython-311.pyc
+│   │   └── utils.cpython-311.pyc
+│   ├── nltk_data/
+│   │   ├── corpora/
+│   │   │   ├── stopwords/
+│   │   │   ├── stopwords.zip
+│   │   │   └── wordnet.zip
+│   │   ├── taggers/
+│   │   │   ├── averaged_perceptron_tagger_eng/
+│   │   │   │   ├── averaged_perceptron_tagger_eng.classes.json
+│   │   │   │   ├── averaged_perceptron_tagger_eng.tagdict.json
+│   │   │   │   └── averaged_perceptron_tagger_eng.weights.json
+│   │   │   └── averaged_perceptron_tagger_eng.zip
+│   │   └── tokenizers/
+│   │       ├── punkt/
+│   │       │   ├── PY3/
+│   │       │   ├── .DS_Store
+│   │       └── punkt.zip
+│   ├── __init__.py
+│   ├── app.py
+│   ├── requirements.txt
+│   └── utils.py
+├── artifacts/
+│   ├── data_ingestion/
+│   │   ├── raw/
+│   │   │   └── tweet_data.csv
+│   │   ├── test_data.parquet
+│   │   └── train_data.parquet
+│   ├── data_preprocessing/
+│   │   ├── preprocessed_test_data.feather
+│   │   └── preprocessed_train_data.feather
+│   ├── data_validation/
+│   │   └── validation_status.txt
+│   └── feature_engineering/
+│       └── train_data.feather
+├── configs/
+│   ├── config.yaml
+│   └── params.yaml
+├── dist/
+│   ├── toxic_tweettagger-0.1.0-py3-none-any.whl
+│   └── toxic_tweettagger-0.1.0.tar.gz
+├── dvc_storage/
+│   └── files/
+├── hf_serve_api/
+│   ├── main/
+│   │   ├── __init__.py
+│   │   ├── db_logging.py
+│   │   ├── inference.py
+│   │   ├── schema.py
+│   │   └── utils.py
+│   ├── model/
+│   │   ├── artifacts/
+│   │   │   ├── Tfidf.joblib
+│   │   │   └── XGB-v2.joblib
+│   │   ├── conda.yaml
+│   │   ├── MLmodel
+│   │   ├── python_env.yaml
+│   │   ├── python_model.pkl
+│   │   ├── registered_model_meta
+│   │   └── requirements.txt
+│   ├── .dockerignore
+│   ├── .gitattributes
+│   ├── Dockerfile
+│   ├── README.md
+│   └── requirements.txt
+├── images/
+│   ├── all_experiments.png
+│   ├── app_preview.png
+│   ├── base_models_comparison.png
+│   ├── BoW_vs_TF-IDF.png
+│   ├── data_drift-report.png
+│   ├── lime_report.png
+│   ├── tuning_xgb.png
+│   └── vizualization1.png
+├── logs/
+├── mlruns/
+├── models/
+├── notebooks/
+│   ├── artifacts/
+│   │   ├── data_drift.html
+│   │   ├── final_data.csv
+│   │   └── preprocessed_data.csv
+│   ├── dl-models/
+│   │   ├── bi-lstm.h5
+│   │   ├── lstm-v1.h5
+│   │   ├── lstm-v2.h5
+│   │   └── tokenizer.pkl
+│   ├── data exploration.ipynb
+│   ├── dl_experiments.ipynb
+│   ├── model experiments.ipynb
+│   ├── test.ipynb
+│   └── tuning xgboost.ipynb
+├── reports/
+│   ├── .gitignore
+│   ├── data_drift.json
+│   ├── experiment.json
+│   ├── metrics.json
+│   └── report.txt
+├── src/
+│   ├── __pycache__/
+│   │   └── __init__.cpython-311.pyc
+│   ├── components/
+│   │   ├── __pycache__/
+│   │   │   ├── __init__.cpython-311.pyc
+│   │   │   ├── data_ingestion.cpython-311.pyc
+│   │   │   ├── data_preprocessing.cpython-311.pyc
+│   │   │   ├── data_validation.cpython-311.pyc
+│   │   │   ├── feature_engineering.cpython-311.pyc
+│   │   │   ├── model_evaluation.cpython-311.pyc
+│   │   │   ├── model_training.cpython-311.pyc
+│   │   │   └── register_model.cpython-311.pyc
+│   │   ├── __init__.py
+│   │   ├── data_ingestion.py
+│   │   ├── data_preprocessing.py
+│   │   ├── data_validation.py
+│   │   ├── feature_engineering.py
+│   │   ├── model_evaluation.py
+│   │   └── model_training.py
+│   ├── constant/
+│   │   ├── __pycache__/
+│   │   │   ├── __init__.cpython-311.pyc
+│   │   │   └── constants.cpython-311.pyc
+│   │   ├── __init__.py
+│   │   └── constants.py
+│   ├── core/
+│   │   ├── __pycache__/
+│   │   │   ├── __init__.cpython-311.pyc
+│   │   │   ├── config_entity.cpython-311.pyc
+│   │   │   ├── configuration.cpython-311.pyc
+│   │   │   ├── exception.cpython-311.pyc
+│   │   │   └── logger.cpython-311.pyc
+│   │   ├── __init__.py
+│   │   ├── config_entity.py
+│   │   ├── configuration.py
+│   │   ├── exception.py
+│   │   └── logger.py
+│   ├── db/
+│   │   ├── __pycache__/
+│   │   │   ├── __init__.cpython-311.pyc
+│   │   │   └── mongo_client.cpython-311.pyc
+│   │   ├── __init__.py
+│   │   └── mongo_client.py
+│   ├── operations/
+│   │   ├── __pycache__/
+│   │   │   ├── __init__.cpython-311.pyc
+│   │   │   ├── model_pusher.cpython-311.pyc
+│   │   │   ├── register_model.cpython-311.pyc
+│   │   │   └── serve_model.cpython-311.pyc
+│   │   ├── __init__.py
+│   │   ├── promote_model.py
+│   │   ├── register_model.py
+│   │   └── serve_model.py
+│   ├── pipeline/
+│   │   ├── __pycache__/
+│   │   │   ├── __init__.cpython-311.pyc
+│   │   │   └── ml_pipeline.cpython-311.pyc
+│   │   ├── __init__.py
+│   │   └── ml_pipeline.py
+│   ├── script/
+│   │   ├── __pycache__/
+│   │   │   ├── __init__.cpython-311.pyc
+│   │   │   └── model_wrapper.cpython-311.pyc
+│   │   ├── __init__.py
+│   │   └── model_wrapper.py
+│   ├── Toxic_TweetTagger.egg-info/
+│   │   ├── dependency_links.txt
+│   │   ├── PKG-INFO
+│   │   ├── requires.txt
+│   │   ├── SOURCES.txt
+│   │   └── top_level.txt
+│   ├── utils/
+│   │   ├── __pycache__/
+│   │   │   ├── __init__.cpython-311.pyc
+│   │   │   └── common.cpython-311.pyc
+│   │   └── __init__.py
+│   └── __init__.py
+├── static/
+│   ├── favicon.png
+│   └── style.css
+├── templates/
+│   ├── about.html
+│   └── index.html
+├── tests/
+│   ├── __pycache__/
+│   │   ├── __init__.cpython-311.pyc
+│   │   ├── test_app.cpython-311-pytest-8.4.1.pyc
+│   │   ├── test_dumy.cpython-311-pytest-8.4.1.pyc
+│   │   ├── test_fastapi.cpython-311-pytest-8.4.1.pyc
+│   │   └── test_model.cpython-311-pytest-8.4.1.pyc
+│   ├── __init__.py
+│   ├── test_app.py
+│   └── test_model.py
+├── .dockerignore
+├── .env
+├── .env.example
+├── .gitattributes
+├── .gitignore
+├── Dockerfile
+├── dvc.lock
+├── dvc.yaml
+├── LICENSE
+├── pyproject.toml
+├── pytest.ini
+├── README.md
+├── requirements-dev.txt
+├── requirements.txt
+├── run_app.py
+├── SECURITY.md
+├── setup.py
+├── tox.ini
+└── vercel.json
