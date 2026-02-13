@@ -16,7 +16,8 @@ PARAMS_FILE = Path(CONFIG_DIR, "params.yaml")
 
 # Database Constants
 DATABASE_NAME = "Tweets_DB"
-COLLECTION_NAME = "toxic_tweet_data"
+TRAINING_COLLECTION_NAME = "tweets_collection"
+PRODUCTION_COLLECTION_NAME = "production_tweets"
 
 # HuggingFace Repo
 HUGGINGFACE_REPO_ID = "Subi003/ToxicTagger_serveAPI"
