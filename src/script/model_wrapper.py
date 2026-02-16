@@ -1,5 +1,6 @@
 # This script wraps the ML model and the vectorizer into a single Python model object and 
-# prepares it for registeration in MLflow.
+# prepares it for registeration in MLflow. 
+# This implementation is deprecated and is not used in the current version of the API (V2)
 
 import pandas as pd
 from mlflow.pyfunc.model import PythonModel

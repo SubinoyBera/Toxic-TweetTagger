@@ -30,6 +30,7 @@ class MongoDBClient:
             logging.error(f"Failed to inititalize MongoDBClient -connection failed: {e}", exc_info=True)
             raise AppException(e, sys)
     
+
     def get_all_docs(self, collection_name:str, database_name:str) -> pd.DataFrame:
         """
         Fetches data from the specified MongoDB collection and database.

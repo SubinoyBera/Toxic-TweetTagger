@@ -1,12 +1,11 @@
 import time
 import threading
 from queue import Queue, Empty, Full
-from src.db.mongo_client import MongoDBClient
 from src.constant.constants import DATABASE_NAME, PRODUCTION_COLLECTION_NAME
 from src.core.logger import logging 
 
 class BufferedBatchWriter:
-    def __init__(self):
+    def __init__(self, mongo_client):
         """
         Initializes the buffered batch writer.
         The buffered batch writer will write records to the MongoDB collection in batches.
@@ -19,7 +18,7 @@ class BufferedBatchWriter:
         self.flush_interval = 30
         self.shutdown_flag = threading.Event()
 
-        self.client = MongoDBClient()
+        self.client = mongo_client 
         self.database_name = DATABASE_NAME
         self.collection_name = PRODUCTION_COLLECTION_NAME
 

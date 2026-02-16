@@ -1,11 +1,13 @@
 # Utility functions for the model inference api
 
+import os
 import yaml
 import joblib
 import numpy as np
 import pandas as pd
 from pathlib import Path
 from typing import Any
+from sklearn.base import BaseEstimator
 from lime.lime_text import LimeTextExplainer
 
 # load yaml files to get model meta data.
@@ -64,13 +66,25 @@ class LimeExplainer:
 
 def load_model():
     """Loads ML model from location path and returns the model."""
+    model_artifacts_dir = Path("model/artifacts")
+    model, vectorizer = None, None
     try:
-        with open(Path("model/python_model.pkl"), "rb") as f:
-            model = joblib.load(f)
-        return model
+        for file in os.listdir(model_artifacts_dir):
+            if file.endswith(".joblib"):
+                obj = joblib.load(os.path.join(model_artifacts_dir, file))
+
+                # check if object have "predict" method AND be estimator-like
+                if hasattr(obj, "predict") and isinstance(obj, BaseEstimator):
+                    model = obj
+
+                # Preprocessor: has transform but not predict
+                elif hasattr(obj, "transform") and not hasattr(obj, "predict"):
+                    vectorizer = obj
+
+        return model, vectorizer
     
-    except Exception as e:
-        raise RuntimeError(f"Failed to load model from hub: {e}")
+    except FileNotFoundError:
+        raise FileNotFoundError("Model artifacts not found in the directory.")
 
 
 def get_model_registry() -> str:
