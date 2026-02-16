@@ -1,6 +1,6 @@
 import sys, os
 import json
-import numpy as np
+
 import pandas as pd
 from typing import Any
 from pathlib import Path
@@ -11,6 +11,7 @@ from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
 from src.utils import create_directory, read_yaml, load_obj
 from sklearn.metrics import (accuracy_score, precision_score, recall_score,f1_score, roc_auc_score)
+
 import gc
 import dagshub
 import mlflow
