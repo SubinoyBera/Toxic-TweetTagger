@@ -38,9 +38,8 @@ class FeatureEngineering:
             vectorizer_name = params.vectorizer
 
             vectorizer = TfidfVectorizer(max_features=params.max_features,
-                                        min_df=params.min_df,
-                                        ngram_range=(params.ngrams.min, params.ngrams.max)
-                                        )
+                                        min_df=params.min_df, ngram_range=(params.ngrams.min, params.ngrams.max)
+                                    )
 
             logging.info("Performing TF-IDF vectorization")
             X_tfidf = vectorizer.fit_transform(df['Content'])
@@ -50,10 +49,10 @@ class FeatureEngineering:
             training_data['Label'] = df['Label'].values
 
             save_model_path = self.eng_config.models_dir
-            save_obj(location_path=save_model_path, obj_name=f"{vectorizer_name}.joblib", obj=vectorizer)
+            save_obj(location_path=save_model_path, obj_name=f"vectorizer.joblib", obj=vectorizer)
             
             with open(Path(save_model_path, "vectorizer_meta.txt"), 'w') as f:
-                f.write(f"Vectorizer has been created\n\n {params}")
+                f.write(f"{vectorizer_name} has been created and fitted on the training data\n\n {params}")
             
             logging.info("Saving training dataset")
             training_data.to_feather(self.eng_config.training_data_path)

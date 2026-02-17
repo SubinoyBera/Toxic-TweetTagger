@@ -42,19 +42,30 @@ class ModelTrainer:
             model = XGBClassifier(n_estimators=params.hyperparameters.n_estimators,
                               learning_rate=params.hyperparameters.learning_rate,
                               max_depth=params.hyperparameters.max_depth, 
+                              tree_method=params.hyperparameters.tree_method,
+                              max_bin=params.hyperparameters.max_bin,
+                              scale_pos_weight=params.hyperparameters.scale_pos_weight,
                               gamma=params.hyperparameters.gamma,
                               reg_lambda=params.hyperparameters.reg_lambda,
-                              subsample=0.8, n_jobs=-1, random_state=42, use_label_encoder=False)
+                              subsample=params.hyperparameters.subsample,
+                              colsample_bytree=params.hyperparameters.colsample_bytree,
+                              n_jobs=-1, random_state=42, use_label_encoder=False, predictor="cpu_predictor"
+                            )
         
             logging.info("Model training started")
             model.fit(X_train, y_train)
-
+            # get XGB booster
+            booster = model.get_booster()
+            
             save_model_path = self.model_training_config.models_dir
-            save_obj(location_path=save_model_path, obj=model, obj_name=f"{params.model_name}.joblib")
-            logging.info(f"Model trained as saved at: {save_model_path}")
+            
+            # save models
+            booster.save_model(Path(save_model_path, "booster.json"))
+            save_obj(location_path=save_model_path, obj=model, obj_name=f"model.joblib")
+            logging.info(f"Model trained and saved at: {save_model_path}")
 
             with open(Path(save_model_path, "model_meta.txt"), 'w') as f:
-                f.write(f"Model has been trained\n\n {params}")
+                f.write(f"{params.model_name} model has been trained successfully.\n\n {params}")
 
             # free memory
             del X_train, y_train, model
