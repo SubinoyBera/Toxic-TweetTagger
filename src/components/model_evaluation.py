@@ -15,6 +15,7 @@ from sklearn.metrics import (accuracy_score, precision_score, recall_score,f1_sc
 import gc
 import dagshub
 import mlflow
+from mlflow.xgboost import log_model
 from src.script.model_wrapper import CustomModel
 from dotenv import load_dotenv
 load_dotenv()
@@ -95,7 +96,8 @@ class ModelEvaluation:
             logging.error(f"Failed to save model experiment info: {e}", exc_info=True)
             raise AppException(e, sys)
         
-    def evaluate(self, model:Any, model_name:str, vectorizer:Any, vectorizer_name:str, df:pd.DataFrame) -> tuple[dict, dict]:
+    def evaluate(self, model:Any, model_name:str, vectorizer:Any, vectorizer_name:str, 
+                 eval_threshold:float, df:pd.DataFrame) -> tuple[dict, dict]:
         """
         Evaluates the given model and vectorizer on the given dataset.
         Args:
@@ -110,14 +112,14 @@ class ModelEvaluation:
         """
         try:
             X_test = df.drop(columns='Label')
-            # Perform vectorization
+            # Perform feature extraction
             X_test = vectorizer.transform(X_test["Content"])
             
             logging.info(f"Evaluating model: {model_name}")
             # Predict using the model
-            y_pred = model.predict(X_test)
-            # Get the predicted probabilities for the positive class
-            proba_class1 = model.predict_proba(X_test)[:, 1]
+            y_probs = model.predict_proba(X_test)[:, 1]
+
+            y_pred = (y_probs >= eval_threshold).astype(int)
  
             # Get the true labels
             y_test = df['Label'].values
@@ -125,13 +127,14 @@ class ModelEvaluation:
             evaluation_report = {
                 "model": model_name,
                 "vectorizer": vectorizer_name,
+                "threshold": eval_threshold,
                 "accuracy": accuracy_score(y_test, y_pred),                 # type: ignore
                 "precision": precision_score(y_test, y_pred),               # type: ignore
                 "recall": recall_score(y_test, y_pred),                     # type: ignore
                 "f1 score": f1_score(y_test, y_pred),                       # type: ignore
-                "roc_auc": roc_auc_score(y_test, proba_class1)              # type: ignore
+                "roc_auc": roc_auc_score(y_test, y_probs)                   # type: ignore
             }
-            # Get model parameters
+            # Get XGBoost model parameters
             model_params: dict = model.get_xgb_params()
 
             return (
@@ -158,6 +161,7 @@ def initiate_model_evaluation():
     config_params = read_yaml(PARAMS_FILE)
     model_name = config_params.model_training.model_name
     vectorizer_name = config_params.feature_engineering.vectorizer
+    eval_threshold = config_params.model_evaluation.threshold
 
     test_data_path = eval_obj.evaluation_config.test_data_path
     model_path = eval_obj.evaluation_config.models_dir
@@ -173,7 +177,7 @@ def initiate_model_evaluation():
             vectorizer = load_obj(location_path=model_path, obj_name=f"{vectorizer_name}.joblib")
 
             evaluation_report, model_params = eval_obj.evaluate(model=model, model_name=model_name, vectorizer=vectorizer,
-                                                                vectorizer_name=vectorizer_name,df=processed_test_df)
+                                                                vectorizer_name=vectorizer_name, eval_threshold=eval_threshold, df=processed_test_df)
 
             eval_obj.save_report(evaluation_report)
             logging.info("Logging model and different parameters in Mlflow")
@@ -195,19 +199,19 @@ def initiate_model_evaluation():
             else:
                 logging.warning("No model parameters found. Skipping parameter logging")   
 
-            # Log the Custom Model in Mlflow
-            # Custom Model wraps the actual model classifer and the vectorizer into a single Python Model object
+            # Custom Model wraps the classifer and the vectorizer into a single Python Model object
             final_model = CustomModel(model=model, vectorizer=vectorizer)
+            
+            # Log the model and artifacts
             mlflow.pyfunc.log_model(
                 artifact_path = model_name,
                 python_model = final_model,
-                artifacts={
-                    "vectorizer": os.path.join(model_path, f"{vectorizer_name}.joblib"),
-                    "classifier": os.path.join(model_path, f"{model_name}.joblib")
-                }
+                artifacts={"vectorizer": os.path.join(model_path, "vectorizer.joblib"),
+                           "model": os.path.join(model_path, "model.joblib"),
+                           "booster": os.path.join(model_path, "booster.json"),
+                           "metrics": os.path.join("reports", "metrics.json")}
             )
-            # log model evaluation metrics file to Mlfow
-            mlflow.log_artifact("reports/metrics.json")
+
             # save model info
             eval_obj.save_experiment_info(model_name=model_name, run_id=run.info.run_id)
             logging.info("Model evaluation completed")

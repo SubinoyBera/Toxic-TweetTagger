@@ -45,9 +45,6 @@ class DataIngestion:
             # close mongo connection 
             client.close_connection()
 
-            # shuffling data
-            data = data.sample(frac=1, random_state=42).reset_index(drop=True)
-
             logging.info("Splitting data into training and testing sets")
             train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
 
