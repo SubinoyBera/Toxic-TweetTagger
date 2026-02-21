@@ -204,11 +204,6 @@ Folder map of d:\My Projects\Toxic Tweet-Tagger
 │   │   └── constants.py
 │   ├── core/
 │   │   ├── __pycache__/
-│   │   │   ├── __init__.cpython-311.pyc
-│   │   │   ├── config_entity.cpython-311.pyc
-│   │   │   ├── configuration.cpython-311.pyc
-│   │   │   ├── exception.cpython-311.pyc
-│   │   │   └── logger.cpython-311.pyc
 │   │   ├── __init__.py
 │   │   ├── config_entity.py
 │   │   ├── configuration.py

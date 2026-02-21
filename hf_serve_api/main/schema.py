@@ -5,7 +5,8 @@ from typing import Annotated, Dict, Literal
 
 
 class InputData(BaseModel):
-    comment: Annotated[str, Field(..., description="User tweet or comment to be classified")]
+    request_id: str = Field(..., description="ID of incomming request")
+    text: Annotated[str, Field(..., description="User tweet or comment (text)")]
 
 
 class Prediction(BaseModel):

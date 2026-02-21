@@ -1,15 +1,14 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 import time
-import uuid
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 
-from src.db.db_logging import BufferedBatchWriter
+from main.workers import BufferedEventConsumerWorker
 from main.schema import APIResponse, FeedbackResponse, InputData
-from main.utils import LimeExplainer, get_model_registry, get_model_version, load_model
-from src.constant.constants import DATABASE_NAME, PRODUCTION_COLLECTION_NAME
+from main.utils import LimeExplainer, get_model_version, load_model_artifacts
+from src.constant.constants import DATABASE_NAME, PRODUCTION_COLLECTION_NAME, FEEDBACK_COLLECTION_NAME
 from src.db.mongo_client import MongoDBClient
 
 
@@ -25,8 +24,8 @@ async def lifespan(app: FastAPI):
     app.state.collection = mongo_client.client[DATABASE_NAME][PRODUCTION_COLLECTION_NAME]
 
     app.state.batch_writer = BufferedBatchWriter(mongo_client)
-    app.state.model, app.state.vectorizer = load_model()
-    app.state.explainer = LimeExplainer(app.state.model)
+    app.state.vectorizer, app.state.xgb_booster, app.state.eval_threshold = load_model_artifacts()
+    app.state.explainer = LimeExplainer(app.state.model, app.state.vectorizer)
     # run application
     yield
     # application shutdown
@@ -49,62 +48,57 @@ def status():
     )
 
 
-@inference_api.post("/get_prediction", response_model=APIResponse)
+@inference_api.post("/predict", response_model=APIResponse)
 def api_response(payload: InputData, request: Request):
     """
     Model inference API endpoint.
 
     This endpoint accepts a POST request with a JSON payload containing a comment string.
-    It returns a JSON response containing the model prediction, explanation, and metadata.
+    It returns a JSON response containing the model prediction, and metadata.
     """
     timestamp = datetime.now(timezone.utc).isoformat()
-    request_id = str(uuid.uuid4())
     start_time = time.perf_counter()
 
-    model = request.app.state.model
-    writer = request.app.state.batch_writer
-    tweet = payload.comment
+    booster = request.app.state.xgb_booster
+    vectorizer = request.app.state.vectorizer
+    thresh = request.app.state.eval_threshold
+
+    if payload.text is None:
+        raise HTTPException(status_code=400, detail="No text provided.")
 
     try:
-        explainer = LimeExplainer(model)
-        explanation = explainer.explain(tweet)
-        prediction = explainer.prediction
+        x = request.app.state.vectorizer.transform([payload.text])
+        prob = request.app.state.xgb_booster.inplace_predict(x)
+        pred = (prob > thresh).astype(int)
+        
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Inference failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail=f"Inference failed: {exc}")
 
-    if prediction is None:
-        raise HTTPException(status_code=500, detail="Model prediction could not be made")
+    if pred is None:
+        raise HTTPException(status_code=500, detail="Failed to generate model prediction.")
+        
+    prob_class1 = float(1 - prob[0])
 
-    try:
-        label = int(prediction["class_label"][0])
-        probability_scores = prediction["class_probability_scores"][0]
-        proba_class0 = float(probability_scores[0])
-        proba_class1 = float(probability_scores[1])
-    except (KeyError, IndexError, TypeError, ValueError) as exc:
-        raise HTTPException(status_code=500, detail=f"Invalid model output format: {exc}") from exc
-
-    if proba_class1 > 0.70:
-        toxic_level = "strong"
-    elif proba_class1 > 0.54:
-        toxic_level = "high"
-    elif proba_class1 > 0.46:
-        toxic_level = "light"
+    if prob_class1 > 0.70:
+        toxicity = "strong"
+    elif prob_class1 > thresh + 0.05:
+        toxicity = "high"
+    elif prob_class1 > thresh - 0.02:
+        toxicity = "light"
     else:
-        toxic_level = "none"
-
-    confidence = round(max(proba_class0, proba_class1), 4)
+        toxicity = "none"
 
     # Prepare the record to insert into database
     record = {
-        "request_id": request_id,
+        "request_id": payload.request_id,
         "timestamp": timestamp,
-        "comment": tweet,
-        "prediction": label,
-        "confidence": confidence,
+        "comment": payload.text,
+        "prediction": pred[0],
+        "confidence": prob[0],
         "feedback": None,
     }
     # Add the record to the batch writer for asynchronous insertion into MongoDB
-    writer.add(record)
+    request.app.state.writer.add(record)
 
     end_time = time.perf_counter()
 
@@ -115,35 +109,39 @@ def api_response(payload: InputData, request: Request):
 
     response = {
         "response": {
-            "class_label": label,
-            "confidence": confidence,
-            "toxic_level": toxic_level,
-            "pred_scores": {
-                0: round(proba_class0, 4),
-                1: round(proba_class1, 4),
-            },
-            "explanation": explanation,
+            "class_label": pred[0],
+            "confidence": prob[0],
+            "toxicity": toxicity,
         },
         "metadata": {
-            "request_id": request_id,
+            "request_id": payload.request_id,
             "timestamp": timestamp,
             "response_time_ms": round((end_time - start_time) * 1000, 4),
             "input": {
-                "num_tokens": len(tweet.split()),
-                "num_characters": len(tweet),
+                "num_tokens": len(payload.text.split()),
+                "num_characters": len(payload.text),
             },
-            "model": type(model.model).__name__,
+            "model": type(booster),
             "version": model_version,
-            "vectorizer": type(model.vectorizer).__name__,
-            "type": "Production",
-            "loader_module": f"Mlflow {get_model_registry()}",
+            "vectorizer": type(vectorizer),
+            "type": "ToxicTagger-Models",
+            "loader_module": f"mlflow.pyfunc.model",
             "streamable": False,
-            "api_version": "v-1.0",
-            "developer": "Subinoy Bera",
+            "api_version": "v-2.0",
+            "developer": "Subinoy Bera"
         },
     }
-
+    
     return response
+
+
+@inference_api.get("/explain")
+def explain(payload: InputData, request: Request):
+    try:
+        explanation = request.app.state.explainer.explain(payload.text)
+    except:
+        pass
+
 
 
 @inference_api.post("/feedback")
