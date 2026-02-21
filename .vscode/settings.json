@@ -17,5 +17,7 @@
 
   // Optional: auto docstrings
   "autoDocstring.docstringFormat": "google",
-
+  "python-envs.defaultEnvManager": "ms-python.python:conda",
+  "python-envs.defaultPackageManager": "ms-python.python:conda",
+  "python-envs.pythonProjects": []
 }

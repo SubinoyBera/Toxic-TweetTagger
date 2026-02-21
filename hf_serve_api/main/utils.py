@@ -1,13 +1,13 @@
 # Utility functions for the model inference api
 
-import os
 import yaml
+import json
 import joblib
 import numpy as np
 import pandas as pd
 from pathlib import Path
 from typing import Any
-from sklearn.base import BaseEstimator
+import xgboost as xgb
 from lime.lime_text import LimeTextExplainer
 
 # load yaml files to get model meta data.
@@ -23,7 +23,7 @@ _global_explainer = LimeTextExplainer(class_names=["hate", "non-hate"], bow=Fals
 
 
 class LimeExplainer:
-    def __init__(self, model: Any):
+    def __init__(self, vectorizer: Any, model: Any):
         """
         Initializes an instance of LimeExplainer.
 
@@ -33,19 +33,22 @@ class LimeExplainer:
         self.explainer = _global_explainer
         self.prediction = None
         self.model = model
+        self.vectorizer = vectorizer
 
-    def _get_prediction_explaination(self, tweet) -> np.ndarray:
+    def _get_prediction(self, tweet) -> np.ndarray:
         """
         Internal function to get prediction from the model and class probability scores 
         for lime explainer.
         """
+        X = self.vectorizer.transform([tweet])
+        pred = self.model.predict(X)
         input_df = pd.DataFrame({
             "comments": tweet
         })
         self.prediction = self.model.predict(context=None, model_input=input_df)
         return np.array(self.prediction["class_probability_scores"])
     
-    def explain(self, tweet) -> dict:
+    def explain(self, tweet):
         """
         Generate lime explanation for a given tweet.
 
@@ -57,31 +60,29 @@ class LimeExplainer:
         """
         explanation = self.explainer.explain_instance(
             tweet,
-            self._get_prediction_explaination,
-            num_features=5,
+            self._get_prediction,
+            num_features=10,
             num_samples=20
         )
-        return round_dict_values(dic = dict(explanation.as_list()))
+        html_content = explanation.as_html()
+        
+        return html_content
+        
 
-
-def load_model():
+def load_model_artifacts():
     """Loads ML model from location path and returns the model."""
-    model_artifacts_dir = Path("model/artifacts")
-    model, vectorizer = None, None
     try:
-        for file in os.listdir(model_artifacts_dir):
-            if file.endswith(".joblib"):
-                obj = joblib.load(os.path.join(model_artifacts_dir, file))
+        with open(Path("model/artifacts/vectorizer.joblib"), 'rb') as f:
+            vectorizer = joblib.load(f)
 
-                # check if object have "predict" method AND be estimator-like
-                if hasattr(obj, "predict") and isinstance(obj, BaseEstimator):
-                    model = obj
+        xbg_booster = xgb.Booster()
+        xbg_booster.load_model(Path("model/artifacts/booster.json"))
 
-                # Preprocessor: has transform but not predict
-                elif hasattr(obj, "transform") and not hasattr(obj, "predict"):
-                    vectorizer = obj
+        with open(Path("model/artifacts/metrics.json"), 'r') as f:
+            metrics = json.load(f)
+            eval_threshold = metrics.get("threshold", 0.5)
 
-        return model, vectorizer
+        return vectorizer,  xbg_booster, eval_threshold
     
     except FileNotFoundError:
         raise FileNotFoundError("Model artifacts not found in the directory.")
@@ -93,12 +94,9 @@ def get_model_registry() -> str:
     return model_registry
 
 
-def get_model_version() -> str:
+def get_model_version() -> int:
     """Fetches the model version and returns it."""
-    model_version = model_metadata['model_version']
-    return model_version
-
-
-def round_dict_values(dic) -> dict:
-    """Rounds all values in a dictionary to 4 decimal places."""
-    return {str(k): round(v, 4) for k, v in dic.items()}
+    if not model_metadata:
+        return 0
+    else:
+        return int(model_metadata.get("model_version", 0))
