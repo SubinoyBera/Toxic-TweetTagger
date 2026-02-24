@@ -1,7 +1,7 @@
 import sys
 from sklearn.model_selection import train_test_split
-from src.constant.constants import DATABASE_NAME, TRAINING_COLLECTION_NAME
-from src.db.mongo_client import MongoDBClient
+from src.core.constants import DATABASE_NAME, TRAINING_COLLECTION_NAME
+from src.core.mongo_client import MongoDBClient
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration

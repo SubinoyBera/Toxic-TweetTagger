@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 import pandas as pd
 from xgboost import XGBClassifier
-from src.constant.constants import PARAMS_FILE
+from src.core.constants import PARAMS_FILE
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration

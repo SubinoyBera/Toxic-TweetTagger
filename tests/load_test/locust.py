@@ -1,4 +1,4 @@
-from locust import HttpUser, task, between
+from tests.load_test.locust import HttpUser, task, between
 import random
 
 # Load comments once at startup

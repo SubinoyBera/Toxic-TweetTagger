@@ -5,8 +5,8 @@ import joblib
 from pathlib import Path
 from box import ConfigBox
 from ensure import ensure_annotations
-from ..core.logger import logging
-from ..core.exception import AppException
+from src.core.logger import logging
+from src.core.exception import AppException
 
 
 @ensure_annotations

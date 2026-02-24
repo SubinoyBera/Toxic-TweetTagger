@@ -1,16 +1,71 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 import time
+import sys
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
-
+from fastapi.responses import JSONResponse, HTMLResponse
+from prometheus_fastapi_instrumentator import Instrumentator
+from prometheus_client import Counter, Histogram
+from lime.lime_text import LimeTextExplainer
 from main.workers import BufferedEventConsumerWorker
 from main.schema import APIResponse, FeedbackResponse, InputData
-from main.utils import LimeExplainer, get_model_version, load_model_artifacts
-from src.constant.constants import DATABASE_NAME, PRODUCTION_COLLECTION_NAME, FEEDBACK_COLLECTION_NAME
-from src.db.mongo_client import MongoDBClient
+from main.utils import Explainer, get_model_version, load_model_artifacts
+from src.core.constants import DATABASE_NAME, PRODUCTION_COLLECTION_NAME, FEEDBACK_COLLECTION_NAME
+from src.core.mongo_client import MongoDBClient
+from src.core.logger import logging
+from src.core.exception import AppException
 
+# Count total predictions
+# Total requests received at predict endpoint
+REQUEST_RECEIVED = Counter(
+    "predict_requests_total",
+    "Total prediction requests received"
+)
+
+# Requests successfully served
+REQUEST_SUCCESS = Counter(
+    "predict_requests_success_total",
+    "Total successful prediction responses"
+)
+
+# Requests failed
+REQUEST_FAILED = Counter(
+    "predict_requests_failed_total",
+    "Total failed prediction requests"
+)
+
+# Prediction class distribution (hate / non-hate)
+PREDICTION_CLASS = Counter(
+    "prediction_class_total",
+    "Count of predicted classes",
+    ["class_label"]  # label dimension
+)
+
+PREDICTION_CONFIDENCE = Histogram(
+    "prediction_confidence",
+    "Confidence distribution by predicted class",
+    ["class_label"],
+    buckets=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+)
+
+# Inference latency
+INFERENCE_LATENCY = Histogram(
+    "model_inference_seconds",
+    "Model inference time in seconds"
+)
+
+# Feedback counter
+FEEDBACK_COUNTER = Counter(
+    "feedback_submissions_total",
+    "Total feedback submissions"
+)
+
+FEEDBACK_VALIDATION = Counter(
+    "feedback_validation_total",
+    "Feedback validation result",
+    ["result"]
+)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,32 +75,41 @@ async def lifespan(app: FastAPI):
     is closed when the application is finished.
     """
     # application state setup
-    mongo_client = MongoDBClient()
-    app.state.collection = mongo_client.client[DATABASE_NAME][PRODUCTION_COLLECTION_NAME]
+    try:
+        mongo_client = MongoDBClient()
+        app.state.collection = mongo_client.client[DATABASE_NAME][PRODUCTION_COLLECTION_NAME]
 
-    app.state.batch_writer = BufferedBatchWriter(mongo_client)
-    app.state.vectorizer, app.state.xgb_booster, app.state.eval_threshold = load_model_artifacts()
-    app.state.explainer = LimeExplainer(app.state.model, app.state.vectorizer)
+        app.state.vectorizer, app.state.xgb_booster, app.state.eval_threshold = load_model_artifacts()
+        app.state.model_version = get_model_version()
+
+        lime_explainer = LimeTextExplainer(class_names=["hate", "non-hate"], bow=False)
+        app.state.explainer = Explainer(lime_explainer, app.state.model, app.state.vectorizer)
+        app.state.prediction_event_consumer = BufferedEventConsumerWorker(mongo_client, DATABASE_NAME, PRODUCTION_COLLECTION_NAME)
+        app.state.feedback_event_consumer = BufferedEventConsumerWorker(mongo_client, DATABASE_NAME, FEEDBACK_COLLECTION_NAME)
+        logging.info("Infernce API app server started successfully")
+
+    except Exception as e:
+        logging.critical(f"Startup Failed: {e}", exc_info=True)
+        raise AppException(e, sys)
+    
     # run application
     yield
+    
     # application shutdown
-    app.state.batch_writer.shutdown()
+    app.state.prediction_event_consumer.shutdown()
+    app.state.feedback_event_consumer.shutdown()
     mongo_client.close_connection()
 
 
 # Initialize FastAPI application with the defined lifespan context manager
 inference_api = FastAPI(lifespan=lifespan)
+Instrumentator().instrument(inference_api).expose(inference_api)
 
 
-@inference_api.get("/")
+@inference_api.get("/health")
 def status():
     """Status endpoint for the model inference API."""
-    return JSONResponse(
-        content={
-            "status": 200,
-            "message": "Inference API active.",
-        }
-    )
+    return {"status": "ok"}
 
 
 @inference_api.post("/predict", response_model=APIResponse)
@@ -67,81 +131,112 @@ def api_response(payload: InputData, request: Request):
         raise HTTPException(status_code=400, detail="No text provided.")
 
     try:
-        x = request.app.state.vectorizer.transform([payload.text])
-        prob = request.app.state.xgb_booster.inplace_predict(x)
+        x = vectorizer.transform([payload.text])
+        prob = booster.inplace_predict(x)              # P(class=1)
         pred = (prob > thresh).astype(int)
         
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Inference failed: {exc}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Inference failed: {e}")
 
     if pred is None:
-        raise HTTPException(status_code=500, detail="Failed to generate model prediction.")
-        
-    prob_class1 = float(1 - prob[0])
+        REQUEST_FAILED.inc()
+        raise HTTPException(status_code=500, detail=f"Inference failed.")
 
-    if prob_class1 > 0.70:
+    if prob[0] > 0.70:
         toxicity = "strong"
-    elif prob_class1 > thresh + 0.05:
+    elif prob[0] > thresh + 0.05:
         toxicity = "high"
-    elif prob_class1 > thresh - 0.02:
+    elif prob[0] > thresh - 0.02:
         toxicity = "light"
     else:
         toxicity = "none"
 
+    confidence = prob[0] if pred[0] == 1 else 1-prob[0]
+    confidence_margin = round(abs(2*pred[0] - 1), 4)
+
+    warnings = []
+
+    if len(payload.text.split()) <= 2:
+        warnings.append({
+            "type": "MIN_TOKEN_WARNING",
+            "message": "Input is too short for reliable classification."
+    })
+
+    if confidence_margin < 0.10:
+        message = f"""
+            Prediction is close to model decision boundary. Confidence Margin: {confidence_margin}.
+            Please consider manual review.
+        """
+        warnings.append({
+            "code": "LOW_CONFIDENCE_MARGIN",
+            "message": message
+    })
+
     # Prepare the record to insert into database
-    record = {
+    prediction_record = {
         "request_id": payload.request_id,
         "timestamp": timestamp,
         "comment": payload.text,
         "prediction": pred[0],
-        "confidence": prob[0],
-        "feedback": None,
+        "confidence": confidence,
     }
+
     # Add the record to the batch writer for asynchronous insertion into MongoDB
-    request.app.state.writer.add(record)
+    request.app.state.prediction_event_consumer.add_event(prediction_record)
 
     end_time = time.perf_counter()
+    response_time = round((end_time - start_time) * 1000, 4)
 
-    try:
-        model_version = int(get_model_version())
-    except (TypeError, ValueError):
-        model_version = 0
+    REQUEST_SUCCESS.inc()
+    # Track latency
+    INFERENCE_LATENCY.observe(response_time)
+    # Track class distribution
+    PREDICTION_CLASS.labels(class_label=str(pred[0])).inc()
+    # Track class confidence
+    PREDICTION_CONFIDENCE.labels(class_label=str(pred[0])).observe(pred[0])
 
     response = {
-        "response": {
-            "class_label": pred[0],
+        "id": payload.request_id,
+        "timestamp": timestamp,
+        "object": "text-classification",
+        "prediction": {
+            "label": pred[0],
             "confidence": prob[0],
             "toxicity": toxicity,
         },
+        "warnings": warnings if warnings else None,
         "metadata": {
-            "request_id": payload.request_id,
-            "timestamp": timestamp,
-            "response_time_ms": round((end_time - start_time) * 1000, 4),
-            "input": {
-                "num_tokens": len(payload.text.split()),
-                "num_characters": len(payload.text),
+            "latency_ms": response_time,
+            "usage": {
+                "word_count": len(payload.text.split()),
+                "total_characters": len(payload.text)
             },
-            "model": type(booster),
-            "version": model_version,
-            "vectorizer": type(vectorizer),
-            "type": "ToxicTagger-Models",
-            "loader_module": f"mlflow.pyfunc.model",
+            "model": {
+                "name": "XGB-Classifier-Booster",
+                "version": request.app.state.model_version,
+                "vectorizer": str(type(vectorizer).__name__),
+            },
             "streamable": False,
-            "api_version": "v-2.0",
-            "developer": "Subinoy Bera"
-        },
+            "environment": "Production",
+            "api_version": "v-2.0"
+        }
     }
     
-    return response
+    return JSONResponse(status_code=200, content=response)
 
 
-@inference_api.get("/explain")
+@inference_api.post("/explain")
 def explain(payload: InputData, request: Request):
     try:
-        explanation = request.app.state.explainer.explain(payload.text)
-    except:
-        pass
-
+        explanation_html = request.app.state.explainer.explain(payload.text)
+        if not explanation_html:
+            raise ValueError("Returned empty explaination")
+        
+        return HTMLResponse(content=explanation_html)
+    
+    except Exception as e:
+        logging.exception(f"Failed to generate explaination. RequestID: {payload.request_id} : {e}")
+        raise HTTPException(status_code=503, detail="Explanation engine service is unavailable.")
 
 
 @inference_api.post("/feedback")
@@ -149,32 +244,31 @@ def submit_feedback(payload: FeedbackResponse, request: Request):
     """
     Submit user feedback for a given request_id.
     """
-    collection = request.app.state.collection
-
-    result = collection.update_one(
-        {
+    try:
+        feedback_record = {
             "request_id": payload.request_id,
-            "feedback": None,
-        },
-        {
-            "$set": {
-                "feedback": {"label": payload.label},
-            }
-        },
-    )
-    if result.matched_count == 0:
-        raise HTTPException(
-            status_code=404,
-            detail="Invalid request_id or feedback already submitted",
-        )
+            "time_stamp": datetime.now(timezone.utc).isoformat(),
+            "predicted_label": payload.predicted_label,
+            "feedback_label": payload.feedback_label
+        }
 
-    return {
-        "status": "success",
-        "request_id": payload.request_id,
-        "message": "Feedback recorded successfully",
-    }
+        request.app.state.feedback_consumer_worker.add_event(feedback_record)
+        logging.info(f"Feedback submitted for request_id: {payload.request_id}")
 
+        FEEDBACK_COUNTER.inc()
 
-@inference_api.get("/metrics")
-def metrics():
-    pass
+        # Compare prediction vs feedback
+        if payload.predicted_label == payload.feedback_label:
+            FEEDBACK_VALIDATION.labels(result="correct").inc()
+        else:
+            FEEDBACK_VALIDATION.labels(result="incorrect").inc()
+
+        return {
+            "status": "success",
+            "request_id": payload.request_id,
+            "message": "Feedback recorded successfully",
+        }
+    
+    except Exception as e:
+        logging.exception(f"Failed to submit feedback. RequestID: {payload.request_id} : {e}")
+        raise HTTPException(status_code=503, detail="Feedback service is unavailable.")

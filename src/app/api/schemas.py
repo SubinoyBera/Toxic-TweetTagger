@@ -4,12 +4,12 @@ from pydantic import BaseModel, Field
 from typing import Annotated, Dict, Literal
 
 
-class InputData(BaseModel):
-    request_id: str = Field(..., description="ID of incomming request")
-    text: Annotated[str, Field(..., description="User tweet or comment (text)")]
+class InferenceRequest(BaseModel):
+    request_id: str = Field(..., description="Unique inference request identifier")
+    text: Annotated[str, Field(..., description="Input text for classification")]
 
 
-class Prediction(BaseModel):
+class PredictionResult(BaseModel):
     class_label: int
     confidence: float
     toxic_level: str
@@ -32,12 +32,12 @@ class MetaData(BaseModel):
     developer: str
 
 
-class APIResponse(BaseModel):
-    response: Prediction
+class InferenceResponse(BaseModel):
+    response: PredictionResult
     metadata: MetaData
 
 
-class FeedbackResponse(BaseModel):
-    request_id: str = Field(..., min_length=15, description="Unique identifier for the inference request")
+class FeedbackRequest(BaseModel):
+    request_id: str = Field(..., min_length=15, description="ID of the Inference request served")
     predicted_label: Literal[0, 1]
     feedback_label: Literal[0, 1]
