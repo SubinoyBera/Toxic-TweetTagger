@@ -20,5 +20,8 @@ TRAINING_COLLECTION_NAME = "tweets_collection"
 PRODUCTION_COLLECTION_NAME = "production_tweets"
 FEEDBACK_COLLECTION_NAME = "prediction_feedback"
 
+# Final registerd models dir
+REGISTERED_MODELS_DIR = Path(ROOT_DIR, "src/app/model")
+
 # HuggingFace Repo
 HUGGINGFACE_REPO_ID = "Subi003/ToxicTagger_serveAPI"

@@ -1,7 +1,7 @@
 # This file contains tests for the FastAPI application endpoints.
 import pytest
 from fastapi import status
-from app.app import app
+from frontend_app.app import app
 from fastapi.testclient import TestClient
 
 client = TestClient(app)

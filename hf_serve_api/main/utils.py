@@ -22,18 +22,18 @@ except:
 _global_explainer = LimeTextExplainer(class_names=["hate", "non-hate"], bow=False)
 
 
-class LimeExplainer:
-    def __init__(self, vectorizer: Any, model: Any):
+class Explainer:
+    def __init__(self, explainer: Any, model: Any, vectorizer: Any):
         """
         Initializes an instance of LimeExplainer.
 
         Sets the class names for the explainer and initializes the LimeTextExplainer.
         Also initializes the model prediction attribute to None.
         """
-        self.explainer = _global_explainer
-        self.prediction = None
+        self.explainer = explainer
         self.model = model
         self.vectorizer = vectorizer
+        self.prediction = None
 
     def _get_prediction(self, tweet) -> np.ndarray:
         """
@@ -88,15 +88,10 @@ def load_model_artifacts():
         raise FileNotFoundError("Model artifacts not found in the directory.")
 
 
-def get_model_registry() -> str:
-    """Fetches the model registry name and returns it."""
-    model_registry = model_metadata['model_name']
-    return model_registry
-
-
 def get_model_version() -> int:
     """Fetches the model version and returns it."""
     if not model_metadata:
         return 0
     else:
         return int(model_metadata.get("model_version", 0))
+    ..

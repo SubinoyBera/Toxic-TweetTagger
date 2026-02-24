@@ -5,7 +5,7 @@ import pandas as pd
 from typing import Any
 from pathlib import Path
 from .data_preprocessing import DataPreprocessing
-from src.constant.constants import PARAMS_FILE
+from src.core.constants import PARAMS_FILE
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration

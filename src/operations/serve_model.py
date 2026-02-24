@@ -5,7 +5,7 @@ import dagshub
 from mlflow import artifacts
 from pathlib import Path
 from huggingface_hub import upload_folder
-from src.constant.constants import HUGGINGFACE_REPO_ID
+from src.core.constants import HUGGINGFACE_REPO_ID
 from src.core.logger import logging
 from src.core.exception import AppException
 from dotenv import load_dotenv

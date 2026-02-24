@@ -4,7 +4,7 @@ from fastapi.exceptions import HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from typing import Optional
-from app.utils import *
+from frontend_app.utils import *
 import requests
 
 # Initilize fastapi app server
