@@ -50,10 +50,10 @@ FEEDBACK_REQUEST_SUCCESS = Counter(
     "Total successful feedback submissions"
 )
 
-FEEDBACK_VALIDATION = Counter(
-    "feedback_validation_total",
-    "Feedback validation result",
-    ["result"]
+USER_PREDICTION_FEEDBACK = Counter(
+    "user_prediction_feedback_total",
+    "User feedback indicating whether the model prediction was correct",
+    ["feedback"]
 )
 
 FEEDBACK_REQUEST_FAILED = Counter(

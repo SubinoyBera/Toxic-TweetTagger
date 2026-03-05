@@ -4,13 +4,16 @@ from src.core.logger import logging
 from src.core.exception import AppException
 from src.app.monitoring.service_metrics import EXPLAINER_REQUEST_SUCCESS, EXPLAINER_REQUEST_FAILED
 
+
 class ExplainerService:
     def __init__(self, explainer, model_booster, vectorizer):
         """
-        Initializes an instance of LimeExplainer.
+        Initializes an instance of LimeExplainer explaination service.
 
-        Sets the class names for the explainer and initializes the LimeTextExplainer.
-        Also initializes the model prediction attribute to None.
+        Args:
+            explainer (LimeTextExplainer) : An instance of LimeTextExplainer.
+            model_booster (xgb.XGBClassifier) : An instance of the XGBoost model.
+            vectorizer : An instance of the vectorizer to transform input text into numerical features.
         """
         self.explainer = explainer
         self.booster = model_booster
@@ -27,7 +30,13 @@ class ExplainerService:
             prob = np.vstack([1 - prob, prob]).T
         return prob    
     
-    def explain(self, text):
+    def explain(self, text: str):
+        """
+        Generate an explanation of the prediction made by the model for a given text.
+
+        Returns:
+            HTML content of the explanation which is rendered in the UI
+        """
         try:
             explanation = self.explainer.explain_instance(
                 text,

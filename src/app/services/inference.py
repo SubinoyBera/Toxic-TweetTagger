@@ -15,7 +15,7 @@ class InferenceService:
         self.event_consumer_worker = prediction_event_consumer
         self.model_version = model_version
 
-    def predict(self, request_id: str, text: str):
+    def predict(self, request_id: str, input_tweet: str, text: str):
         """
         Model inference API endpoint.
 
@@ -44,39 +44,29 @@ class InferenceService:
             toxicity = "strong"
         elif prob[0] > self.threshold + 0.05:
             toxicity = "high"
-        elif prob[0] > self.threshold - 0.02:
-            toxicity = "light"
+        elif prob[0] > self.threshold - 0.03:
+            toxicity = "uncertain"
         else:
             toxicity = "none"
 
-        confidence = prob[0] if pred[0] == 1 else 1-prob[0]
-        confidence_margin = round(abs(2*pred[0] - 1), 4)
+        confidence = float(prob[0] if pred[0] == 1 else 1-prob[0])
+        confidence_margin = abs(2*float(prob[0]) - 1)
 
-        warnings = []
-
-        if len(text.split()) <= 2:
-            warnings.append({
-                "type": "MIN_TOKEN_WARNING",
-                "message": "Input is too short for reliable classification."
-        })
-
+        warnings = None
         if confidence_margin < 0.10:
-            message = f"""
-                Prediction is close to model decision boundary. Confidence Margin: {confidence_margin}.
-                Please consider manual review.
-            """
-            warnings.append({
+            message=f"Prediction is close to model decision boundary. Confidence Margin: {round(confidence_margin, 4)}. Manual review is recommended!"
+            warnings = {
                 "code": "LOW_CONFIDENCE_MARGIN",
                 "message": message
-        })
+            }
 
         # Prepare the record to insert into database
         prediction_record = {
             "request_id": request_id,
             "timestamp": timestamp,
-            "comment": text,
-            "prediction": pred[0],
-            "confidence": confidence,
+            "comment": input_tweet,
+            "prediction": int(pred[0]),
+            "confidence": round(confidence, 4)
         }
 
         # Add the record to the batch writer for asynchronous insertion into MongoDB
@@ -98,8 +88,8 @@ class InferenceService:
             "timestamp": timestamp,
             "object": "text-classification",
             "prediction": {
-                "label": pred[0],
-                "confidence": prob[0],
+                "label": int(pred[0]),
+                "confidence": round(confidence, 4),
                 "toxicity": toxicity,
             },
             "warnings": warnings if warnings else None,

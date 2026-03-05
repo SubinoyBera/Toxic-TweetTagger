@@ -29,6 +29,7 @@ async def lifespan(app: FastAPI):
         # load model
         xgb_booster = xgb.Booster()
         xgb_booster.load_model(Path(REGISTERED_MODELS_DIR, "artifacts", "booster.json"))
+        xgb_booster.set_param({"nthread": 1})
         # load vectorizer
         vectorizer = load_obj(Path(REGISTERED_MODELS_DIR, "artifacts"), "vectorizer.joblib")
 
@@ -54,7 +55,7 @@ async def lifespan(app: FastAPI):
         app.state.feedback_service = FeedbackService(feedback_event_consumer)
 
         lime_explainer = LimeTextExplainer(class_names=["hate", "non-hate"], bow=False)
-        app.state.explainer_service = ExplainerService(lime_explainer, app.state.model, app.state.vectorizer)
+        app.state.explainer_service = ExplainerService(lime_explainer, xgb_booster, vectorizer)
 
         logging.info("Infernce API app server started successfully")
 
@@ -66,8 +67,8 @@ async def lifespan(app: FastAPI):
     yield
     
     # application shutdown
-    app.state.prediction_event_consumer.shutdown()
-    app.state.feedback_event_consumer.shutdown()
+    prediction_event_consumer.shutdown()
+    feedback_event_consumer.shutdown()
     mongo_client.close_connection()
 
 # Create FastAPI app
