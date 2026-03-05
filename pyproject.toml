@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "toxictweet-tagger"
-version = "1.0.0"
+version = "2.0.0"
 authors = [
   { name="Subinoy Bera", email="subinoyberadgp@gmail.com" }
 ]
@@ -24,16 +24,14 @@ requires-python = ">=3.11"
 dependencies = [
     "numpy",
     "pandas",
-    "scipy",
     "scikit-learn",
     "xgboost",
     "nltk",
-    "python-box",
-    "ensure",
     "pymongo",
     "PyYAML",
     "requests",
     "pydantic",
+    "python-dotenv",
     "tqdm",
     "httpx",
     "huggingface-hub",
@@ -54,10 +52,12 @@ dev = [
     "pytest",
     "tox",
     "docker",
+    "scipy",
     "matplotlib",
     "ipykernel",
     "tensorflow",
-    "python-dotenv",
+    "python-box",
+    "ensure",
 ]
 testing = [
     "pytest >= 8.0.0",

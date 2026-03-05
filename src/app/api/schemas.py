@@ -1,43 +1,44 @@
-# Schema validation for the API response
+# Schema validation for the API requests and responses
 
 from pydantic import BaseModel, Field
-from typing import Annotated, Dict, Literal
+from typing import Annotated, Dict, Literal, Optional
+from datetime import datetime
 
 
 class InferenceRequest(BaseModel):
-    request_id: str = Field(..., description="Unique inference request identifier")
-    text: Annotated[str, Field(..., description="Input text for classification")]
+    input_tweet: Annotated[str, Field(..., description="Input tweet or comment text for classification")]
+    text: Annotated[str, Field(..., description="Preprocessed text to be fed to the model for prediction")]
 
+class ExplanationRequest(BaseModel):
+    input_tweet: Annotated[str, Field(..., description="Input tweet or comment text for generating explanation")]
 
 class PredictionResult(BaseModel):
-    class_label: int
-    confidence: float
-    toxic_level: str
-    pred_scores: Dict[int, float]
-    explanation: Dict[str, float]
+    label: int
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Prediction probability")
+    toxicity: Literal["strong", "high", "uncertain", "none"]
 
+class ModelInfoSchema(BaseModel):
+    name: str = Field(..., description="Model name")
+    version: int = Field(..., description="Model version")
+    vectorizer: str = Field(..., description="Vectorizer class name")
 
-class MetaData(BaseModel):
-    request_id: str
-    timestamp: str
-    response_time: str
-    input: Dict[str, int]
-    model: str
-    version: int
-    vectorizer: str
-    type: str
-    loader_module: str
-    streamable: bool
+class MetadataSchema(BaseModel):
+    latency: float = Field(..., ge=0, description="Response time in seconds")
+    usage: Dict[str, float] 
+    model: ModelInfoSchema
+    streamable: bool = Field(default=False)
+    environment: Literal["Standard", "Beta", "Production"]
     api_version: str
-    developer: str
-
 
 class InferenceResponse(BaseModel):
-    response: PredictionResult
-    metadata: MetaData
+    id: str
+    timestamp: datetime
+    object: Literal["text-classification"]
+    prediction: PredictionResult
+    warnings: Optional[dict] = None
+    metadata: MetadataSchema
 
 
 class FeedbackRequest(BaseModel):
-    request_id: str = Field(..., min_length=15, description="ID of the Inference request served")
     predicted_label: Literal[0, 1]
     feedback_label: Literal[0, 1]

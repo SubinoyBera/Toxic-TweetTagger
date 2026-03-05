@@ -1,7 +1,7 @@
 # This file contains tests for the FastAPI application endpoints.
 import pytest
 from fastapi import status
-from frontend_app.app import app
+from frontend.app import app
 from fastapi.testclient import TestClient
 
 client = TestClient(app)
@@ -48,7 +48,8 @@ async def test_predict_page():
     ["highly toxic", "toxic", "likely to be toxic", or "looks safe"]
     
     """
-    response = client.post("/predict", data={"tweet": "I love that movie! It was great"})
+    response = client.post("/predict", data={"input_tweet": "I love that movie! It was great", 
+                                             "text": "I love that movie! It was great"})
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
     # Check if the response contains expected phrases
@@ -57,7 +58,7 @@ async def test_predict_page():
         for phrase in [
             "strong", 
             "high", 
-            "light", 
+            "uncertain", 
             "none"
         ]
     )

@@ -116,9 +116,9 @@ class BufferedEventConsumerWorker:
                 first_record_time = None
 
         # Final flush on shutdown
-            if batch:
-                self._flush(batch)
-            logging.info("BufferedEventConsumer worker stopped cleanly.")
+        if batch:
+            self._flush(batch)
+        logging.info("BufferedEventConsumer worker stopped cleanly.")
 
     # Database flush
     def _flush(self, batch_records: list):
@@ -134,8 +134,7 @@ class BufferedEventConsumerWorker:
         try:
             self.client.insert_docs(self.collection_name, 
                                     self.database_name, 
-                                    batch_records,
-                                    timeout = self.mongo_timeout
+                                    batch_records
                                 )
             logging.info(f"Flushed {len(batch_records)} records to MongoDB")
         
