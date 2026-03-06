@@ -35,4 +35,5 @@ def metrics():
     return Response(
         generate_latest(registry),
         media_type=CONTENT_TYPE_LATEST,
+        headers={"Cache-Control": "no-cache"}
     )

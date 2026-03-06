@@ -55,7 +55,7 @@ def new_model():
     return new_model
     
 
-def test_model_signature(new_model):
+def test_python_model(new_model):
     """
     Tests the model's signature and output validity.
     This test creates a dummy input DataFrame mimicking expected input and uses the loaded model 
