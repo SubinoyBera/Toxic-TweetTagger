@@ -47,7 +47,7 @@ def serve_model():
         model_uri = f"models:/{model_name}/{stage}"
 
         logging.info(f"Downloading model artifacts from MLflow model registry")
-        artifacts.download_artifacts(artifact_uri=model_uri, dst_path="hf_serve_api/model")
+        artifacts.download_artifacts(artifact_uri=model_uri, dst_path="src/app/model")
 
         if not hf_token:
             raise EnvironmentError("Huggingface access token is not set")

@@ -5,6 +5,7 @@ nltk.data.path.append(os.path.join(os.path.dirname(__file__), "nltk_data"))
 
 import emoji
 import string
+import re
 from nltk import pos_tag
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords, wordnet
@@ -71,3 +72,27 @@ def preprocess(tweet: str) -> str:
     tweet = obj.remove_stopwords(tweet)
     
     return tweet
+
+
+def validate_input(text: str) -> bool:
+    if not text:
+        return False
+
+    # Remove leading/trailing whitespace
+    text = text.strip()
+
+    # Collapse multiple spaces
+    text = re.sub(r"\s+", " ", text)
+
+    # Extract words
+    words = text.split(" ")
+
+    # Word count constraint
+    if len(words) > 50:
+        return False
+
+    # Check for at least one meaningful word (>=3 chars)
+    if not any(len(word) >= 3 for word in words):
+        return False
+
+    return True
