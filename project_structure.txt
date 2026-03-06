@@ -1,0 +1,175 @@
+Project Structure Map: Toxic Tweet-Tagger
+==================================================
+
+├── __pycache__/
+├── .dvc/
+│   ├── cache/
+│   │   ├── files/
+│   │   │   └── md5/
+│   │   └── runs/
+│   ├── tmp/
+│   ├── .gitignore
+│   └── config
+├── .git/
+├── .github/
+│   └── workflows/
+│       ├── ci.yaml
+│       └── release.yaml
+├── .pytest_cache/
+│   ├── v/
+│   │   └── cache/
+│   ├── .gitignore
+│   ├── CACHEDIR.TAG
+│   └── README.md
+├── .vscode/
+├── artifacts/
+├── configs/
+│   ├── config.yaml
+│   └── params.yaml
+├── dist/
+├── dvc_storage/
+│   └── files/
+│       └── md5/
+├── frontend/
+│   ├── __pycache__/
+│   ├── nltk_data/
+│   │   ├── corpora/
+│   │   │   ├── stopwords/
+│   │   │   ├── stopwords.zip
+│   │   │   └── wordnet.zip
+│   │   ├── taggers/
+│   │   │   ├── averaged_perceptron_tagger_eng/
+│   │   │   └── averaged_perceptron_tagger_eng.zip
+│   │   └── tokenizers/
+│   │       ├── punkt/
+│   │       └── punkt.zip
+│   ├── static/
+│   │   ├── favicon.png
+│   │   ├── script.js
+│   │   └── style.css
+│   ├── templates/
+│   │   ├── about.html
+│   │   └── index.html
+│   ├── __init__.py
+│   ├── app.py
+│   ├── requirements.txt
+│   └── utils.py
+├── images/
+├── logs/
+├── mlruns/
+├── notebooks/
+│   ├── artifacts/
+│   ├── dl-models/
+│   ├── data exploration.ipynb
+│   ├── dl_experiments.ipynb
+│   ├── model experiments.ipynb
+│   ├── test.ipynb
+│   └── tuning xgboost.ipynb
+├── reports/
+│   ├── data_drift.json
+│   ├── experiment.json
+│   └── metrics.json
+├── src/
+│   ├── __pycache__/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── api_routes.py
+│   │   │   ├── dependencies.py
+│   │   │   └── schemas.py
+│   │   ├── middleware/
+│   │   │   └── __init__.py
+│   │   ├── model/
+│   │   │   ├── artifacts/
+│   │   │   │   ├── booster.json
+│   │   │   │   ├── metrics.json
+│   │   │   │   ├── model.joblib
+│   │   │   │   └── vectorizer.joblib
+│   │   │   ├── conda.yaml
+│   │   │   ├── MLmodel
+│   │   │   ├── python_env.yaml
+│   │   │   ├── python_model.pkl
+│   │   │   ├── registered_model_meta
+│   │   │   └── requirements.txt
+│   │   ├── monitoring/
+│   │   │   ├── __init__.py
+│   │   │   ├── http_metrics.py
+│   │   │   └── service_metrics.py
+│   │   ├── services/
+│   │   │   ├── explainer.py
+│   │   │   ├── feedback.py
+│   │   │   └── inference.py
+│   │   ├── workers/
+│   │   │   └── __init__.py
+│   │   ├── main.py
+│   │   └── requirements.txt
+│   ├── components/
+│   │   ├── __init__.py
+│   │   ├── data_ingestion.py
+│   │   ├── data_preprocessing.py
+│   │   ├── data_validation.py
+│   │   ├── feature_engineering.py
+│   │   ├── model_evaluation.py
+│   │   └── model_training.py
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config_entity.py
+│   │   ├── configuration.py
+│   │   ├── constants.py
+│   │   ├── exception.py
+│   │   ├── logger.py
+│   │   └── mongo_client.py
+│   ├── operations/
+│   │   ├── __init__.py
+│   │   ├── promote_model.py
+│   │   ├── register_model.py
+│   │   └── serve_model.py
+│   ├── pipeline/
+│   │   ├── __init__.py
+│   │   └── ml_pipeline.py
+│   ├── script/
+│   │   ├── __init__.py
+│   │   └── model_wrapper.py
+│   ├── Toxic_TweetTagger.egg-info/
+│   │   ├── dependency_links.txt
+│   │   ├── PKG-INFO
+│   │   ├── requires.txt
+│   │   ├── SOURCES.txt
+│   │   └── top_level.txt
+│   ├── utils/
+│   │   └── __init__.py
+│   ├── __init__.py
+│   ├── .dockerignore
+│   └── Dockerfile
+├── tests/
+│   ├── __pycache__/
+│   ├── integration_test/
+│   │   ├── __init__.py
+│   │   └── test_app.py
+│   ├── load_test/
+│   │   ├── __init__.py
+│   │   ├── locust.py
+│   │   └── test_comments.txt
+│   ├── unit_test/
+│   │   ├── __init__.py
+│   │   ├── test_feedback_service.py
+│   │   ├── test_inference_service.py
+│   │   └── test_model.py
+│   └── __init__.py
+├── .dockerignore
+├── .env
+├── .env.example
+├── .gitattributes
+├── .gitignore
+├── Dockerfile
+├── dvc.lock
+├── dvc.yaml
+├── LICENSE
+├── pyproject.toml
+├── pytest.ini
+├── README.md
+├── requirements-dev.txt
+├── requirements.txt
+├── SECURITY.md
+├── setup.py
+├── tox.ini
+└── vercel.json

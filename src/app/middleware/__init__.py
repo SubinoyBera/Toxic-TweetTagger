@@ -5,6 +5,10 @@ from src.core.logger import logging
 from src.app.monitoring.http_metrics import HTTP_REQUESTS_TOTAL, HTTP_REQUEST_DURATION_SECONDS, HTTP_REQUESTS_IN_PROGRESS
 
 async def http_observability_middleware(request: Request, call_next):
+    # Skip Prometheus metrics endpoint
+    if request.url.path == "/api/metrics":
+        return await call_next(request)
+
     request_id = request.headers.get("X-Request-ID")
     if not request_id:
         request_id = str(uuid.uuid4())
