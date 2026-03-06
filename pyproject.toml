@@ -47,6 +47,7 @@ mlops = [
     "mlflow",
     "evidently",
     "lime",
+    "prometheus"
 ]
 dev = [
     "pytest",
