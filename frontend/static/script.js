@@ -6,6 +6,27 @@ form.addEventListener("submit", () => {
   button.disabled = true;
 });
 
+
+const params = new URLSearchParams(window.location.search);
+const errorMessage = params.get("error");
+
+if (errorMessage) {
+
+    const toast = document.getElementById("toast");
+    const toastText = document.getElementById("toast-text");
+
+    toastText.innerText = "⚠️ " + errorMessage;
+
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 4000);
+}
+
+window.history.replaceState({}, document.title, window.location.pathname);
+
+
 // confidence bar
 document.addEventListener("DOMContentLoaded", function () {
   const bar = document.querySelector(".confidence-bar");
@@ -43,6 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
     #04c00a 100%
   )`;
 });
+
 
 // Show feedback popup if feedback was submitted
 document.addEventListener("DOMContentLoaded", function () {

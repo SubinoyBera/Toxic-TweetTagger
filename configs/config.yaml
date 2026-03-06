@@ -20,7 +20,7 @@ feature_engineering:
   training_dataset: train_data.feather
 
 model_training:
-  models_dir: models
+  models_dir: artifacts/models
   train_data: train_data.feather
 
 model_evaluation:

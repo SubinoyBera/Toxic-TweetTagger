@@ -9,6 +9,8 @@
     <script src="/static/script.js" defer></script>
 </head>
 
+<div id="error-data" data-error="{{ error_message if error_message else '' }}"></div>
+
 <body>
     <header class="header">
         <div class="project_name">
@@ -116,5 +118,10 @@
         {% endif %}
     
     </div> 
+
+    <div id="toast" class="toast-message">
+            <span id="toast-text"></span>
+        </div>
+
 </body>
 </html>

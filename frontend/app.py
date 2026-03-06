@@ -4,6 +4,7 @@ from fastapi.exceptions import HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from starlette import status
+from urllib.parse import quote
 from typing import Optional
 from pathlib import Path
 from frontend.utils import *
@@ -68,7 +69,7 @@ def health_check():
 @app.post("/get_prediction", response_class=HTMLResponse)
 async def get_prediction(request: Request, tweet: str = Form(...,
                                                     description="User tweet or comment to be classified")
-                                                ) -> HTMLResponse :
+                                                ):
     """
     Endpoint to predict the if the tweet or comment is toxic or not.
 
@@ -84,13 +85,35 @@ async def get_prediction(request: Request, tweet: str = Form(...,
         HTMLResponse: The rendered HTML template with the prediction result.
     
     """
-    if not tweet:
-        raise HTTPException(status_code=400, detail="Tweet cannot be empty.")
+    if not tweet or not tweet.strip():
+        return RedirectResponse(
+            url=f"/?error={quote('No Text found')}",
+            status_code=303
+        )
     
     payload_text = preprocess(tweet)
+    words = payload_text.split()
+
+    if not words:
+        return RedirectResponse(
+        url=f"/?error={quote('Text must contain meaningful words')}",
+        status_code=303
+    )
+
+    if len(words) > 50:
+        return RedirectResponse(
+        url=f"/?error={quote('Comments must not contain more than 50 words')}",
+        status_code=303
+    )
+
+    if not any(len(w) >= 3 for w in words):
+        return RedirectResponse(
+        url=f"/?error={quote('Comments must contain at least one word with 3+ characters')}",
+        status_code=303
+    )
     
-    #url = "https://subi003-toxictagger-serveapi.hf.space/get_prediction"
     url = "http://localhost:8000/api/predict"
+    #url = "https://subi003-toxictagger-serveapi.hf.space/get_prediction"
 
     headers = {"X-Request-ID": str(uuid.uuid4())}
 
