@@ -54,7 +54,7 @@ def serve_model():
 
         logging.info(f"Uploading to huggingface space for model serving")
         upload_folder(
-            folder_path = Path("hf_serve_api"),
+            folder_path = Path("src"),
             repo_id = HUGGINGFACE_REPO_ID,
             repo_type = "space",
             token = hf_token,
