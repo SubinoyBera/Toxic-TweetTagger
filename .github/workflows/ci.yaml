@@ -4,23 +4,17 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - '*.md'
-      - 'images/*'
-      - 'notebooks/*'
-      - 'templates/*'
-      - 'static/*'
-      - 'app/*'
+      - "*.md"
+      - "images/*"
+      - "notebooks/*"
+      - "frontend/*"
 
   pull_request:
     branches: [main]
     paths-ignore:
-      - '*.md'
-      - 'images/*'
-      - 'notebooks/*'
-      - 'templates/*'
-      - 'static/*'
-      - 'app/*'
-
+      - "*.md"
+      - "images/*"
+      - "notebooks/*"
 
 jobs:
   build-and-test:
@@ -33,7 +27,7 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: cache uv and pip dependencies
         uses: actions/cache@v3
@@ -73,6 +67,16 @@ jobs:
           source .venv/bin/activate
           dvc repro
 
+      - name: register model in registry
+        id: register_model
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          OWNER: ${{ secrets.OWNER }}
+          MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
+        run: |
+          source .venv/bin/activate
+          python -m src.operations.register_model
+
       - name: run model tests
         id: model_test
         continue-on-error: true
@@ -84,7 +88,7 @@ jobs:
           source .venv/bin/activate
           tox -e test_model
 
-      - name: promote model to production in registry
+      - name: promote model to production
         id: promote_model
         if: steps.model_test.outcome == 'success'
         env:
@@ -95,31 +99,43 @@ jobs:
           source .venv/bin/activate
           python -m src.operations.promote_model
 
-      - name: push production model from registry to server
-        id: deploy_model
-        if: steps.promote_model.outcome == 'success'
+      - name: load the production model artifact and package it for deployment
+        id: load_model
+        if: steps.model_test.outcome == 'success'
         env:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
           OWNER: ${{ secrets.OWNER }}
           MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
+        run: |
+          source .venv/bin/activate
+          python -m src.operations.load_model
+
+      - name: run unit test for app services
+        id: unit_test_services
+        if: steps.load_model.outcome == 'success'
+        run: |
+          source .venv/bin/activate
+          tox -e unit_test_services
+
+      - name: run integration test
+        id: integration_test
+        if: steps.unit_test_services.outcome == 'success'
+        env:
+          MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+        run: |
+          source .venv/bin/activate
+          tox -e integration_test
+
+      - name: deploy model and API services 
+        id: serve_model
+        if: steps.integration_test.outcome == 'success'
+        env:
           HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
         run: |
           source .venv/bin/activate
           python -m src.operations.serve_model
-
-      - name: wait for deployment
-        if: steps.deploy_model.outcome == 'success'
-        run: sleep 225
-
-      - name: run app tests
-        if: steps.deploy_model.outcome == 'success'
-        env:
-          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-          OWNER: ${{ secrets.OWNER }}
-          MLFLOW_URI: ${{ secrets.MLFLOW_URI }}
-        run: |
-          source .venv/bin/activate
-          tox -e test_app
 
       - name: upload pipeline logs
         if: always()
