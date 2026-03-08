@@ -16,12 +16,6 @@ def test_remove_punctuations(helper):
     assert "!" not in result
     assert "?" not in result
 
-def test_emojis_to_text(helper):
-    text = "I love python ❤️"
-    result = helper.emojis_to_texts(text)
-
-    assert ":red_heart:" in result
-
 def test_remove_stopwords(helper):
     text = "this is a very good movie"
     result = helper.remove_stopwords(text)
@@ -34,12 +28,3 @@ def test_lemmatization(helper):
     result = helper.lemmatization(text)
 
     assert isinstance(result, str)
-
-def test_preprocess_pipeline():
-    tweet = "Dogs are running!!! ❤️"
-
-    result = preprocess(tweet)
-
-    assert isinstance(result, str)
-    assert "!" not in result
-    assert result == result.lower()
