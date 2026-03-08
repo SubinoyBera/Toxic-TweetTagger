@@ -138,6 +138,7 @@ Project Structure Map: Toxic Tweet-Tagger
 │   ├── utils/
 │   │   └── __init__.py
 │   ├── __init__.py
+|   ├── README.md
 │   ├── .dockerignore
 │   └── Dockerfile
 ├── tests/
