@@ -11,11 +11,11 @@ load_dotenv()
 LOG_LEVEL = logging.INFO
 ENV = os.getenv("ENV")
 
-log_handlers = [logging.StreamHandler(sys.stdout)]
+log_handlers: list[logging.Handler] = [logging.StreamHandler(sys.stdout)]               # Typing fixes for mypy
 
 if ENV == "DEV":
     LOG_FILE = f"{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}.log"
-    logs_path = os.path.join(os.getcwd(), "logs", LOG_FILE)
+    logs_path = os.path.join(os.getcwd(), "logs")
 
     # Create a logs directory if it doesn't exist
     os.makedirs(logs_path, exist_ok = True)

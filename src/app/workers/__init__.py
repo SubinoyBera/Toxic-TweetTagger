@@ -1,6 +1,8 @@
-# 
+# This module contains the implementation of the BufferedEventConsumerWorker class, which is responsible for consuming events from a buffer queue and writing them to a MongoDB collection in batches. 
+
 import time
 import threading
+from typing import Any
 from queue import Queue, Empty, Full
 from src.core.logger import logging 
 
@@ -19,21 +21,21 @@ class BufferedEventConsumerWorker:
             flush_interval (int, optional): The interval (in seconds) at which to flush the queue. Defaults to 30.
             mongo_timeout (int, optional): The timeout (in seconds) for write operations. Defaults to 5.
         """
-        self.queue = Queue(queue_maxsize)
+        self.queue: Queue[dict[str, Any] | None] = Queue(queue_maxsize)
         self.max_batch_size = max_batch_size                
         self.flush_interval = flush_interval
         self.mongo_timeout = mongo_timeout
 
-        self.shutdown_event = threading.Event()
+        self.shutdown_event: threading.Event = threading.Event()
 
         self.client = mongo_client 
         self.database_name = database_name
         self.collection_name = collection_name
 
-        self.worker = threading.Thread(
+        self.worker: threading.Thread = threading.Thread(
             target=self._writer_worker,
             daemon=True
-            )
+        )
         self.worker.start()
 
     def add_event(self, record: dict) -> None:  
