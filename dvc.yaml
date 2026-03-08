@@ -39,7 +39,7 @@ stages:
       - configs/params.yaml:
         - feature_engineering.max_features
     outs:
-      - models/vectorizer_meta.txt
+      - artifacts/models/vectorizer_meta.txt
       - artifacts/feature_engineering/train_data.feather
 
   model_training:
@@ -52,7 +52,7 @@ stages:
       - configs/params.yaml:
         - model_training.hyperparameters
     outs:
-      - models/model_meta.txt
+      - artifacts/models/model_meta.txt
 
   model_evaluation:
     cmd: python -m src.components.model_evaluation
@@ -62,7 +62,7 @@ stages:
       - src/script/model_wrapper.py
       - src/core/configuration.py
       - artifacts/data_ingestion/test_data.parquet
-      - models/model_meta.txt
+      - artifacts/models/model_meta.txt
     params:
       - configs/params.yaml:
         - model_training.model_name
