@@ -72,15 +72,12 @@ def test_python_model(new_model):
     input_text = ["the book is so bad, i hate it"]
     input_df = pd.DataFrame(input_text, columns=["text"])
 
-    model_response = new_model.predict(input_df)
-
-    label = int(model_response["class_label"][0])
-    probability_scores = model_response["class_probability_scores"]
-    scores = np.array(probability_scores).flatten()
+    label = new_model.predict(None, input_df)[0]
+    probability_scores = new_model.predict_proba(None, input_df)[0]
 
     assert label in [0, 1]
     assert probability_scores is not None
-    assert pytest.approx(np.sum(scores), 0.01) == 1.0
+    assert pytest.approx(np.sum(probability_scores), 0.01) == 1.0
 
 
 def test_model_performance():
