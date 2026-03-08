@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
         {
-            "src": "app/app.py",
+            "src": "frontend/app.py",
             "use": "@vercel/python",
             "config": {
                 "maxLambdaSize": "50mb",
@@ -13,7 +13,7 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "app/app.py"
+            "dest": "/frontend/app.py"
         }
     ]
 }

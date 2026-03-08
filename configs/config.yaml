@@ -16,7 +16,7 @@ data_preprocessing:
 
 feature_engineering:
   root_dir: artifacts/feature_engineering
-  models_dir: models
+  models_dir: artifacts/models
   training_dataset: train_data.feather
 
 model_training:
