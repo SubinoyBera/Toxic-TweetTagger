@@ -33,6 +33,7 @@ dependencies = [
     "requests",
     "pydantic",
     "python-dotenv",
+    "python-box",
     "tqdm",
     "httpx",
     "huggingface-hub",
