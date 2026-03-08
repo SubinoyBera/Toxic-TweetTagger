@@ -211,7 +211,12 @@ logs/
 artifacts/*
 notebooks/artifacts/
 notebooks/dl-models/
+
 /artifacts
 dvc_storage/
+reports/data_drift.json
+reports/experiment.json
+reports/metrics.json
+
 prometheus_metrics/*
 tests/load_test/*
