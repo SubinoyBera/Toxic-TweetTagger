@@ -27,6 +27,7 @@ dependencies = [
     "scikit-learn",
     "xgboost",
     "nltk",
+    "emoji",
     "pymongo",
     "PyYAML",
     "requests",
