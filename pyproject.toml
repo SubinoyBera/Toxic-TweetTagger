@@ -47,7 +47,7 @@ mlops = [
     "mlflow",
     "evidently",
     "lime",
-    "prometheus"
+    "prometheus-client"
 ]
 dev = [
     "pytest",
