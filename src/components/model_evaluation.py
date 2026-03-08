@@ -173,8 +173,8 @@ def initiate_model_evaluation():
     mlflow.set_experiment("DVC Pipeline Model Experiments")
     with mlflow.start_run(run_name=model_name) as run:
         try:
-            model = load_obj(location_path=model_path, obj_name=f"{model_name}.joblib")
-            vectorizer = load_obj(location_path=model_path, obj_name=f"{vectorizer_name}.joblib")
+            model = load_obj(location_path=model_path, obj_name="model.joblib")
+            vectorizer = load_obj(location_path=model_path, obj_name="vectorizer.joblib")
 
             evaluation_report, model_params = eval_obj.evaluate(model=model, model_name=model_name, vectorizer=vectorizer,
                                                                 vectorizer_name=vectorizer_name, eval_threshold=eval_threshold, df=processed_test_df)
