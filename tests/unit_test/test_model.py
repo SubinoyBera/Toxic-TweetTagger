@@ -69,8 +69,8 @@ def test_python_model(new_model):
           to ensure correct probability distribution.
           
     """
-    input_text = ["the book is so bad, i hate it!"]
-    input_df = pd.DataFrame(input_text, columns=["comments"])
+    input_text = ["the book is so bad, i hate it"]
+    input_df = pd.DataFrame(input_text, columns=["text"])
 
     model_response = new_model.predict(input_df)
 
