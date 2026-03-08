@@ -6,7 +6,8 @@ from fastapi.testclient import TestClient
 
 @pytest.fixture(scope="module")
 def client():
-    return TestClient(app)
+    with TestClient(app) as client:
+        yield client
 
 def test_health(client):
     response = client.get("/health")
