@@ -72,8 +72,8 @@ def test_python_model(new_model):
     input_text = ["the book is so bad, i hate it"]
     input_df = pd.DataFrame(input_text, columns=["text"])
 
-    label = new_model.predict(None, input_df)[0]
-    probability_scores = new_model.predict_proba(None, input_df)[0]
+    label = new_model.predict(input_df)[0]
+    probability_scores = new_model.predict_proba(input_df)[0]
 
     assert label in [0, 1]
     assert probability_scores is not None
