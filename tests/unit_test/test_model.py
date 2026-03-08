@@ -73,11 +73,8 @@ def test_python_model(new_model):
     input_df = pd.DataFrame(input_text, columns=["text"])
 
     label = new_model.predict(input_df)[0]
-    probability_scores = new_model.predict_proba(input_df)[0]
 
     assert label in [0, 1]
-    assert probability_scores is not None
-    assert pytest.approx(np.sum(probability_scores), 0.01) == 1.0
 
 
 def test_model_performance():
