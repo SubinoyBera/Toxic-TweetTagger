@@ -211,8 +211,6 @@ logs/
 artifacts/*
 notebooks/artifacts/
 notebooks/dl-models/
-models/
 /artifacts
 dvc_storage/
-hf_serve_api/model/*
-prometheus_metrics/
+prometheus_metrics/*

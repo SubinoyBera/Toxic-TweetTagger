@@ -1,7 +1,7 @@
 import sys
 from sklearn.model_selection import train_test_split
-from src.constant.constants import DATABASE_NAME, COLLECTION_NAME
-from src.connection.mongo_client import MongoDBClient
+from src.core.constants import DATABASE_NAME, TRAINING_COLLECTION_NAME
+from src.core.mongo_client import MongoDBClient
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.core.configuration import AppConfiguration
@@ -37,13 +37,13 @@ class DataIngestion:
             logging.info("Connecting to MongoDB")
             client = MongoDBClient()
 
-            data = client.fetch_data(database_name=DATABASE_NAME, collection_name=COLLECTION_NAME)
+            data = client.get_all_docs(database_name=DATABASE_NAME, collection_name=TRAINING_COLLECTION_NAME)
 
             data.to_csv(save_ingested_data_path, index=False)
             logging.info(f"Raw ingested data saved successfully saved at {save_ingested_data_path}")
 
-            # shuffling data
-            data = data.sample(frac=1, random_state=42).reset_index(drop=True)
+            # close mongo connection 
+            client.close_connection()
 
             logging.info("Splitting data into training and testing sets")
             train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)

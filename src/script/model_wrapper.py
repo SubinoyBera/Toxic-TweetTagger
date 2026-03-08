@@ -1,5 +1,6 @@
 # This script wraps the ML model and the vectorizer into a single Python model object and 
-# prepares it for registeration in MLflow.
+# prepares it for registeration in MLflow. 
+# This implementation is deprecated and is not used in the current version of the API (V2)
 
 import pandas as pd
 from mlflow.pyfunc.model import PythonModel
@@ -29,13 +30,17 @@ class CustomModel(PythonModel):
         Returns:
             dict: A dictionary containing the class probability scores and class labels.
         """
-        texts = model_input["comments"]
+        texts = model_input["text"]
         if self.vectorizer is not None and self.model is not None:
             X = self.vectorizer.transform(texts)
-            class_probability_scores = self.model.predict_proba(X)
             class_label = self.model.predict(X)
 
-        return {
-            "class_probability_scores" : class_probability_scores,
-            "class_label" : class_label
-        }
+        return class_label
+    
+    def predict_proba(self, context, model_input: pd.DataFrame):        
+        text = model_input["text"]
+        if self.vectorizer is not None and self.model is not None:
+            X = self.vectorizer.transform(text)
+            class_proba = self.model.predict_proba(X)
+        
+        return class_proba

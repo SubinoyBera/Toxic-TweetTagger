@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToxicTweet-Tagger</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+    <script src="/static/script.js" defer></script>
+</head>
+
+<div id="error-data" data-error="{{ error_message if error_message else '' }}"></div>
+
+<body>
+    <header class="header">
+        <div class="project_name">
+            <h4>Subinoy Bera : ToxicTweet-Tagger</h4>
+        </div>
+        
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/about.html">About</a>
+        </nav>
+    </header>
+
+    <div class="card"> 
+        <h1>Hate Tweet Detection</h1>
+        <form action="/get_prediction" method="POST">
+            <label for="text" style="font-size: 18px;">Write text:</label><br>
+            <textarea id="text" name="tweet" class="textarea" rows="5" placeholder="Enter your comment here ...">{{ user_input if user_input else '' }}</textarea><br>
+            <button type="submit" class="predict-btn">Predict</button>
+        </form>
+        
+        {% if result is not none %}
+            <div class="result-card {{ toxicity_level }}">
+
+            <!-- Header -->
+            <div class="result-header centered">
+                <h3>Prediction Result</h3>
+
+                <span class="status-badge {{ toxicity_level }}">
+                    {% if toxicity == 'strong' %}
+                        ⚠️ Highly Toxic
+                    {% elif toxicity == 'high' %}
+                        ❌ Toxic
+                    {% elif toxicity == 'uncertain' %}
+                        🤔 Uncertain
+                    {% elif toxicity == 'none' %}
+                        ✅ Safe
+                    {% else %}
+                        😖 Model Error
+                    {% endif %}
+                </span>
+            </div>
+
+            <!-- Confidence Section -->
+            <div class="confidence-section">
+                <div class="confidence-label">
+                    Confidence: <strong>{{ confidence }}%</strong>
+                </div>
+            
+                <div class="confidence-bar" data-confidence="{{ confidence }}">
+                    <div class="confidence-fill"></div>
+                </div>
+            </div>
+
+            <!-- Warning -->
+            {% if warning_msg %}
+            <div class="warning-box">
+                <strong>⚠️ Warning: Low Confidence</strong>
+                <p>{{ warning_msg }}</p>
+            </div>
+            {% endif %}
+        
+            <!-- Feedback -->
+            {% if result %}
+                <div class="feedback-section">
+                    <p>Is this prediction correct?</p>
+                
+                    <form action="/submit_feedback" method="post">
+
+                        <!-- Hidden prediction data -->
+                        <input type="hidden" name="id" value="{{ id }}">
+                        <input type="hidden" name="pred_label" value="{{ pred_label }}">
+                    
+                        <button type="submit" name="feedback_label" value=1 class="feedback-btn">
+                            👍 Yes
+                        </button>
+                    
+                        <button type="submit" name="feedback_label" value=0 class="feedback-btn negative">
+                            👎 No
+                        </button>
+                    
+                    </form>
+                </div>
+            {% endif %}
+
+            <!-- Collapsible -->
+            <details class="extras">
+                <summary> Extras </summary>
+                {% if result %}
+                    <form action="/get_explanation" method="post" target="_blank">
+                        <input type="hidden" name="tweet" value="{{ user_input }}">
+                        <button type="submit" class="explaination-btn">Generate Explanation</button>
+                    </form>
+                {% endif %}
+
+                <p class="inference-time">⏱️ Model Inference Time: {{ inference_time }} ms</p>
+
+                <p class="version">🧩 Version: 2.0.0</p>
+                
+                <div class="api-box">
+                    <a href="/api_response" target="_blank">View API</a>
+                </div>
+            </details>
+
+        </div>
+        {% endif %}
+    
+    </div> 
+
+    <div id="toast" class="toast-message">
+            <span id="toast-text"></span>
+        </div>
+
+</body>
+</html>
