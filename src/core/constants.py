@@ -24,4 +24,4 @@ FEEDBACK_COLLECTION_NAME = "prediction_feedback"
 REGISTERED_MODELS_DIR = Path(ROOT_DIR, "src/app/model")
 
 # HuggingFace Repo
-HUGGINGFACE_REPO_ID = "Subi003/ToxicTagger_serveAPI"
+HUGGINGFACE_REPO_ID = "Subi003/ToxicTweet-Tagger"

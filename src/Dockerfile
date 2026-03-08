@@ -9,7 +9,7 @@ WORKDIR /app
 COPY . /app
 
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r src/app/requirements.txt -r src/app/model/requirements.txt
+    pip install --no-cache-dir -r app/requirements.txt -r app/model/requirements.txt
 
 RUN mkdir -p /tmp/prometheus_metrics && \
     chmod 777 /tmp/prometheus_metrics
