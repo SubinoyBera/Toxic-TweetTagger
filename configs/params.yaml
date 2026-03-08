@@ -7,9 +7,9 @@ feature_engineering:
     max: 1
 
 model_training:
-  model_name: XGB-v5
+  model_name: XGB-X
   hyperparameters:
-    n_estimators: 550
+    n_estimators: 150
     learning_rate: 0.1
     max_depth: 6
     tree_method: hist
