@@ -7,7 +7,7 @@ feature_engineering:
     max: 1
 
 model_training:
-  model_name: XGB-v3
+  model_name: XGB-v5
   hyperparameters:
     n_estimators: 550
     learning_rate: 0.1
