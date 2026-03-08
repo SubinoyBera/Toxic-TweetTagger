@@ -21,7 +21,7 @@ prometheus_client==0.22.1
 xgboost==3.0.2
 uvicorn==0.35.0
 gunicorn==23.0.0
-dvc==3.61.0
+dvc==3.66.1
 mlflow==2.22.1
 dagshub==0.5.10
 fastapi==0.116.1

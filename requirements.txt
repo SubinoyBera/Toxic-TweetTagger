@@ -12,7 +12,7 @@ ensure==1.0.4
 lime==0.2.0.1
 evidently==0.7.12
 PyYAML==6.0.2
-dvc==3.61.0
+dvc==3.66.1
 mlflow==2.22.1
 dagshub==0.5.10
 fastapi==0.116.1
