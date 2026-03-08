@@ -214,4 +214,4 @@ notebooks/dl-models/
 /artifacts
 dvc_storage/
 prometheus_metrics/*
-tests/load_test/
+tests/load_test/*
