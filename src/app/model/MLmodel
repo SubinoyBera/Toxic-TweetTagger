@@ -1,0 +1,31 @@
+artifact_path: XGB-v4
+flavors:
+  python_function:
+    artifacts:
+      booster:
+        path: artifacts\booster.json
+        uri: D:\My Projects\Toxic Tweet-Tagger\test_models\booster.json
+      metrics:
+        path: artifacts\metrics.json
+        uri: D:\My Projects\Toxic Tweet-Tagger\test_models\metrics.json
+      model:
+        path: artifacts\model.joblib
+        uri: D:\My Projects\Toxic Tweet-Tagger\test_models\model.joblib
+      vectorizer:
+        path: artifacts\vectorizer.joblib
+        uri: D:\My Projects\Toxic Tweet-Tagger\test_models\vectorizer.joblib
+    cloudpickle_version: 3.1.1
+    code: null
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pyfunc.model
+    python_model: python_model.pkl
+    python_version: 3.11.5
+    streamable: false
+mlflow_version: 2.22.1
+model_size_bytes: 4509986
+model_uuid: a2c7dc9359894fab899c13a88f9f9a4c
+prompts: null
+run_id: 9b6349ac22e04cf0a22257952299e056
+utc_time_created: '2026-02-17 03:36:56.916972'

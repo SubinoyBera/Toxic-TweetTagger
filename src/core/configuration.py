@@ -1,7 +1,7 @@
 # Project pipeline configuration 
 import sys
 from pathlib import Path
-from ..constant.constants import CONFIG_FILE
+from .constants import CONFIG_FILE
 from ..utils import read_yaml, create_directory
 from ..core.logger import logging
 from ..core.exception import AppException

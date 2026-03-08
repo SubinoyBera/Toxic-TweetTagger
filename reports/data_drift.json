@@ -1,0 +1,33 @@
+{
+    "metrics": [
+        {
+            "id": "15e89f895b482f9b84ba7274ed18a106", 
+            "metric_id": "DriftedColumnsCount(drift_share=0.5)", 
+            "value": {"count": 0.0, "share": 0.0}
+        }, 
+        {
+            "id": "7849b97c9f427479254d11b1281b616b", 
+            "metric_id": "ValueDrift(column=num_words)", 
+            "value": 0.005645616766074185
+        }, 
+        {
+            "id": "43125150575c7daee5b5ca7701d93beb", 
+            "metric_id": "ValueDrift(column=num_characters)", "value": 0.006729013390054461
+        }, 
+        {
+            "id": "284d9df74232c0e90413b3564dd3fbd4", 
+            "metric_id": "ValueDrift(column=avg_word_len)", 
+            "value": 0.0051522998337021324
+        }, 
+        {
+            "id": "250b5e21d48e2d009edd95669fffe3e7", 
+            "metric_id": "ValueDrift(column=Label)", 
+            "value": 0.00025779935622355967
+        }, 
+        {"id": "4947e73b99ab7be918afeb75276d9c27", 
+        "metric_id": "ValueDrift(column=Content)", 
+        "value": 0.4989729043760807
+        }
+    ], 
+    "tests": []
+}
