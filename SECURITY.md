@@ -5,7 +5,9 @@ This is the first version of the project and more updated versions would be avai
 
 | Version | Support             | Notes                               |
 | ------- | ------------------  | ----------------------------------- |
-| 1.0.0   | ✅ Full Support    | First version with full support.    |
+| 1.0.0   | ❌ Deprecated      | First app version.                  |
+| 1.0.1   | ✅ Full Support    | Patch upgrade and improvement.      |
+| 2.0.0   | ✅ Full Support    | Upgrade API services and UI.        |
 
 ---
 
