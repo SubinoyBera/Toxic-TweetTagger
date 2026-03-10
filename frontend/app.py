@@ -49,7 +49,7 @@ def health_check():
     if the server is alive and running.
     
     """
-    url = "https://subi003-toxictagger-serveapi.hf.space/"
+    url = "https://subi003-toxictweet-tagger.hf.space/api/health"
     
     response = requests.get(url)
     
@@ -113,7 +113,7 @@ async def get_prediction(request: Request, tweet: str = Form(...,
     )
     
     #url = "http://localhost:8000/api/predict"
-    url = "https://Subi003/ToxicTweet-Tagger/api/predict"
+    url = "https://subi003-toxictweet-tagger.hf.space/api/predict"
 
     headers = {"X-Request-ID": str(uuid.uuid4())}
 
@@ -159,7 +159,7 @@ async def submit_feedback(request: Request,
                           feedback_label: int = Form(..., description="The feedback label for the input tweet")):
 
     #url = "http://localhost:8000/api/submit_feedback"
-    url = "https://Subi003/ToxicTweet-Tagger/api/submit_feedback"
+    url = "https://subi003-toxictweet-tagger.hf.space/api/submit_feedback"
 
     try:
         response = requests.post(
@@ -196,7 +196,7 @@ async def get_explanation(request: Request, tweet: str=Form(...)):
         raise HTTPException(status_code=400, detail="Tweet cannot be empty.")
     
     #url = "http://localhost:8000/api/explain"
-    url = "https://Subi003/ToxicTweet-Tagger/api/explain"
+    url = "https://subi003-toxictweet-tagger.hf.space/api/explain"
 
     response = requests.post(url, json={"input_tweet": tweet})
 
