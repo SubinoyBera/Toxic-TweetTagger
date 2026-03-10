@@ -47,7 +47,7 @@ In essence, its <b>not just about building a machine learning model</b> with som
 
 ## 🔗 Links :
 
-- ### [Visit App ↗️](https://toxictweet-tagger.vercel.app)
+- ### [Visit App ↗️](https://toxic-tweet-tagger.vercel.app/)
 - ### [Hugging Face 🤗](https://huggingface.co/spaces/Subi003/ToxicTagger_serveAPI/tree/main)
 
 📌 <b>PLEASE NOTE</b> :
