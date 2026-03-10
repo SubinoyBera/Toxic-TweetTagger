@@ -11,20 +11,20 @@ from src.app.api.schemas import InferenceRequest, InferenceResponse, FeedbackReq
 router = APIRouter()
 
 @router.get("/health")
-async def health_check():
+def health_check():
     return {"status": "ok"}
 
 @router.post("/predict", response_model=InferenceResponse)
-async def predict(request: Request, payload: InferenceRequest, service: InferenceService = Depends(get_inference_service)):
+def predict(request: Request, payload: InferenceRequest, service: InferenceService = Depends(get_inference_service)):
     request_id = request.state.request_id
     return service.predict(request_id, payload.input_tweet, payload.text)
 
 @router.post("/explain")
-async def explain(payload: ExplanationRequest, service: ExplainerService = Depends(get_explainer_service)):
+def explain(payload: ExplanationRequest, service: ExplainerService = Depends(get_explainer_service)):
     return HTMLResponse(service.explain(payload.input_tweet))
 
 @router.post("/submit_feedback")
-async def submit_feedback(request: Request, payload: FeedbackRequest, service: FeedbackService = Depends(get_feedback_service)):
+def submit_feedback(request: Request, payload: FeedbackRequest, service: FeedbackService = Depends(get_feedback_service)):
     request_id = request.state.request_id
     return service.submit_feedback(request_id, payload.predicted_label, payload.feedback_label)
 
