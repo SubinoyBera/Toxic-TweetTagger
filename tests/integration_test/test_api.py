@@ -1,5 +1,6 @@
 # This file contains tests for the FastAPI backend API endpoints.
 import pytest
+import uuid
 from fastapi import status
 from src.app.main import app
 from fastapi.testclient import TestClient
@@ -10,7 +11,7 @@ def client():
         yield client
 
 def test_health(client):
-    response = client.get("/health")
+    response = client.get("api/health")
 
     assert response.status_code == status.HTTP_200_OK
     
@@ -22,9 +23,12 @@ def test_health(client):
 def test_predict_endpoint(client):
     tweet = "I love that movie! It was great"
 
+    headers = {"X-Request-ID": str(uuid.uuid4())}
+
     response = client.post(
         "/api/predict",
-        params={"tweet": tweet}
+        json={"input_tweet": tweet, "text": tweet},
+        headers=headers
     )
 
     assert response.status_code == 200
@@ -74,7 +78,7 @@ def test_predict_endpoint(client):
 def test_explain_endpoint(client):
     response = client.post(
         "/api/explain",
-        params={"tweet": "You are stupid"}
+        json={"input_tweet": "You are stupid"}
     )
 
     assert response.status_code == 200
@@ -82,13 +86,15 @@ def test_explain_endpoint(client):
 
 
 def test_feedback_endpoint_success(client):
-    payload = {
-        "request_id": "test123",
-        "pred_label": 1,
-        "feedback_label": 1
-    }
 
-    response = client.post("/api/feedback", json=payload)
+    response = client.post(
+            "api/submit_feedback",
+            json={
+                "predicted_label": 1,
+                "feedback_label": 1
+            },
+            headers={"X-Request-ID": str(uuid.uuid4())},
+        )
 
     assert response.status_code == 200
 
