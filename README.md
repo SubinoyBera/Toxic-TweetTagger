@@ -15,7 +15,7 @@ The system covers the complete lifecycle of an ML application:
 - Containerized inference services
 - Deployment and monitoring readiness
 
-## 🚀 Highlights :
+## ✍️ Highlights :
 
 - 📂 <b>End-to-End ML Pipeline</b> – Complete ML lifecycle starting from data ingestion and preprocessing to model training, evaluation. Every stage is modular and reusable, making the pipeline easy to extend or adapt to new datasets.
 
@@ -47,7 +47,7 @@ The system covers the complete lifecycle of an ML application:
 - <b>Testing & Code Quality</b> : tox, pytest, black, flake8, mypy
 - <b>Deployment</b> : Vercel
 
-## Version 2 Update :
+## 🚀 Version 2.0 Update :
 - Inference time reduced from ~200 ms to <10 ms.
 - Implemented feedback and prediction explanation services.
 - Exposes Prometheus metrics endpoint for monitoring and visualization using Grafana dashboards.
@@ -63,7 +63,7 @@ The system covers the complete lifecycle of an ML application:
 ## 🔗 Links :
 
 - ### [Visit App ↗️](https://toxic-tweet-tagger.vercel.app/)
-- ### [Hugging Face 🤗](https://huggingface.co/spaces/Subi003/ToxicTagger_serveAPI/tree/main)
+- ### [Hugging Face 🤗](https://huggingface.co/Subi003)
 
 📌 <b>PLEASE NOTE</b> :
 This project focuses on Machine Learning engineering, MLOps, and model deployment aspects rather than full-stack web development.
