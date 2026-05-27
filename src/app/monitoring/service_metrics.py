@@ -46,7 +46,7 @@ EXPLAINER_REQUEST_FAILED = Counter(
 
 # Feedback counter
 FEEDBACK_REQUEST_SUCCESS = Counter(
-    "feedback_subissions_success_total",
+    "feedback_submissions_success_total",
     "Total successful feedback submissions"
 )
 

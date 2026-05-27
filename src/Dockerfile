@@ -22,9 +22,6 @@ RUN wget https://github.com/prometheus/prometheus/releases/download/v2.51.0/prom
     mv prometheus-2.51.0.linux-amd64/prometheus /usr/local/bin/ && \
     rm -rf prometheus-2.51.0.linux-amd64*
 
-# Copy prometheus config (accessible to appuser)
-COPY prometheus.yaml /app/prometheus.yaml
-
 # Copy startup script
 COPY start.sh /start.sh
 RUN chmod +x /start.sh

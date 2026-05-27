@@ -7,7 +7,7 @@ rm -rf /tmp/prometheus_metrics/*
 mkdir -p /tmp/prometheus_metrics
 
 # Substitute environment variables into prometheus config
-envsubst < /app/prometheus.yml > /tmp/prometheus_resolved.yaml
+envsubst < /app/src/prometheus.yaml > /tmp/prometheus_resolved.yaml
 
 # Start Prometheus in background
 echo "Starting Prometheus"

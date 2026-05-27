@@ -140,7 +140,9 @@ Project Structure Map: Toxic Tweet-Tagger
 │   ├── utils/
 │   │   └── __init__.py
 │   ├── __init__.py
-|   ├── README.md
+│   ├── README.md
+│   ├── prometheus.yaml
+│   ├── start.sh
 │   ├── .dockerignore
 │   └── Dockerfile
 ├── tests/
