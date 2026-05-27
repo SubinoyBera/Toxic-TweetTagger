@@ -1,1 +1,2 @@
 *.ipynb linguist-vendored
+src/start.sh text eol=lf
