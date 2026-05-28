@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from src.core.logger import logging
 from src.core.exception import AppException
 from src.app.monitoring.service_metrics import (PREDICTION_REQUEST_SUCCESS, PREDICTION_REQUEST_FAILED, 
-                                     PREDICTION_CLASS, INFERENCE_LATENCY, PREDICTION_CONFIDENCE)
+                                     PREDICTION_CLASS, INFERENCE_LATENCY, PREDICTION_CONFIDENCE, CONFIDENCE_MARGIN)
 
 class InferenceService:
     def __init__(self, model_booster, vectorizer, eval_threshold, 
@@ -54,7 +54,10 @@ class InferenceService:
 
         warnings = None
         if confidence_margin < 0.10:
-            message=f"Prediction is close to model decision boundary. Confidence Margin: {round(confidence_margin, 4)}. Manual review is recommended!"
+            if pred[0] == 1:
+                message=f"Model predicted as 'Toxic', but prediction confidence is close to decision boundary. Manual review is recommended! Please consider providing feedback to help improve the model."
+            else:
+                message=f"Model predicted as 'Safe', but prediction confidence is close to decision boundary. Manual review is recommended! Please consider providing feedback to help improve the model."
             warnings = {
                 "code": "LOW_CONFIDENCE_MARGIN",
                 "message": message
@@ -82,6 +85,8 @@ class InferenceService:
         PREDICTION_CLASS.labels(class_label=str(pred[0])).inc()
         # Track class confidence
         PREDICTION_CONFIDENCE.labels(class_label=str(pred[0])).observe(confidence)
+        # Track confidence margin
+        CONFIDENCE_MARGIN.observe(confidence_margin)
 
         response = {
             "id": request_id,

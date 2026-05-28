@@ -6,29 +6,78 @@ form.addEventListener("submit", () => {
   button.disabled = true;
 });
 
-
 const params = new URLSearchParams(window.location.search);
 const errorMessage = params.get("error");
 
 if (errorMessage) {
+  const toast = document.getElementById("toast");
+  const toastText = document.getElementById("toast-text");
 
-    const toast = document.getElementById("toast");
-    const toastText = document.getElementById("toast-text");
+  toastText.innerText = "⚠️ " + errorMessage;
 
-    toastText.innerText = "⚠️ " + errorMessage;
+  toast.classList.add("show");
 
-    toast.classList.add("show");
-
-    setTimeout(() => {
-        toast.classList.remove("show");
-    }, 4000);
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 4000);
 }
 
 window.history.replaceState({}, document.title, window.location.pathname);
 
-
-// confidence bar
+// Show feedback popup if feedback was submitted
 document.addEventListener("DOMContentLoaded", function () {
+  const params = new URLSearchParams(window.location.search);
+
+  // --- Error toast ---
+  const errorMessage = params.get("error");
+  if (errorMessage) {
+    const toast = document.getElementById("toast");
+    const toastText = document.getElementById("toast-text");
+    toastText.innerText = "⚠️ " + errorMessage;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 4000);
+  }
+
+  // --- Feedback popup ---
+  function showPopup(message, bgColor) {
+    const popup = document.createElement("div");
+    popup.innerHTML = message;
+    popup.style.position = "fixed";
+    popup.style.top = "20px";
+    popup.style.left = "50%";
+    popup.style.transform = "translateX(-50%)";
+    popup.style.background = bgColor;
+    popup.style.color = "white";
+    popup.style.padding = "15px 20px";
+    popup.style.borderRadius = "8px";
+    popup.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
+    popup.style.zIndex = "9999";
+    popup.style.opacity = "1";
+    popup.style.transition = "opacity 0.5s ease";
+    document.body.appendChild(popup);
+    setTimeout(() => {
+      popup.style.opacity = "0";
+      setTimeout(() => popup.remove(), 500);
+    }, 5500);
+  }
+
+  if (params.get("feedback_submitted") === "true") {
+    showPopup(
+      "✅ Feedback recorded successfully. Thank you for your feedback! 🙏",
+      "#3da240",
+    );
+  }
+  if (params.get("feedback_error") === "true") {
+    showPopup(
+      "❌ Feedback service is currently unavailable. Please try again later.",
+      "#f44336",
+    );
+  }
+
+  // ✅ Clean URL LAST — after reading all params
+  window.history.replaceState({}, document.title, window.location.pathname);
+
+  // confidence bar
   const bar = document.querySelector(".confidence-bar");
   const fill = document.querySelector(".confidence-fill");
 
@@ -52,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Apply gradient to the FILL element using fixed color stops
   // at 40% and 70% of the fill's own width, scaled to the actual confidence.
   // e.g. if confidence=99.74%, the red zone ends at (40/99.74)*100 ≈ 40.1% of the fill
-  const redEnd   = (40 / confidence) * 100;
+  const redEnd = (40 / confidence) * 100;
   const greenStart = (70 / confidence) * 100;
 
   fill.style.background = `linear-gradient(to right,
@@ -63,51 +112,4 @@ document.addEventListener("DOMContentLoaded", function () {
     #a9c838 ${(greenStart + 100) / 2}%,
     #04c00a 100%
   )`;
-});
-
-
-// Show feedback popup if feedback was submitted
-document.addEventListener("DOMContentLoaded", function () {
-
-  const params = new URLSearchParams(window.location.search);
-
-  function showPopup(message, bgColor) {
-    const popup = document.createElement("div");
-    popup.innerHTML = message;
-    popup.style.position = "fixed";
-    popup.style.top = "20px";
-    popup.style.left = "50%";
-    popup.style.transform = "translateX(-50%)";
-    popup.style.background = bgColor;
-    popup.style.color = "white";
-    popup.style.padding = "15px 20px";
-    popup.style.borderRadius = "8px";
-    popup.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
-    popup.style.zIndex = "9999";
-    popup.style.opacity = "1";
-    popup.style.transition = "opacity 0.5s ease";
-
-    document.body.appendChild(popup);
-
-    setTimeout(() => {
-        popup.style.opacity = "0";
-        setTimeout(() => popup.remove(), 500);
-    }, 5500);
-  }
-
-  // Success popup
-  if (params.get("feedback_submitted") === "true") {
-      showPopup("✅ Feedback recorded successfully. Thank you for your feedback! 🙏", "#3da240");
-  }
-
-  // Error popup
-  if (params.get("feedback_error") === "true") {
-      showPopup("❌ Feedback service is currently unavailable. Please try again later.", "#f44336");
-  }
-
-  // Clean URL after showing popup
-  if (params.has("feedback_submitted") || params.has("feedback_error")) {
-      window.history.replaceState({}, document.title, "/");
-  }
-
 });

@@ -27,7 +27,14 @@ PREDICTION_CONFIDENCE = Histogram(
     buckets=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 )
 
-# Inference responce time
+# Prediction confidence margin
+CONFIDENCE_MARGIN = Histogram(
+    "prediction_confidence_margin",
+    "Distance from decision boundary (2*prob - 1)",
+    buckets=[0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.0]
+)
+
+# Inference response time
 INFERENCE_LATENCY = Histogram(
     "model_inference_seconds",
     "Model inference time in seconds",
