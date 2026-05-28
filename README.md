@@ -87,15 +87,7 @@ Despite several optimizations, it might still have latency issues and cold start
     <img src="images/vizualization1.png" alt="Pair-plot visualization" height="300" width="600" style="margin-bottom: 10px;">
     <img src="images/data_drift-report.png" alt="MLflow Experiment Plot" height="300" width="600" style="margin-bottom: 10px;">
     <img src="images/all_experiments.png" alt="MLflow Experiment Plot" height="300" width="600" style="margin-bottom: 30px;"> 
-    <br>
-    LIME:
-    <br>
-    <img src="images/lime_report.png" alt="LIME explainer" height="300" width="600" style="margin-bottom: 10px;">
-    <br>
-    GRAFANA:
-    <br>
-    <img src="images/grafana_dashboard.png" alt="Grafana" height="300" width="600">
-    </p>
+    <img src="images/lime_report.png" alt="LIME explainer" height="300" width="600">
 </p>
 
 ## ⚙️ Installation :
