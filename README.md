@@ -11,9 +11,9 @@ The system covers the complete lifecycle of an ML application:
 - Data ingestion and validation.
 - Model training and experimentation.
 - Model versioning and registry management
-- Automated testing and CI pipelines
+- Automated testing, serving, and CI pipelines
 - Containerized inference services
-- Deployment and monitoring readiness
+- Deployment and monitoring
 
 ## ✍️ Highlights :
 
@@ -33,7 +33,7 @@ The system covers the complete lifecycle of an ML application:
 
 - 🔭 <b>Model Explainability with LIME</b> – Integrated LIME (Local Interpretable Model-agnostic Explanations) to interpret individual predictions and understand why the model made a decision. This improves transparency, trust, and debuggability of the deployed ML system.
 
-- 🖥️ <b>Monitoring-ready Architecture</b> – Used logging and exception modules for proper tracking and error handling. While Evidently is already used at data validation, the system is also designed to extend monitoring into production with Prometheus and Grafana, continuous drift detection, performance tracking, and retraining triggers.
+- 🖥️ <b>System Monitoring</b> – Used logging and exception modules for proper tracking and error handling. While Evidently is already used at data validation, the system is designed for end-to-end monitoring using Prometheus and Grafana, drift detection, performance tracking, and retraining triggers.
 
 - 🧩 <b>Scalable, Modular and Industry-Grade Design</b> – Developed and engineered following best practices from modern ML teams, ensuring the project is maintainable, extensible, and future-proof, going far beyond typical portfolio ML demos.
 
@@ -60,6 +60,9 @@ The system covers the complete lifecycle of an ML application:
     <img src="images/app_preview.png" alt="Application image" height="300" width="600">
 </p>
 
+### 🖼️ Grafana Dashboard :
+<img src="images/grafana_dashboard.png" alt="Grafana" height="400" width="600">
+
 ## 🔗 Links :
 
 - ### [Visit App ↗️](https://toxic-tweet-tagger.vercel.app/)
@@ -83,8 +86,15 @@ Despite several optimizations, it might still have latency issues and cold start
 <p>
     <img src="images/vizualization1.png" alt="Pair-plot visualization" height="300" width="600" style="margin-bottom: 10px;">
     <img src="images/data_drift-report.png" alt="MLflow Experiment Plot" height="300" width="600" style="margin-bottom: 10px;">
-    <img src="images/all_experiments.png" alt="MLflow Experiment Plot" height="300" width="600" style="margin-bottom: 10px;">
-    <img src="images/lime_report.png" alt="MLflow Experiment Plot" height="300" width="600">
+    <img src="images/all_experiments.png" alt="MLflow Experiment Plot" height="300" width="600" style="margin-bottom: 30px;"> 
+    <br>
+    LIME:
+    <br>
+    <img src="images/lime_report.png" alt="LIME explainer" height="300" width="600" style="margin-bottom: 10px;">
+    <br>
+    GRAFANA:
+    <br>
+    <img src="images/grafana_dashboard.png" alt="Grafana" height="300" width="600">
     </p>
 </p>
 
@@ -145,7 +155,7 @@ Write your comment and click on the `predict` button. Click on "Extra Details" t
 ### 💥 Future Updates :
 1. Deploying the application in production-grade servers (AWS).
 2. Upgrading model performances using transformer-based models such as BERT or RoBERTa.
-3. Implement automated model retraining pipeline and data drift detection in production.
+3. Implement an automated model retraining pipeline and data drift detection in production.
 4. Adding request rate limiting and API security
 <br>
 
